@@ -125,7 +125,8 @@ function toggleSidebar() {
           </div>
         </div>
         <Button text class="account-menu-btn" @click="toggleAccountMenu">
-          <MoreVertical :size="20" :stroke-width="2.35" />
+          <Avatar v-if="sidebarCollapsed" :label="accountInitial" shape="circle" class="account-menu-avatar" />
+          <MoreVertical v-else :size="24" :stroke-width="2.45" />
         </Button>
         <Menu ref="accountMenu" :model="accountActions" popup />
       </div>
@@ -410,11 +411,22 @@ function toggleSidebar() {
   min-width: 0;
 }
 
-.account-avatar {
+.account-meta > div {
+  min-width: 0;
+}
+
+.account-avatar,
+.account-menu-avatar {
   background: var(--p-surface-100);
   color: var(--p-surface-900);
   border: 1px solid var(--p-surface-200);
   flex: 0 0 auto;
+}
+
+.account-menu-avatar {
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.78rem;
 }
 
 .account-name {
@@ -423,6 +435,9 @@ function toggleSidebar() {
   font-size: 0.88rem;
   font-weight: 500;
   line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .account-role {
@@ -433,11 +448,15 @@ function toggleSidebar() {
 }
 
 .account-menu-btn {
-  width: 2.3rem;
-  height: 2.3rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: var(--app-control-radius);
-  color: var(--p-surface-700);
+  color: var(--p-surface-800);
   flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
 .account-menu-btn:hover {
@@ -469,6 +488,14 @@ function toggleSidebar() {
   min-height: 2.7rem;
 }
 
+.sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content),
+.sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content) {
+  width: 2.9rem;
+  min-height: 2.7rem;
+  margin-inline: auto;
+  border-radius: 0.62rem;
+}
+
 .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-header-label),
 .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item-label) {
   display: none;
@@ -476,21 +503,18 @@ function toggleSidebar() {
 
 .sidebar.collapsed .account-panel {
   justify-content: center;
-  gap: 0.35rem;
+  gap: 0;
   padding: 0.42rem;
 }
 
 .sidebar.collapsed .account-meta {
-  justify-content: center;
-}
-
-.sidebar.collapsed .account-meta > div {
   display: none;
 }
 
 .sidebar.collapsed .account-menu-btn {
-  width: 2.05rem;
-  height: 2.05rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
 }
 
 @media (max-width: 900px) {
@@ -545,6 +569,13 @@ function toggleSidebar() {
     min-height: initial;
   }
 
+  .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content),
+  .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content) {
+    width: auto;
+    min-height: initial;
+    margin-inline: 0;
+  }
+
   .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-header-label),
   .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item-label) {
     display: initial;
@@ -554,14 +585,6 @@ function toggleSidebar() {
     flex-direction: row;
     gap: 0.55rem;
     padding: 0.5rem;
-  }
-
-  .sidebar.collapsed .account-meta {
-    justify-content: flex-start;
-  }
-
-  .sidebar.collapsed .account-meta > div {
-    display: block;
   }
 
   .sidebar.collapsed .account-menu-btn {
