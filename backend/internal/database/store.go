@@ -1064,7 +1064,6 @@ func (s *PGStore) SeedRolesAndPermissions(ctx context.Context) error {
 		"users.assign_roles", "users.assign_sites", "users.reset_password",
 		"patients.create", "patients.read", "patients.update", "patients.disable",
 		"patients.write", // legacy — kept for backward compatibility
-		"encounters.read", "encounters.write",
 		"forms.create", "forms.read", "forms.update", "forms.disable",
 		"reports.export",
 		"sites.create", "sites.read", "sites.update", "sites.disable",
@@ -1081,10 +1080,10 @@ func (s *PGStore) SeedRolesAndPermissions(ctx context.Context) error {
 	// Role-permission mappings
 	rolePerms := map[string][]string{
 		"ADMIN":      perms, // all
-		"DOCTOR":     {"patients.create", "patients.read", "patients.update", "patients.write", "encounters.read", "encounters.write", "reports.export"},
-		"CHW":        {"patients.create", "patients.read", "patients.update", "patients.write", "encounters.read", "encounters.write"},
-		"DATA_ENTRY": {"patients.create", "patients.read", "patients.update", "patients.write", "encounters.read", "encounters.write", "forms.create", "forms.read", "forms.update", "forms.disable"},
-		"SUPERVISOR": {"patients.read", "encounters.read", "encounters.write", "reports.export", "users.read", "audit.read"},
+		"DOCTOR":     {"patients.create", "patients.read", "patients.update", "patients.write", "reports.export"},
+		"CHW":        {"patients.create", "patients.read", "patients.update", "patients.write"},
+		"DATA_ENTRY": {"patients.create", "patients.read", "patients.update", "patients.write", "forms.create", "forms.read", "forms.update", "forms.disable"},
+		"SUPERVISOR": {"patients.read", "reports.export", "users.read", "audit.read"},
 	}
 	for roleName, permNames := range rolePerms {
 		for _, permName := range permNames {

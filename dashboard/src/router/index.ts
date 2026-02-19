@@ -6,7 +6,6 @@ import RolesView from '@/views/RolesView.vue'
 import SitesView from '@/views/SitesView.vue'
 import UsersView from '@/views/UsersView.vue'
 import PatientsView from '@/views/PatientsView.vue'
-import EncountersView from '@/views/EncountersView.vue'
 import LoginView from '@/views/LoginView.vue'
 import ResetPasswordView from '@/views/ResetPasswordView.vue'
 import SettingsView from '@/views/SettingsView.vue'
@@ -71,7 +70,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/dashboard',
+      redirect: '/overview',
     },
     {
       path: '/auth/login',
@@ -85,14 +84,14 @@ const router = createRouter({
       component: ResetPasswordView,
     },
     {
-      path: '/dashboard',
-      name: 'dashboard',
+      path: '/overview',
+      name: 'overview',
       component: OverviewView,
       meta: { requiresAuth: true },
     },
     {
-      path: '/overview',
-      redirect: '/dashboard',
+      path: '/dashboard',
+      redirect: '/overview',
     },
     {
       path: '/admin',
@@ -152,14 +151,6 @@ const router = createRouter({
       },
     },
     {
-      path: '/encounters',
-      name: 'encounters',
-      component: EncountersView,
-      meta: {
-        requiresAuth: true,
-      },
-    },
-    {
       path: '/users',
       redirect: '/admin/users',
     },
@@ -175,7 +166,7 @@ const router = createRouter({
     },
     {
       path: '/:pathMatch(.*)*',
-      redirect: '/dashboard',
+      redirect: '/overview',
     },
   ],
 })
@@ -197,7 +188,7 @@ router.beforeEach(async (to) => {
   }
 
   if (to.meta.guestOnly && authStore.isAuthenticated) {
-    return { path: authStore.defaultDashboardRoute() }
+    return { path: authStore.defaultOverviewRoute() }
   }
 
   return true

@@ -472,8 +472,8 @@ export const useAuthStore = defineStore('auth', () => {
     () => sessionActive.value || Boolean(accessToken.value) || Boolean(refreshToken.value),
   )
 
-  function defaultDashboardRoute() {
-    return '/dashboard'
+  function defaultOverviewRoute() {
+    return '/overview'
   }
 
   function persistSessionFlag() {
@@ -889,7 +889,7 @@ export const useAuthStore = defineStore('auth', () => {
     sites,
     isAdmin,
     isAuthenticated,
-    defaultDashboardRoute,
+    defaultOverviewRoute,
     hydrate,
     ensureProfile,
     fetchProfile,

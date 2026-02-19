@@ -4,7 +4,6 @@ import type { MenuItem } from 'primevue/menuitem'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
-  ClipboardList,
   Frown,
   HeartPulse,
   LayoutDashboard,
@@ -82,8 +81,8 @@ const patientAccessPermissions = [
 
 const navItems: NavItem[] = [
   {
-    label: 'Dashboard',
-    to: '/dashboard',
+    label: 'Overview',
+    to: '/overview',
     icon: LayoutDashboard,
     section: 'main',
     visibleTo: ['user'],
@@ -104,13 +103,6 @@ const navItems: NavItem[] = [
     section: 'main',
     visibleTo: ['user', 'admin'],
     requiredPermissions: patientAccessPermissions,
-  },
-  {
-    label: 'Encounter',
-    to: '/encounters',
-    icon: ClipboardList,
-    section: 'main',
-    visibleTo: ['user', 'admin'],
   },
   {
     label: 'Sites',

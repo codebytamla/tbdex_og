@@ -24,7 +24,7 @@ async function submit() {
   const redirect =
     typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/')
       ? route.query.redirect
-      : authStore.defaultDashboardRoute()
+      : authStore.defaultOverviewRoute()
   await router.push(redirect)
 }
 </script>
