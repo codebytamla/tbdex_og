@@ -238,28 +238,60 @@ function isNavMenuItemActive(item: MenuItem) {
   font-weight: 500;
 }
 
+.nav :deep(.nav-panelmenu .p-panelmenu-panel > .p-panelmenu-header .p-panelmenu-header-link:hover) {
+  color: var(--p-primary-700);
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-item > .p-panelmenu-item-content .p-panelmenu-item-link:hover) {
+  color: var(--p-primary-700);
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-panel > .p-panelmenu-header .p-panelmenu-header-content:hover) {
+  background: var(--p-surface-100);
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-item > .p-panelmenu-item-content:hover) {
+  background: var(--p-surface-100);
+}
+
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content) {
-  background: color-mix(in srgb, var(--p-primary-color) 14%, var(--p-surface-0));
+  background: var(--p-primary-700);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-link) {
-  color: var(--p-primary-800);
+  color: var(--p-surface-0);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-label) {
-  font-weight: 620;
+  font-weight: 600;
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content) {
-  background: color-mix(in srgb, var(--p-primary-color) 14%, var(--p-surface-0));
+  background: var(--p-primary-700);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-link) {
-  color: var(--p-primary-800);
+  color: var(--p-surface-0);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-label) {
-  font-weight: 620;
+  font-weight: 600;
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content:hover) {
+  background: var(--p-primary-800);
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content:hover) {
+  background: var(--p-primary-800);
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-link:hover) {
+  color: var(--p-surface-0);
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-link:hover) {
+  color: var(--p-surface-0);
 }
 
 .content {

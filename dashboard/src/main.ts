@@ -98,8 +98,8 @@ const MonoPreset = definePreset(Aura, {
         indent: '0.8rem',
       },
       submenuIcon: {
-        color: '{surface.500}',
-        focusColor: '{primary.700}',
+        color: '{surface.400}',
+        focusColor: '{primary.500}',
       },
     },
   },
