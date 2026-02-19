@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import OverviewView from '@/views/OverviewView.vue'
+import ReferralsView from '@/views/ReferralsView.vue'
+import ScreeningsView from '@/views/ScreeningsView.vue'
 import RolesView from '@/views/RolesView.vue'
 import SitesView from '@/views/SitesView.vue'
 import UsersView from '@/views/UsersView.vue'
@@ -9,9 +11,11 @@ import ResetPasswordView from '@/views/ResetPasswordView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import { useAuthStore } from '@/stores/auth'
 
-const usersReadPermissions = ['users.read']
+const referralsReadPermissions = ['referrals.read']
+const screeningsReadPermissions = ['screenings.read']
 const patientsReadPermissions = ['patients.read']
 const sitesReadPermissions = ['sites.read']
+const usersReadPermissions = ['users.read']
 const rolesReadPermissions = ['roles.read']
 
 function parseClaimMeta(value: unknown) {
@@ -51,12 +55,21 @@ const router = createRouter({
       redirect: '/overview',
     },
     {
-      path: '/users',
-      name: 'users',
-      component: UsersView,
+      path: '/referrals',
+      name: 'referrals',
+      component: ReferralsView,
       meta: {
         requiresAuth: true,
-        requiredPermissions: usersReadPermissions,
+        requiredPermissions: referralsReadPermissions,
+      },
+    },
+    {
+      path: '/screenings',
+      name: 'screenings',
+      component: ScreeningsView,
+      meta: {
+        requiresAuth: true,
+        requiredPermissions: screeningsReadPermissions,
       },
     },
     {
@@ -78,6 +91,15 @@ const router = createRouter({
       },
     },
     {
+      path: '/users',
+      name: 'users',
+      component: UsersView,
+      meta: {
+        requiresAuth: true,
+        requiredPermissions: usersReadPermissions,
+      },
+    },
+    {
       path: '/roles',
       name: 'roles',
       component: RolesView,
@@ -91,8 +113,12 @@ const router = createRouter({
       redirect: '/overview',
     },
     {
-      path: '/admin/users',
-      redirect: '/users',
+      path: '/admin/referrals',
+      redirect: '/referrals',
+    },
+    {
+      path: '/admin/screenings',
+      redirect: '/screenings',
     },
     {
       path: '/admin/patients',
@@ -101,6 +127,10 @@ const router = createRouter({
     {
       path: '/admin/sites',
       redirect: '/sites',
+    },
+    {
+      path: '/admin/users',
+      redirect: '/users',
     },
     {
       path: '/admin/roles',

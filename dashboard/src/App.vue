@@ -2,7 +2,7 @@
 import type { MenuItem } from 'primevue/menuitem'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { HeartPulse, MoreVertical } from 'lucide-vue-next'
+import { Activity, MoreVertical } from 'lucide-vue-next'
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import Menu from 'primevue/menu'
@@ -65,11 +65,9 @@ function isNavMenuItemActive(item: MenuItem) {
   <div v-else class="layout-shell">
     <aside class="sidebar">
       <div class="brand">
-        <Avatar shape="circle" class="brand-avatar">
-          <HeartPulse :size="18" :stroke-width="2.25" />
-        </Avatar>
+        <Activity class="brand-icon" :size="18" :stroke-width="2.2" />
         <div class="brand-copy">
-          <h1>BorderDesk</h1>
+          <h1>TBDeX</h1>
         </div>
       </div>
 
@@ -118,7 +116,7 @@ function isNavMenuItemActive(item: MenuItem) {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Space+Grotesk:wght@600;700&display=swap');
 
 :global(:root) {
   --app-font-family: 'IBM Plex Sans', 'Avenir Next', 'SF Pro Text', 'Segoe UI', 'Helvetica Neue', sans-serif;
@@ -189,7 +187,7 @@ function isNavMenuItemActive(item: MenuItem) {
 .sidebar {
   background: linear-gradient(180deg, var(--p-surface-50) 0%, var(--p-surface-100) 100%);
   border-right: 1px solid var(--p-surface-200);
-  padding: 1.25rem;
+  padding: 2rem 1.25rem 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -199,17 +197,23 @@ function isNavMenuItemActive(item: MenuItem) {
 
 .brand {
   display: flex;
-  gap: 0.6rem;
+  gap: 0.5rem;
   align-items: center;
   padding: 0.15rem 0;
 }
 
+.brand-icon {
+  color: var(--p-primary-600);
+  flex: 0 0 auto;
+}
+
 .brand-copy h1 {
   margin: 0;
-  font-size: 0.98rem;
-  font-weight: 650;
-  color: var(--p-surface-900);
-  letter-spacing: -0.01em;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--p-primary-700);
+  letter-spacing: -0.03em;
 }
 
 .nav {
@@ -235,63 +239,63 @@ function isNavMenuItemActive(item: MenuItem) {
 
 .nav :deep(.nav-panelmenu .p-panelmenu-header-label) {
   color: inherit;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel > .p-panelmenu-header .p-panelmenu-header-link:hover) {
-  color: var(--p-primary-700);
+  color: var(--p-primary-600);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item > .p-panelmenu-item-content .p-panelmenu-item-link:hover) {
-  color: var(--p-primary-700);
+  color: var(--p-primary-600);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel > .p-panelmenu-header .p-panelmenu-header-content:hover) {
-  background: var(--p-surface-100);
+  background: var(--p-surface-200);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item > .p-panelmenu-item-content:hover) {
-  background: var(--p-surface-100);
+  background: var(--p-surface-200);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content) {
-  background: var(--p-primary-700);
+  background: color-mix(in srgb, var(--p-primary-color) 10%, var(--p-surface-0));
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-link) {
-  color: var(--p-surface-0);
+  color: var(--p-primary-700);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-label) {
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content) {
-  background: var(--p-primary-700);
+  background: color-mix(in srgb, var(--p-primary-color) 10%, var(--p-surface-0));
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-link) {
-  color: var(--p-surface-0);
+  color: var(--p-primary-700);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-label) {
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content:hover) {
-  background: var(--p-primary-800);
+  background: color-mix(in srgb, var(--p-primary-color) 15%, var(--p-surface-0));
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content:hover) {
-  background: var(--p-primary-800);
+  background: color-mix(in srgb, var(--p-primary-color) 15%, var(--p-surface-0));
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-link:hover) {
-  color: var(--p-surface-0);
+  color: var(--p-primary-700);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-link:hover) {
-  color: var(--p-surface-0);
+  color: var(--p-primary-700);
 }
 
 .content {
@@ -301,15 +305,6 @@ function isNavMenuItemActive(item: MenuItem) {
   overflow-y: auto;
 }
 
-.brand-avatar {
-  background: var(--p-primary-700);
-  color: var(--p-surface-0);
-  border: 1px solid var(--p-primary-800);
-}
-
-.brand-avatar :deep(svg) {
-  display: block;
-}
 
 .account-panel {
   margin-top: auto;
@@ -341,7 +336,7 @@ function isNavMenuItemActive(item: MenuItem) {
   margin: 0;
   color: var(--p-surface-900);
   font-size: 0.88rem;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.1;
 }
 

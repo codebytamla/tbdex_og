@@ -11,19 +11,19 @@ import router from './router'
 
 const app = createApp(App)
 const primaryPalette = palette('{teal}') as Record<string, string>
-const lightSurfacePalette = palette('{zinc}') as Record<string, string>
+const lightSurfacePalette = palette('{slate}') as Record<string, string>
 const darkSurfacePalette: Record<string, string> = {
-  0: lightSurfacePalette['950'] || '#09090b',
-  50: lightSurfacePalette['900'] || '#18181b',
-  100: lightSurfacePalette['800'] || '#27272a',
-  200: lightSurfacePalette['700'] || '#3f3f46',
-  300: lightSurfacePalette['600'] || '#52525b',
-  400: lightSurfacePalette['500'] || '#71717a',
-  500: lightSurfacePalette['400'] || '#a1a1aa',
-  600: lightSurfacePalette['300'] || '#d4d4d8',
-  700: lightSurfacePalette['200'] || '#e4e4e7',
-  800: lightSurfacePalette['100'] || '#f4f4f5',
-  900: lightSurfacePalette['50'] || '#fafafa',
+  0: lightSurfacePalette['950'] || '#020617',
+  50: lightSurfacePalette['900'] || '#0f172a',
+  100: lightSurfacePalette['800'] || '#1e293b',
+  200: lightSurfacePalette['700'] || '#334155',
+  300: lightSurfacePalette['600'] || '#475569',
+  400: lightSurfacePalette['500'] || '#64748b',
+  500: lightSurfacePalette['400'] || '#94a3b8',
+  600: lightSurfacePalette['300'] || '#cbd5e1',
+  700: lightSurfacePalette['200'] || '#e2e8f0',
+  800: lightSurfacePalette['100'] || '#f1f5f9',
+  900: lightSurfacePalette['50'] || '#f8fafc',
   950: '#ffffff',
 }
 
@@ -83,15 +83,15 @@ const MonoPreset = definePreset(Aura, {
         },
       },
       item: {
-        color: '{surface.700}',
-        focusBackground: 'color-mix(in srgb, {primary.color} 14%, {surface.0})',
-        focusColor: '{primary.300}',
+        color: '{surface.600}',
+        focusBackground: 'color-mix(in srgb, {primary.color} 8%, {surface.0})',
+        focusColor: '{primary.600}',
         gap: '0.5rem',
         padding: '0.48rem 0.62rem',
         borderRadius: '0.7rem',
         icon: {
-          color: '{surface.500}',
-          focusColor: '{primary.700}',
+          color: '{surface.400}',
+          focusColor: '{primary.600}',
         },
       },
       submenu: {

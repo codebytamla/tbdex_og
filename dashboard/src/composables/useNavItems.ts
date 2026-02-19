@@ -2,7 +2,15 @@ import type { MenuItem } from 'primevue/menuitem'
 import type { Component } from 'vue'
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Frown, LayoutDashboard, MapPin, ShieldCheck, Users } from 'lucide-vue-next'
+import {
+  Frown,
+  LayoutDashboard,
+  Link2,
+  MapPin,
+  ShieldCheck,
+  SlidersHorizontal,
+  Users,
+} from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 
 type NavItemDefinition = {
@@ -20,9 +28,11 @@ type BuiltNavItem = {
   active: boolean
 }
 
-const usersReadPermissions = ['users.read']
+const referralsReadPermissions = ['referrals.read']
+const screeningsReadPermissions = ['screenings.read']
 const patientsReadPermissions = ['patients.read']
 const sitesReadPermissions = ['sites.read']
+const usersReadPermissions = ['users.read']
 const rolesReadPermissions = ['roles.read']
 
 const navDefinitions: NavItemDefinition[] = [
@@ -33,11 +43,18 @@ const navDefinitions: NavItemDefinition[] = [
     iconComponent: LayoutDashboard,
   },
   {
-    key: 'users',
-    label: 'Users',
-    to: '/users',
-    iconComponent: Users,
-    requiredPermissions: usersReadPermissions,
+    key: 'referrals',
+    label: 'Referrals',
+    to: '/referrals',
+    iconComponent: Link2,
+    requiredPermissions: referralsReadPermissions,
+  },
+  {
+    key: 'screenings',
+    label: 'Screenings',
+    to: '/screenings',
+    iconComponent: SlidersHorizontal,
+    requiredPermissions: screeningsReadPermissions,
   },
   {
     key: 'patients',
@@ -52,6 +69,13 @@ const navDefinitions: NavItemDefinition[] = [
     to: '/sites',
     iconComponent: MapPin,
     requiredPermissions: sitesReadPermissions,
+  },
+  {
+    key: 'users',
+    label: 'Users',
+    to: '/users',
+    iconComponent: Users,
+    requiredPermissions: usersReadPermissions,
   },
   {
     key: 'roles',
