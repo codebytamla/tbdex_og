@@ -98,6 +98,10 @@ const canSubmit = computed(() => {
   if (dialogMode.value === 'view') return false
   return form.name.trim().length > 0 && !dialogBusy.value && canManageRoles.value
 })
+
+const selectedPermissionsPreview = computed(() =>
+  [...new Set(form.permissions.map((item) => item.trim()).filter(Boolean))].sort(),
+)
 const rowActionItems = computed<ActionMenuItem[]>(() => [
   {
     label: 'View',
@@ -466,20 +470,34 @@ void loadRoles()
           <InputText v-model="form.description" :disabled="dialogMode === 'view'" />
         </label>
 
-        <label class="field">
+        <label class="field permissions-field">
           <span>Permissions</span>
           <MultiSelect
             v-model="form.permissions"
+            class="role-permissions-select"
             :options="permissionsCatalog"
             optionLabel="name"
             optionValue="name"
-            display="chip"
+            :maxSelectedLabels="1"
+            selectedItemsLabel="{0} selected"
             filter
             fluid
             :loading="permissionsLoading"
             :disabled="dialogMode === 'view'"
             placeholder="Select permissions"
           />
+          <div v-if="selectedPermissionsPreview.length > 0" class="permissions-preview">
+            <p class="permissions-preview-meta">{{ selectedPermissionsPreview.length }} selected permissions</p>
+            <div class="permissions-preview-list">
+              <span
+                v-for="permission in selectedPermissionsPreview"
+                :key="permission"
+                class="permissions-preview-chip"
+              >
+                {{ permission }}
+              </span>
+            </div>
+          </div>
         </label>
       </template>
     </div>
@@ -532,11 +550,13 @@ void loadRoles()
 .dialog-content {
   display: grid;
   gap: 0.85rem;
+  min-width: 0;
 }
 
 .field {
   display: grid;
   gap: 0.38rem;
+  min-width: 0;
 }
 
 .field span {
@@ -549,6 +569,53 @@ void loadRoles()
   margin: 0;
   color: var(--p-surface-600);
   font-size: 0.86rem;
+}
+
+.permissions-field {
+  min-width: 0;
+}
+
+.permissions-preview {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.permissions-preview-meta {
+  margin: 0;
+  color: var(--p-surface-600);
+  font-size: 0.77rem;
+}
+
+.permissions-preview-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.35rem;
+  max-height: 7.4rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.42rem;
+  border: 1px solid var(--p-surface-200);
+  border-radius: 0.56rem;
+  background: var(--p-surface-0);
+}
+
+.permissions-preview-chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 1.25rem;
+  padding: 0.14rem 0.48rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  line-height: 1.2;
+  color: var(--p-primary-700);
+  background: color-mix(in srgb, var(--p-primary-color) 10%, var(--p-surface-0));
+  border: 1px solid color-mix(in srgb, var(--p-primary-color) 20%, var(--p-surface-0));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .dialog-actions {
@@ -584,6 +651,26 @@ void loadRoles()
 
 :deep(.p-datatable-tbody > tr > td) {
   color: var(--p-surface-900);
+}
+
+:deep(.p-dialog-content) {
+  overflow-x: hidden;
+}
+
+:deep(.role-permissions-select) {
+  min-width: 0;
+  max-width: 100%;
+}
+
+:deep(.role-permissions-select .p-multiselect-label-container) {
+  min-width: 0;
+}
+
+:deep(.role-permissions-select .p-multiselect-label) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (max-width: 900px) {
