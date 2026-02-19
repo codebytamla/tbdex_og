@@ -23,102 +23,44 @@ type NavItem = {
   label: string
   to: string
   icon: Component
-  section: 'main' | 'admin'
-  visibleTo: Array<'user' | 'admin'>
   requiredPermissions?: string[]
   requiredRoles?: string[]
 }
 
-const roleAccessPermissions = [
-  'roles.*',
-  'roles.read',
-  'roles.write',
-  'roles.update',
-  'roles.delete',
-  'roles.manage',
-  'users.*',
-  'users.read',
-  'users.write',
-  'users.update',
-  'users.delete',
-  'users.manage',
-]
-
-const userAccessPermissions = [
-  'users.*',
-  'users.read',
-  'users.write',
-  'users.update',
-  'users.delete',
-  'users.manage',
-]
-
-const siteAccessPermissions = [
-  'sites.*',
-  'sites.read',
-  'sites.write',
-  'sites.update',
-  'sites.delete',
-  'sites.manage',
-  'users.*',
-  'users.read',
-  'users.write',
-  'users.update',
-  'users.delete',
-  'users.manage',
-]
-
-const patientAccessPermissions = [
-  'patients.*',
-  'patients.manage',
-  'patients.read',
-  'patients.create',
-  'patients.update',
-  'patients.add_site',
-  'patients.disable',
-  'patients.write',
-]
+const usersReadPermissions = ['users.read']
+const patientsReadPermissions = ['patients.read']
+const sitesReadPermissions = ['sites.read']
+const rolesReadPermissions = ['roles.read']
 
 const navItems: NavItem[] = [
   {
     label: 'Overview',
     to: '/overview',
     icon: LayoutDashboard,
-    section: 'main',
-    visibleTo: ['user'],
   },
   {
     label: 'Users',
-    to: '/admin/users',
+    to: '/users',
     icon: Users,
-    section: 'admin',
-    visibleTo: ['admin'],
-    requiredPermissions: userAccessPermissions,
-    requiredRoles: ['administrator', 'admin'],
+    requiredPermissions: usersReadPermissions,
   },
   {
     label: 'Patients',
     to: '/patients',
     icon: Frown,
-    section: 'main',
-    visibleTo: ['user', 'admin'],
-    requiredPermissions: patientAccessPermissions,
+    requiredPermissions: patientsReadPermissions,
   },
   {
     label: 'Sites',
-    to: '/admin/sites',
+    to: '/sites',
     icon: MapPin,
-    section: 'admin',
-    visibleTo: ['admin'],
-    requiredPermissions: siteAccessPermissions,
+    requiredPermissions: sitesReadPermissions,
   },
   {
     label: 'Roles',
-    to: '/admin/roles',
+    to: '/roles',
     icon: ShieldCheck,
-    section: 'admin',
-    visibleTo: ['admin'],
-    requiredPermissions: roleAccessPermissions,
+    requiredPermissions: rolesReadPermissions,
   },
 ]
 
@@ -131,7 +73,9 @@ onMounted(() => {
 })
 
 const isAuthRoute = computed(() => route.path.startsWith('/auth') || route.path === '/reset-password')
-const visibleNavItems = computed(() => navItems)
+const visibleNavItems = computed(() =>
+  navItems.filter((item) => authStore.canAccess(item.requiredPermissions, item.requiredRoles)),
+)
 const accountName = computed(() => authStore.accountName)
 const accountRole = computed(() => {
   const primary = authStore.accountRole?.trim()

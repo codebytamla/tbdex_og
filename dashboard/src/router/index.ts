@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { h } from 'vue'
-import { RouterView } from 'vue-router'
 import OverviewView from '@/views/OverviewView.vue'
 import RolesView from '@/views/RolesView.vue'
 import SitesView from '@/views/SitesView.vue'
@@ -11,59 +9,18 @@ import ResetPasswordView from '@/views/ResetPasswordView.vue'
 import SettingsView from '@/views/SettingsView.vue'
 import { useAuthStore } from '@/stores/auth'
 
-const AdminRouteView = {
-  render: () => h(RouterView),
+const usersReadPermissions = ['users.read']
+const patientsReadPermissions = ['patients.read']
+const sitesReadPermissions = ['sites.read']
+const rolesReadPermissions = ['roles.read']
+
+function parseClaimMeta(value: unknown) {
+  if (Array.isArray(value)) {
+    return value.filter((entry): entry is string => typeof entry === 'string' && entry.trim().length > 0)
+  }
+  if (typeof value === 'string' && value.trim().length > 0) return [value]
+  return []
 }
-
-const roleAccessPermissions = [
-  'roles.*',
-  'roles.read',
-  'roles.write',
-  'roles.update',
-  'roles.delete',
-  'roles.manage',
-  'users.*',
-  'users.read',
-  'users.write',
-  'users.update',
-  'users.delete',
-  'users.manage',
-]
-
-const userAccessPermissions = [
-  'users.*',
-  'users.read',
-  'users.write',
-  'users.update',
-  'users.delete',
-  'users.manage',
-]
-
-const siteAccessPermissions = [
-  'sites.*',
-  'sites.read',
-  'sites.write',
-  'sites.update',
-  'sites.delete',
-  'sites.manage',
-  'users.*',
-  'users.read',
-  'users.write',
-  'users.update',
-  'users.delete',
-  'users.manage',
-]
-
-const patientAccessPermissions = [
-  'patients.*',
-  'patients.manage',
-  'patients.read',
-  'patients.create',
-  'patients.update',
-  'patients.add_site',
-  'patients.disable',
-  'patients.write',
-]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -94,52 +51,13 @@ const router = createRouter({
       redirect: '/overview',
     },
     {
-      path: '/admin',
-      component: AdminRouteView,
-      meta: { requiresAuth: true, requiresAdmin: true },
-      children: [
-        {
-          path: '',
-          redirect: '/admin/users',
-        },
-        {
-          path: 'roles',
-          name: 'admin-roles',
-          component: RolesView,
-          meta: {
-            requiredPermissions: roleAccessPermissions,
-          },
-        },
-        {
-          path: 'users',
-          name: 'admin-users',
-          component: UsersView,
-          meta: {
-            requiredPermissions: userAccessPermissions,
-            requiredRoles: ['administrator', 'admin'],
-          },
-        },
-        {
-          path: 'patients',
-          name: 'admin-patients',
-          component: PatientsView,
-          meta: {
-            requiredPermissions: patientAccessPermissions,
-          },
-        },
-        {
-          path: 'sites',
-          name: 'admin-sites',
-          component: SitesView,
-          meta: {
-            requiredPermissions: siteAccessPermissions,
-          },
-        },
-      ],
-    },
-    {
-      path: '/roles',
-      redirect: '/admin/roles',
+      path: '/users',
+      name: 'users',
+      component: UsersView,
+      meta: {
+        requiresAuth: true,
+        requiredPermissions: usersReadPermissions,
+      },
     },
     {
       path: '/patients',
@@ -147,16 +65,46 @@ const router = createRouter({
       component: PatientsView,
       meta: {
         requiresAuth: true,
-        requiredPermissions: patientAccessPermissions,
+        requiredPermissions: patientsReadPermissions,
       },
     },
     {
-      path: '/users',
-      redirect: '/admin/users',
+      path: '/sites',
+      name: 'sites',
+      component: SitesView,
+      meta: {
+        requiresAuth: true,
+        requiredPermissions: sitesReadPermissions,
+      },
     },
     {
-      path: '/sites',
-      redirect: '/admin/sites',
+      path: '/roles',
+      name: 'roles',
+      component: RolesView,
+      meta: {
+        requiresAuth: true,
+        requiredPermissions: rolesReadPermissions,
+      },
+    },
+    {
+      path: '/admin',
+      redirect: '/overview',
+    },
+    {
+      path: '/admin/users',
+      redirect: '/users',
+    },
+    {
+      path: '/admin/patients',
+      redirect: '/patients',
+    },
+    {
+      path: '/admin/sites',
+      redirect: '/sites',
+    },
+    {
+      path: '/admin/roles',
+      redirect: '/roles',
     },
     {
       path: '/settings',
@@ -188,6 +136,15 @@ router.beforeEach(async (to) => {
   }
 
   if (to.meta.guestOnly && authStore.isAuthenticated) {
+    return { path: authStore.defaultOverviewRoute() }
+  }
+
+  const requiredPermissions = parseClaimMeta(to.meta.requiredPermissions)
+  const requiredRoles = parseClaimMeta(to.meta.requiredRoles)
+  if (
+    (requiredPermissions.length > 0 || requiredRoles.length > 0) &&
+    !authStore.canAccess(requiredPermissions, requiredRoles)
+  ) {
     return { path: authStore.defaultOverviewRoute() }
   }
 
