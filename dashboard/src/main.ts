@@ -64,7 +64,7 @@ const MonoPreset = definePreset(Aura, {
     },
     panelmenu: {
       root: {
-        gap: '0.25rem',
+        gap: '0.125rem',
       },
       panel: {
         background: 'transparent',
@@ -87,7 +87,7 @@ const MonoPreset = definePreset(Aura, {
         focusBackground: 'color-mix(in srgb, {primary.color} 14%, {surface.0})',
         focusColor: '{primary.800}',
         gap: '0.5rem',
-        padding: '0.56rem 0.72rem',
+        padding: '0.48rem 0.62rem',
         borderRadius: '0.7rem',
         icon: {
           color: '{surface.500}',
