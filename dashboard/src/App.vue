@@ -496,6 +496,14 @@ function toggleSidebar() {
   border-radius: 0.62rem;
 }
 
+.sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-panel > .p-panelmenu-header .p-panelmenu-header-content:hover),
+.sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item > .p-panelmenu-item-content:hover) {
+  width: 2.9rem;
+  min-height: 2.7rem;
+  margin-inline: auto;
+  border-radius: 0.62rem;
+}
+
 .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-header-label),
 .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item-label) {
   display: none;
@@ -571,6 +579,13 @@ function toggleSidebar() {
 
   .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content),
   .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content) {
+    width: auto;
+    min-height: initial;
+    margin-inline: 0;
+  }
+
+  .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-panel > .p-panelmenu-header .p-panelmenu-header-content:hover),
+  .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item > .p-panelmenu-item-content:hover) {
     width: auto;
     min-height: initial;
     margin-inline: 0;
