@@ -19,6 +19,13 @@ type stubAdminUsersStore struct {
 	listUserRolesFn      func(context.Context, uuid.UUID) ([]Role, error)
 	listUserSitesFn      func(context.Context, uuid.UUID) ([]SiteSummary, error)
 	getRoleByNameFn      func(context.Context, string) (Role, error)
+	getRoleByIDFn        func(context.Context, uuid.UUID) (Role, error)
+	listRolesFn          func(context.Context) ([]Role, error)
+	createRoleFn         func(context.Context, string, string) (Role, error)
+	updateRoleFn         func(context.Context, uuid.UUID, *string, *string) (Role, error)
+	listRolePermsFn      func(context.Context, uuid.UUID) ([]Permission, error)
+	replaceRolePermsFn   func(context.Context, uuid.UUID, []string) ([]Permission, error)
+	listAllPermsFn       func(context.Context) ([]Permission, error)
 	createSiteFn         func(context.Context, string, string, string) (Site, error)
 	updateSiteFn         func(context.Context, uuid.UUID, string, string, string) (Site, error)
 }
@@ -84,6 +91,55 @@ func (s stubAdminUsersStore) GetRoleByName(ctx context.Context, name string) (Ro
 		return Role{}, pgx.ErrNoRows
 	}
 	return s.getRoleByNameFn(ctx, name)
+}
+
+func (s stubAdminUsersStore) GetRoleByID(ctx context.Context, id uuid.UUID) (Role, error) {
+	if s.getRoleByIDFn == nil {
+		return Role{}, pgx.ErrNoRows
+	}
+	return s.getRoleByIDFn(ctx, id)
+}
+
+func (s stubAdminUsersStore) ListRoles(ctx context.Context) ([]Role, error) {
+	if s.listRolesFn == nil {
+		return []Role{}, nil
+	}
+	return s.listRolesFn(ctx)
+}
+
+func (s stubAdminUsersStore) CreateRole(ctx context.Context, name, description string) (Role, error) {
+	if s.createRoleFn == nil {
+		return Role{}, nil
+	}
+	return s.createRoleFn(ctx, name, description)
+}
+
+func (s stubAdminUsersStore) UpdateRole(ctx context.Context, id uuid.UUID, name, description *string) (Role, error) {
+	if s.updateRoleFn == nil {
+		return Role{ID: id}, nil
+	}
+	return s.updateRoleFn(ctx, id, name, description)
+}
+
+func (s stubAdminUsersStore) ListRolePermissions(ctx context.Context, roleID uuid.UUID) ([]Permission, error) {
+	if s.listRolePermsFn == nil {
+		return []Permission{}, nil
+	}
+	return s.listRolePermsFn(ctx, roleID)
+}
+
+func (s stubAdminUsersStore) ReplaceRolePermissions(ctx context.Context, roleID uuid.UUID, permissionNames []string) ([]Permission, error) {
+	if s.replaceRolePermsFn == nil {
+		return []Permission{}, nil
+	}
+	return s.replaceRolePermsFn(ctx, roleID, permissionNames)
+}
+
+func (s stubAdminUsersStore) ListAllPermissions(ctx context.Context) ([]Permission, error) {
+	if s.listAllPermsFn == nil {
+		return []Permission{}, nil
+	}
+	return s.listAllPermsFn(ctx)
 }
 
 func (s stubAdminUsersStore) CreateSite(ctx context.Context, name, code, siteType string) (Site, error) {

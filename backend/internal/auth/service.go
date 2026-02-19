@@ -1256,8 +1256,9 @@ func (s *Service) AdminCreateRole(ctx context.Context, req AdminCreateRoleReques
 // -----------------------------------------------------------------
 
 type AdminUpdateRoleRequest struct {
-	Name        *string `json:"name,omitempty"`
-	Description *string `json:"description,omitempty"`
+	Name        *string   `json:"name,omitempty"`
+	Description *string   `json:"description,omitempty"`
+	Permissions *[]string `json:"permissions,omitempty"` // nil => unchanged, empty => clear all
 }
 
 func (s *Service) AdminUpdateRole(ctx context.Context, roleID uuid.UUID, req AdminUpdateRoleRequest, dev DeviceInfo) (*RoleWithPermissions, error) {
@@ -1275,13 +1276,21 @@ func (s *Service) AdminUpdateRole(ctx context.Context, roleID uuid.UUID, req Adm
 		return nil, err
 	}
 
-	perms, err := s.store.ListRolePermissions(ctx, role.ID)
-	if err != nil {
-		return nil, err
+	var perms []Permission
+	if req.Permissions != nil {
+		perms, err = s.store.ReplaceRolePermissions(ctx, role.ID, *req.Permissions)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		perms, err = s.store.ListRolePermissions(ctx, role.ID)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	LogAudit(ctx, s.audit, "role_updated", nil, nil, dev.IP, dev.UserAgent,
-		map[string]any{"role_id": roleID, "name": req.Name})
+		map[string]any{"role_id": roleID, "name": req.Name, "permissions": req.Permissions})
 
 	return &RoleWithPermissions{Role: role, Permissions: perms}, nil
 }
