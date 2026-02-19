@@ -24,6 +24,7 @@ var (
 	ErrInvalidResetToken    = errors.New("invalid or expired reset token")
 	ErrRoleExists           = errors.New("role with this name already exists")
 	ErrRoleNotFound         = errors.New("role not found")
+	ErrUnknownPermissions   = errors.New("one or more permissions do not exist")
 	ErrAdminRoleRequired    = errors.New("admin user must keep ADMIN role")
 	ErrInvalidCursor        = errors.New("invalid cursor")
 	ErrPatientNotFound      = errors.New("patient not found")
@@ -722,6 +723,35 @@ func normalizeNonEmptyStrings(values []string) []string {
 	return result
 }
 
+func (s *Service) validateRolePermissionNames(ctx context.Context, permissionNames []string) ([]string, error) {
+	normalized := normalizeNonEmptyStrings(permissionNames)
+	if len(normalized) == 0 {
+		return []string{}, nil
+	}
+
+	catalog, err := s.store.ListAllPermissions(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	known := make(map[string]struct{}, len(catalog))
+	for _, permission := range catalog {
+		name := strings.TrimSpace(permission.Name)
+		if name == "" {
+			continue
+		}
+		known[name] = struct{}{}
+	}
+
+	for _, name := range normalized {
+		if _, ok := known[name]; !ok {
+			return nil, ErrUnknownPermissions
+		}
+	}
+
+	return normalized, nil
+}
+
 func uniqueUUIDs(values []uuid.UUID) []uuid.UUID {
 	if len(values) == 0 {
 		return []uuid.UUID{}
@@ -1226,6 +1256,11 @@ type AdminCreateRoleRequest struct {
 }
 
 func (s *Service) AdminCreateRole(ctx context.Context, req AdminCreateRoleRequest, dev DeviceInfo) (*RoleWithPermissions, error) {
+	normalizedPermissions, err := s.validateRolePermissionNames(ctx, req.Permissions)
+	if err != nil {
+		return nil, err
+	}
+
 	role, err := s.store.CreateRole(ctx, req.Name, req.Description)
 	if err != nil {
 		if isDuplicateKeyError(err) {
@@ -1235,8 +1270,8 @@ func (s *Service) AdminCreateRole(ctx context.Context, req AdminCreateRoleReques
 	}
 
 	var perms []Permission
-	if len(req.Permissions) > 0 {
-		perms, err = s.store.ReplaceRolePermissions(ctx, role.ID, req.Permissions)
+	if len(normalizedPermissions) > 0 {
+		perms, err = s.store.ReplaceRolePermissions(ctx, role.ID, normalizedPermissions)
 		if err != nil {
 			return nil, err
 		}
@@ -1246,7 +1281,7 @@ func (s *Service) AdminCreateRole(ctx context.Context, req AdminCreateRoleReques
 	}
 
 	LogAudit(ctx, s.audit, "role_created", nil, nil, dev.IP, dev.UserAgent,
-		map[string]any{"role": role.Name, "permissions": req.Permissions})
+		map[string]any{"role": role.Name, "permissions": normalizedPermissions})
 
 	return &RoleWithPermissions{Role: role, Permissions: perms}, nil
 }
@@ -1278,7 +1313,11 @@ func (s *Service) AdminUpdateRole(ctx context.Context, roleID uuid.UUID, req Adm
 
 	var perms []Permission
 	if req.Permissions != nil {
-		perms, err = s.store.ReplaceRolePermissions(ctx, role.ID, *req.Permissions)
+		normalizedPermissions, err := s.validateRolePermissionNames(ctx, *req.Permissions)
+		if err != nil {
+			return nil, err
+		}
+		perms, err = s.store.ReplaceRolePermissions(ctx, role.ID, normalizedPermissions)
 		if err != nil {
 			return nil, err
 		}

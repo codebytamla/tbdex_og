@@ -148,8 +148,8 @@ function toggleSidebar() {
   --app-control-height: 2.4rem;
   --app-control-radius: 0.46rem;
   --app-control-font-size: 0.9rem;
-  --page-section-margin-bottom: 0.95rem;
-  --page-content-padding: 1.4rem;
+  --page-section-margin-bottom: 1.15rem;
+  --page-content-padding: 1.5rem;
   --page-content-padding-mobile: 1rem;
 }
 

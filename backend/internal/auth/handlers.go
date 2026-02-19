@@ -750,6 +750,8 @@ func (h *Handler) handleAdminCreateRole(w http.ResponseWriter, r *http.Request) 
 		switch err {
 		case ErrRoleExists:
 			writeError(w, http.StatusConflict, "role with this name already exists")
+		case ErrUnknownPermissions:
+			writeError(w, http.StatusBadRequest, "one or more permissions do not exist")
 		default:
 			writeInternalError(w, r, err)
 		}
@@ -809,6 +811,8 @@ func (h *Handler) handleAdminUpdateRole(w http.ResponseWriter, r *http.Request) 
 			writeError(w, http.StatusNotFound, "role not found")
 		case ErrRoleExists:
 			writeError(w, http.StatusConflict, "role with this name already exists")
+		case ErrUnknownPermissions:
+			writeError(w, http.StatusBadRequest, "one or more permissions do not exist")
 		default:
 			writeInternalError(w, r, err)
 		}

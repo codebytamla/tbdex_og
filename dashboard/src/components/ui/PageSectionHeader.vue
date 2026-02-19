@@ -46,7 +46,7 @@ const hasActions = computed(() => !!slots.actions)
 .page-section-copy {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.32rem;
   min-width: 0;
 }
 

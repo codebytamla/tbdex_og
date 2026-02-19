@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"reflect"
 	"testing"
 
@@ -47,6 +48,12 @@ func TestAdminUpdateRoleReplacesPermissionsWhenProvided(t *testing.T) {
 		listRolePermsFn: func(_ context.Context, _ uuid.UUID) ([]Permission, error) {
 			listCalled = true
 			return []Permission{{ID: uuid.New(), Name: "legacy.permission"}}, nil
+		},
+		listAllPermsFn: func(_ context.Context) ([]Permission, error) {
+			return []Permission{
+				{ID: uuid.New(), Name: "patients.read"},
+				{ID: uuid.New(), Name: "users.read"},
+			}, nil
 		},
 	}
 
@@ -165,5 +172,48 @@ func TestAdminUpdateRoleAllowsClearingPermissions(t *testing.T) {
 	}
 	if len(resp.Permissions) != 0 {
 		t.Fatalf("expected no permissions, got %#v", resp.Permissions)
+	}
+}
+
+func TestAdminUpdateRoleRejectsUnknownPermissions(t *testing.T) {
+	roleID := uuid.New()
+	requestedPermissions := []string{"patients.read", "reference.read"}
+
+	replaceCalled := false
+
+	store := stubAdminUsersStore{
+		getRoleByIDFn: func(_ context.Context, id uuid.UUID) (Role, error) {
+			if id != roleID {
+				t.Fatalf("unexpected role id: got %s want %s", id, roleID)
+			}
+			return Role{ID: roleID, Name: "DOCTOR"}, nil
+		},
+		updateRoleFn: func(_ context.Context, id uuid.UUID, _, _ *string) (Role, error) {
+			if id != roleID {
+				t.Fatalf("unexpected role id: got %s want %s", id, roleID)
+			}
+			return Role{ID: roleID, Name: "DOCTOR"}, nil
+		},
+		replaceRolePermsFn: func(_ context.Context, _ uuid.UUID, _ []string) ([]Permission, error) {
+			replaceCalled = true
+			return []Permission{}, nil
+		},
+		listAllPermsFn: func(_ context.Context) ([]Permission, error) {
+			return []Permission{
+				{ID: uuid.New(), Name: "patients.read"},
+				{ID: uuid.New(), Name: "users.read"},
+			}, nil
+		},
+	}
+
+	svc := NewService(store, JWTConfig{}, noopAuditWriter{})
+	_, err := svc.AdminUpdateRole(context.Background(), roleID, AdminUpdateRoleRequest{
+		Permissions: &requestedPermissions,
+	}, DeviceInfo{})
+	if !errors.Is(err, ErrUnknownPermissions) {
+		t.Fatalf("expected ErrUnknownPermissions, got %v", err)
+	}
+	if replaceCalled {
+		t.Fatal("expected ReplaceRolePermissions not to be called for unknown permission names")
 	}
 }
