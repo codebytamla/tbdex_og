@@ -2,7 +2,7 @@
 import type { MenuItem } from 'primevue/menuitem'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Activity, MoreVertical } from 'lucide-vue-next'
+import { PanelLeft, MoreVertical } from 'lucide-vue-next'
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import Menu from 'primevue/menu'
@@ -16,12 +16,18 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const { visibleNavItems } = useNavItems()
+const sidebarCollapseStorageKey = 'borderform.ui.sidebarCollapsed'
+const sidebarCollapsed = ref(false)
 authStore.hydrate()
 onMounted(() => {
+  sidebarCollapsed.value = localStorage.getItem(sidebarCollapseStorageKey) === '1'
   void authStore.ensureProfile(true)
 })
 
 const isAuthRoute = computed(() => route.path.startsWith('/auth') || route.path === '/reset-password')
+const sidebarToggleLabel = computed(() =>
+  sidebarCollapsed.value ? 'Expand navigation sidebar' : 'Collapse navigation sidebar',
+)
 const accountName = computed(() => authStore.accountName)
 const accountRole = computed(() => {
   const primary = authStore.accountRole?.trim()
@@ -54,6 +60,11 @@ function toggleAccountMenu(event: Event) {
 function isNavMenuItemActive(item: MenuItem) {
   return typeof item.class === 'string' && item.class.includes('nav-menu-item-active')
 }
+
+function toggleSidebar() {
+  sidebarCollapsed.value = !sidebarCollapsed.value
+  localStorage.setItem(sidebarCollapseStorageKey, sidebarCollapsed.value ? '1' : '0')
+}
 </script>
 
 <template>
@@ -62,13 +73,24 @@ function isNavMenuItemActive(item: MenuItem) {
 
   <RouterView v-if="isAuthRoute" />
 
-  <div v-else class="layout-shell">
-    <aside class="sidebar">
-      <div class="brand">
-        <Activity class="brand-icon" :size="18" :stroke-width="2.2" />
-        <div class="brand-copy">
-          <h1>TBDeX</h1>
+  <div v-else class="layout-shell" :class="{ 'layout-shell-collapsed': sidebarCollapsed }">
+    <aside class="sidebar" :class="{ collapsed: sidebarCollapsed }">
+      <div class="brand-row">
+        <div class="brand">
+          <div class="brand-copy">
+            <h1>TBDeX</h1>
+          </div>
         </div>
+        <button
+          type="button"
+          class="sidebar-toggle-btn"
+          :aria-label="sidebarToggleLabel"
+          :title="sidebarToggleLabel"
+          :aria-pressed="sidebarCollapsed"
+          @click="toggleSidebar"
+        >
+          <PanelLeft :size="16" :stroke-width="2.35" />
+        </button>
       </div>
 
       <nav class="nav" aria-label="Primary">
@@ -78,8 +100,8 @@ function isNavMenuItemActive(item: MenuItem) {
               :is="item.iconComponent"
               v-if="item.iconComponent"
               :class="[iconClass, 'nav-item-icon']"
-              :size="18"
-              :stroke-width="isNavMenuItemActive(item) ? 2.35 : 2.1"
+              :size="20"
+              :stroke-width="isNavMenuItemActive(item) ? 2.4 : 2.2"
             />
           </template>
           <template #itemicon="{ item, class: iconClass }">
@@ -87,8 +109,8 @@ function isNavMenuItemActive(item: MenuItem) {
               :is="item.iconComponent"
               v-if="item.iconComponent"
               :class="[iconClass, 'nav-item-icon']"
-              :size="18"
-              :stroke-width="isNavMenuItemActive(item) ? 2.35 : 2.1"
+              :size="20"
+              :stroke-width="isNavMenuItemActive(item) ? 2.4 : 2.2"
             />
           </template>
         </PanelMenu>
@@ -177,11 +199,17 @@ function isNavMenuItemActive(item: MenuItem) {
 }
 
 .layout-shell {
+  --sidebar-width: 240px;
   min-height: 100vh;
   height: 100vh;
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
   overflow: hidden;
+  transition: grid-template-columns 180ms ease;
+}
+
+.layout-shell.layout-shell-collapsed {
+  --sidebar-width: 88px;
 }
 
 .sidebar {
@@ -193,6 +221,19 @@ function isNavMenuItemActive(item: MenuItem) {
   gap: 1.5rem;
   min-height: 0;
   overflow-y: auto;
+  transition: padding 180ms ease, gap 180ms ease;
+}
+
+.sidebar.collapsed {
+  padding: 1.6rem 0.65rem 1rem;
+  gap: 1.1rem;
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
 }
 
 .brand {
@@ -202,11 +243,6 @@ function isNavMenuItemActive(item: MenuItem) {
   padding: 0.15rem 0;
 }
 
-.brand-icon {
-  color: var(--p-primary-600);
-  flex: 0 0 auto;
-}
-
 .brand-copy h1 {
   margin: 0;
   font-family: 'Space Grotesk', sans-serif;
@@ -214,6 +250,29 @@ function isNavMenuItemActive(item: MenuItem) {
   font-weight: 700;
   color: var(--p-primary-700);
   letter-spacing: -0.03em;
+}
+
+.sidebar-toggle-btn {
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  background: transparent;
+  color: var(--p-surface-700);
+  border-radius: 0.55rem;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.sidebar-toggle-btn:hover {
+  background: color-mix(in srgb, var(--p-primary-color) 10%, var(--p-surface-0));
+}
+
+.sidebar-toggle-btn:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--p-primary-color) 30%, transparent);
+  outline-offset: 2px;
 }
 
 .nav {
@@ -233,12 +292,29 @@ function isNavMenuItemActive(item: MenuItem) {
   color: inherit;
 }
 
+.nav :deep(.nav-panelmenu .p-panelmenu-submenu-icon) {
+  display: none;
+}
+
 .nav-item-icon {
   flex: 0 0 auto;
 }
 
+.nav :deep(.nav-panelmenu .p-panelmenu-header-link),
+.nav :deep(.nav-panelmenu .p-panelmenu-item-link) {
+  min-height: 2.7rem;
+  padding-block: 0.58rem;
+  column-gap: 0.65rem;
+}
+
 .nav :deep(.nav-panelmenu .p-panelmenu-header-label) {
   color: inherit;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-item-label) {
+  font-size: 1rem;
   font-weight: 400;
 }
 
@@ -259,43 +335,52 @@ function isNavMenuItemActive(item: MenuItem) {
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content) {
-  background: color-mix(in srgb, var(--p-primary-color) 10%, var(--p-surface-0));
+  background: var(--p-surface-200);
+  box-shadow: inset 0 0 0 1px var(--p-surface-300);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-link) {
-  color: var(--p-primary-700);
+  color: var(--p-primary-600);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-label) {
+  color: var(--p-primary-600);
   font-weight: 500;
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content) {
-  background: color-mix(in srgb, var(--p-primary-color) 10%, var(--p-surface-0));
+  background: var(--p-surface-200);
+  box-shadow: inset 0 0 0 1px var(--p-surface-300);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-link) {
-  color: var(--p-primary-700);
+  color: var(--p-primary-600);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-label) {
+  color: var(--p-primary-600);
   font-weight: 500;
 }
 
+.nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-icon),
+.nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-icon) {
+  color: var(--p-primary-600);
+}
+
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content:hover) {
-  background: color-mix(in srgb, var(--p-primary-color) 15%, var(--p-surface-0));
+  background: var(--p-surface-200);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content:hover) {
-  background: color-mix(in srgb, var(--p-primary-color) 15%, var(--p-surface-0));
+  background: var(--p-surface-200);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-link:hover) {
-  color: var(--p-primary-700);
+  color: var(--p-primary-600);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-link:hover) {
-  color: var(--p-primary-700);
+  color: var(--p-primary-600);
 }
 
 .content {
@@ -360,6 +445,54 @@ function isNavMenuItemActive(item: MenuItem) {
   border-color: color-mix(in srgb, var(--p-primary-color) 28%, var(--p-surface-0));
 }
 
+.sidebar.collapsed .brand {
+  display: none;
+  padding-left: 0;
+}
+
+.sidebar.collapsed .brand-row {
+  justify-content: center;
+}
+
+.sidebar.collapsed .brand-copy {
+  display: none;
+}
+
+.sidebar.collapsed .nav {
+  margin-top: 0;
+}
+
+.sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-header-link),
+.sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item-link) {
+  justify-content: center;
+  padding-inline: 0.58rem;
+  min-height: 2.7rem;
+}
+
+.sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-header-label),
+.sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item-label) {
+  display: none;
+}
+
+.sidebar.collapsed .account-panel {
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.42rem;
+}
+
+.sidebar.collapsed .account-meta {
+  justify-content: center;
+}
+
+.sidebar.collapsed .account-meta > div {
+  display: none;
+}
+
+.sidebar.collapsed .account-menu-btn {
+  width: 2.05rem;
+  height: 2.05rem;
+}
+
 @media (max-width: 900px) {
   .layout-shell {
     height: auto;
@@ -368,10 +501,72 @@ function isNavMenuItemActive(item: MenuItem) {
     overflow: visible;
   }
 
+  .layout-shell.layout-shell-collapsed {
+    grid-template-columns: 1fr;
+  }
+
   .sidebar {
     border-right: none;
     border-bottom: 1px solid var(--p-surface-200);
     overflow: visible;
+  }
+
+  .sidebar-toggle-btn {
+    display: none;
+  }
+
+  .sidebar.collapsed {
+    padding: 2rem 1.25rem 1.25rem;
+    gap: 1.5rem;
+  }
+
+  .sidebar.collapsed .brand {
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 0;
+  }
+
+  .sidebar.collapsed .brand-row {
+    justify-content: flex-start;
+  }
+
+  .sidebar.collapsed .brand-copy {
+    display: block;
+  }
+
+  .sidebar.collapsed .nav {
+    margin-top: 0.35rem;
+  }
+
+  .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-header-link),
+  .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item-link) {
+    justify-content: flex-start;
+    padding-inline: initial;
+    min-height: initial;
+  }
+
+  .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-header-label),
+  .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item-label) {
+    display: initial;
+  }
+
+  .sidebar.collapsed .account-panel {
+    flex-direction: row;
+    gap: 0.55rem;
+    padding: 0.5rem;
+  }
+
+  .sidebar.collapsed .account-meta {
+    justify-content: flex-start;
+  }
+
+  .sidebar.collapsed .account-meta > div {
+    display: block;
+  }
+
+  .sidebar.collapsed .account-menu-btn {
+    width: 2.3rem;
+    height: 2.3rem;
   }
 
   .account-panel {
