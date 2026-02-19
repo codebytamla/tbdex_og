@@ -49,8 +49,8 @@ function onClick(event: MouseEvent) {
   gap: 0.4rem;
   height: var(--toolbar-control-height, var(--app-control-height, 2.2rem));
   padding: 0 0.92rem;
-  background: var(--p-primary-700);
-  border-color: var(--p-primary-700);
+  background: var(--p-primary-600);
+  border-color: var(--p-primary-600);
   color: #ffffff;
   border-radius: var(--app-control-radius, 0.68rem);
   font-size: var(--app-control-font-size, 0.83rem);
@@ -61,8 +61,8 @@ function onClick(event: MouseEvent) {
 }
 
 .create-action-btn:hover:not(:disabled) {
-  background: var(--p-primary-800);
-  border-color: var(--p-primary-800);
+  background: var(--p-primary-700);
+  border-color: var(--p-primary-700);
   color: #ffffff;
 }
 

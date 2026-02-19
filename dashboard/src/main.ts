@@ -44,7 +44,7 @@ const MonoPreset = definePreset(Aura, {
     focusRing: {
       width: '1px',
       style: 'solid',
-      color: '{primary.500}',
+      color: '{primary.400}',
       offset: '2px',
     },
   },
@@ -85,7 +85,7 @@ const MonoPreset = definePreset(Aura, {
       item: {
         color: '{surface.700}',
         focusBackground: 'color-mix(in srgb, {primary.color} 14%, {surface.0})',
-        focusColor: '{primary.800}',
+        focusColor: '{primary.300}',
         gap: '0.5rem',
         padding: '0.48rem 0.62rem',
         borderRadius: '0.7rem',
