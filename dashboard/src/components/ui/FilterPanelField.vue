@@ -19,7 +19,7 @@ const props = defineProps<{
 }
 
 .filter-field-label {
-  font-size: 0.71rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--p-surface-600);
   text-transform: uppercase;

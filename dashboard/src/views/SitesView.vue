@@ -363,7 +363,7 @@ void loadSites()
     <template #content>
       <div class="table-tools">
         <ToolbarIconButton :disabled="!canManageSites" title="Refresh sites" ariaLabel="Refresh sites" @click="loadSites">
-          <RefreshCcw :size="14" />
+          <RefreshCcw :size="16" />
         </ToolbarIconButton>
       </div>
 
@@ -397,7 +397,7 @@ void loadSites()
                 title="Open site actions"
                 @click="openRowActionMenu($event, data)"
               >
-                <MoreHorizontal :size="14" />
+                <MoreHorizontal :size="16" />
               </RowActionButton>
             </div>
           </template>
@@ -406,7 +406,7 @@ void loadSites()
       <Menu ref="rowActionMenu" :model="rowActionItems" popup>
         <template #item="{ item, props }">
           <a class="p-menu-item-link menu-action-item" v-bind="props.action">
-            <component :is="item.lucideIcon" class="menu-action-icon" :size="14" />
+            <component :is="item.lucideIcon" class="menu-action-icon" :size="16" />
             <span class="menu-action-label">{{ item.label }}</span>
           </a>
         </template>

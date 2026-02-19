@@ -52,7 +52,7 @@ const hasActions = computed(() => !!slots.actions)
 
 .page-section-title {
   margin: 0;
-  font-size: 1.28rem;
+  font-size: 1.34rem;
   font-weight: 650;
   line-height: 1.18;
   letter-spacing: -0.012em;
@@ -61,7 +61,7 @@ const hasActions = computed(() => !!slots.actions)
 
 .page-section-description {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.38;
   letter-spacing: 0.002em;
@@ -82,11 +82,11 @@ const hasActions = computed(() => !!slots.actions)
 }
 
 .page-section-header.compact .page-section-title {
-  font-size: 1.1rem;
+  font-size: 1.16rem;
 }
 
 .page-section-header.compact .page-section-description {
-  font-size: 0.8rem;
+  font-size: 0.84rem;
 }
 
 @media (max-width: 900px) {
@@ -102,11 +102,11 @@ const hasActions = computed(() => !!slots.actions)
   }
 
   .page-section-title {
-    font-size: 1.15rem;
+    font-size: 1.2rem;
   }
 
   .page-section-description {
-    font-size: 0.8rem;
+    font-size: 0.84rem;
   }
 }
 </style>

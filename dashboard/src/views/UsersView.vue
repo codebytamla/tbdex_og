@@ -1316,11 +1316,11 @@ void loadUsers()
       </a>
       <div class="reset-link-actions">
         <Button text size="small" @click="copyLatestResetLink">
-          <Copy :size="14" />
+          <Copy :size="16" />
           <span>Copy link</span>
         </Button>
         <a :href="latestResetLink" target="_blank" rel="noopener noreferrer" class="reset-link-open">
-          <Link2 :size="14" />
+          <Link2 :size="16" />
           <span>Open reset page</span>
         </a>
       </div>
@@ -1354,7 +1354,7 @@ void loadUsers()
         </div>
         <div class="toolbar-right">
           <ToolbarIconButton :disabled="!canReadUsers" title="Refresh users" ariaLabel="Refresh users" @click="refreshUsers">
-            <RefreshCcw :size="14" />
+            <RefreshCcw :size="16" />
           </ToolbarIconButton>
         </div>
       </div>
@@ -1478,7 +1478,7 @@ void loadUsers()
                 title="Open user actions"
                 @click="openRowActionMenu($event, data)"
               >
-                <MoreHorizontal :size="14" />
+                <MoreHorizontal :size="16" />
               </RowActionButton>
             </div>
           </template>
@@ -1494,7 +1494,7 @@ void loadUsers()
             ]"
             v-bind="props.action"
           >
-            <component :is="item.lucideIcon" class="menu-action-icon" :size="14" />
+            <component :is="item.lucideIcon" class="menu-action-icon" :size="16" />
             <span class="menu-action-label">{{ item.label }}</span>
           </a>
         </template>
@@ -1803,7 +1803,7 @@ void loadUsers()
   border-radius: 0.6rem;
   background: var(--p-surface-800);
   color: var(--p-surface-0);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 700;
   line-height: 1;
 }
@@ -1831,7 +1831,7 @@ void loadUsers()
   gap: 0.3rem;
   margin-top: 0.7rem;
   padding: 0.3rem 0.55rem;
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   font-weight: 500;
   color: var(--p-primary-700);
   border: 1px solid color-mix(in srgb, var(--p-primary-color) 32%, var(--p-surface-0));
@@ -1897,7 +1897,7 @@ void loadUsers()
   border: 1px solid var(--p-surface-200);
   background: var(--p-surface-100);
   color: var(--p-surface-900);
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -1928,7 +1928,7 @@ void loadUsers()
   padding: 0.22rem 0.58rem 0.22rem 0.46rem;
   border-radius: 999px;
   border: 1px solid transparent;
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0.012em;
@@ -1977,11 +1977,11 @@ void loadUsers()
   align-items: center;
   gap: 0.3rem;
   padding: 0.25rem 0.55rem;
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   font-weight: 500;
   color: var(--p-surface-800);
   border: 1px solid var(--p-surface-300);
-  border-radius: 2rem;
+  border-radius: 0.5rem;
   background: var(--p-surface-100);
   cursor: pointer;
   transition: all 0.15s;

@@ -36,7 +36,7 @@ function onClick(event: MouseEvent) {
     :aria-label="props.ariaLabel || props.label"
     @click="onClick"
   >
-    <Plus :size="14" :stroke-width="2.3" />
+    <Plus :size="16" :stroke-width="2.3" />
     <span>{{ props.label }}</span>
   </Button>
 </template>
@@ -46,13 +46,13 @@ function onClick(event: MouseEvent) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.36rem;
+  gap: 0.4rem;
   height: var(--toolbar-control-height, var(--app-control-height, 2.2rem));
   padding: 0 0.92rem;
-  background: #111111;
-  border-color: #111111;
+  background: var(--p-primary-700);
+  border-color: var(--p-primary-700);
   color: #ffffff;
-  border-radius: var(--app-control-radius, 0.62rem);
+  border-radius: var(--app-control-radius, 0.68rem);
   font-size: var(--app-control-font-size, 0.83rem);
   font-weight: 600;
   line-height: 1;
@@ -61,8 +61,8 @@ function onClick(event: MouseEvent) {
 }
 
 .create-action-btn:hover:not(:disabled) {
-  background: #000000;
-  border-color: #000000;
+  background: var(--p-primary-800);
+  border-color: var(--p-primary-800);
   color: #ffffff;
 }
 

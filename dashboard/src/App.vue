@@ -66,7 +66,7 @@ function isNavMenuItemActive(item: MenuItem) {
     <aside class="sidebar">
       <div class="brand">
         <Avatar shape="circle" class="brand-avatar">
-          <HeartPulse :size="16" :stroke-width="2.25" />
+          <HeartPulse :size="18" :stroke-width="2.25" />
         </Avatar>
         <div class="brand-copy">
           <h1>BorderDesk</h1>
@@ -80,7 +80,7 @@ function isNavMenuItemActive(item: MenuItem) {
               :is="item.iconComponent"
               v-if="item.iconComponent"
               :class="[iconClass, 'nav-item-icon']"
-              :size="16"
+              :size="18"
               :stroke-width="isNavMenuItemActive(item) ? 2.35 : 2.1"
             />
           </template>
@@ -89,7 +89,7 @@ function isNavMenuItemActive(item: MenuItem) {
               :is="item.iconComponent"
               v-if="item.iconComponent"
               :class="[iconClass, 'nav-item-icon']"
-              :size="16"
+              :size="18"
               :stroke-width="isNavMenuItemActive(item) ? 2.35 : 2.1"
             />
           </template>
@@ -122,11 +122,11 @@ function isNavMenuItemActive(item: MenuItem) {
 
 :global(:root) {
   --app-font-family: 'IBM Plex Sans', 'Avenir Next', 'SF Pro Text', 'Segoe UI', 'Helvetica Neue', sans-serif;
-  --app-font-size-base: 14px;
-  --app-line-height-base: 1.45;
-  --app-control-height: 2.2rem;
-  --app-control-radius: 0.62rem;
-  --app-control-font-size: 0.83rem;
+  --app-font-size-base: 15px;
+  --app-line-height-base: 1.5;
+  --app-control-height: 2.4rem;
+  --app-control-radius: 0.46rem;
+  --app-control-font-size: 0.9rem;
   --page-section-margin-bottom: 0.95rem;
   --page-content-padding: 1.4rem;
   --page-content-padding-mobile: 1rem;
@@ -151,6 +151,10 @@ function isNavMenuItemActive(item: MenuItem) {
 :global(select),
 :global(textarea) {
   font-family: var(--app-font-family);
+}
+
+:global(.p-button) {
+  border-radius: var(--app-control-radius);
 }
 
 :global(#app) {
@@ -202,7 +206,7 @@ function isNavMenuItemActive(item: MenuItem) {
 
 .brand-copy h1 {
   margin: 0;
-  font-size: 0.92rem;
+  font-size: 0.98rem;
   font-weight: 650;
   color: var(--p-surface-900);
   letter-spacing: -0.01em;
@@ -235,27 +239,27 @@ function isNavMenuItemActive(item: MenuItem) {
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content) {
-  background: var(--p-surface-200);
+  background: color-mix(in srgb, var(--p-primary-color) 14%, var(--p-surface-0));
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-link) {
-  color: var(--p-surface-900);
+  color: var(--p-primary-800);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-label) {
-  font-weight: 600;
+  font-weight: 620;
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content) {
-  background: var(--p-surface-200);
+  background: color-mix(in srgb, var(--p-primary-color) 14%, var(--p-surface-0));
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-link) {
-  color: var(--p-surface-900);
+  color: var(--p-primary-800);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-label) {
-  font-weight: 600;
+  font-weight: 620;
 }
 
 .content {
@@ -266,9 +270,9 @@ function isNavMenuItemActive(item: MenuItem) {
 }
 
 .brand-avatar {
-  background: var(--p-surface-900);
+  background: var(--p-primary-700);
   color: var(--p-surface-0);
-  border: 1px solid var(--p-surface-950);
+  border: 1px solid var(--p-primary-800);
 }
 
 .brand-avatar :deep(svg) {
@@ -304,7 +308,7 @@ function isNavMenuItemActive(item: MenuItem) {
 .account-name {
   margin: 0;
   color: var(--p-surface-900);
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   font-weight: 600;
   line-height: 1.1;
 }
@@ -312,21 +316,21 @@ function isNavMenuItemActive(item: MenuItem) {
 .account-role {
   margin: 0.14rem 0 0;
   color: var(--p-surface-600);
-  font-size: 0.73rem;
+  font-size: 0.8rem;
   line-height: 1.1;
 }
 
 .account-menu-btn {
   width: 2.3rem;
   height: 2.3rem;
-  border-radius: 0.6rem;
+  border-radius: var(--app-control-radius);
   color: var(--p-surface-700);
   flex: 0 0 auto;
 }
 
 .account-menu-btn:hover {
-  background: var(--p-surface-100);
-  border-color: var(--p-surface-200);
+  background: color-mix(in srgb, var(--p-primary-color) 10%, var(--p-surface-0));
+  border-color: color-mix(in srgb, var(--p-primary-color) 28%, var(--p-surface-0));
 }
 
 @media (max-width: 900px) {

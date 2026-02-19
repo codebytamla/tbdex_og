@@ -29,7 +29,6 @@ function onClick(event: MouseEvent) {
   <Button
     class="row-action-btn"
     text
-    rounded
     size="small"
     :disabled="props.disabled"
     :loading="props.loading"

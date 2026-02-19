@@ -47,11 +47,11 @@ function openSettings() {
   <PageSectionHeader title="Overview" description="Dashboard summary for account access, sites, and quick actions">
     <template #actions>
       <Button class="top-cta top-cta-primary" @click="openPatients">
-        <UserPlus :size="14" :stroke-width="2.25" />
+        <UserPlus :size="16" :stroke-width="2.25" />
         <span>Register patient</span>
       </Button>
       <Button class="top-cta" severity="secondary" @click="openSettings">
-        <Shield :size="14" :stroke-width="2.25" />
+        <Shield :size="16" :stroke-width="2.25" />
         <span>Account settings</span>
       </Button>
     </template>
@@ -87,7 +87,7 @@ function openSettings() {
         <template #content>
           <p class="context-label">Primary site</p>
           <p class="context-value context-inline">
-            <MapPin :size="14" :stroke-width="2.2" />
+            <MapPin :size="16" :stroke-width="2.2" />
             <span>{{ primarySite }}</span>
           </p>
 
@@ -103,7 +103,7 @@ function openSettings() {
 
           <p class="context-label">Session status</p>
           <p class="context-value queue-health">
-            <CheckCircle2 :size="14" :stroke-width="2.2" />
+            <CheckCircle2 :size="16" :stroke-width="2.2" />
             <span>Authenticated</span>
           </p>
         </template>
@@ -122,8 +122,8 @@ function openSettings() {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  height: 2.2rem;
-  border-radius: 0.68rem;
+  height: var(--app-control-height, 2.4rem);
+  border-radius: var(--app-control-radius, 0.46rem);
   padding: 0 0.92rem;
   font-size: 0.79rem;
   font-weight: 620;
@@ -163,7 +163,7 @@ function openSettings() {
 
 .hero-eyebrow {
   margin: 0;
-  font-size: 0.66rem;
+  font-size: 0.74rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-weight: 700;
@@ -180,7 +180,7 @@ function openSettings() {
 
 .hero-copy p {
   margin: 0.48rem 0 0;
-  font-size: 0.81rem;
+  font-size: 0.87rem;
   line-height: 1.42;
   color: var(--p-surface-700);
   max-width: 52ch;
@@ -217,7 +217,7 @@ function openSettings() {
 
 .stat-label {
   margin: 0.2rem 0 0;
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   color: var(--p-surface-700);
 }
 
@@ -233,7 +233,7 @@ function openSettings() {
 
 .context-label {
   margin: 0;
-  font-size: 0.73rem;
+  font-size: 0.79rem;
   color: var(--p-surface-500);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -242,7 +242,7 @@ function openSettings() {
 
 .context-value {
   margin: 0.22rem 0 0.62rem;
-  font-size: 0.88rem;
+  font-size: 0.94rem;
   color: var(--p-surface-900);
   font-weight: 620;
 }
