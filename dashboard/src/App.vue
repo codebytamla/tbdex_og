@@ -1,81 +1,27 @@
 <script setup lang="ts">
-import type { Component } from 'vue'
 import type { MenuItem } from 'primevue/menuitem'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import {
-  Frown,
-  HeartPulse,
-  LayoutDashboard,
-  MapPin,
-  MoreVertical,
-  ShieldCheck,
-  Users,
-} from 'lucide-vue-next'
+import { HeartPulse, MoreVertical } from 'lucide-vue-next'
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import Menu from 'primevue/menu'
+import PanelMenu from 'primevue/panelmenu'
 import ConfirmDialog from 'primevue/confirmdialog'
 import Toast from 'primevue/toast'
 import { useAuthStore } from '@/stores/auth'
-
-type NavItem = {
-  label: string
-  to: string
-  icon: Component
-  requiredPermissions?: string[]
-  requiredRoles?: string[]
-}
-
-const usersReadPermissions = ['users.read']
-const patientsReadPermissions = ['patients.read']
-const sitesReadPermissions = ['sites.read']
-const rolesReadPermissions = ['roles.read']
-
-const navItems: NavItem[] = [
-  {
-    label: 'Overview',
-    to: '/overview',
-    icon: LayoutDashboard,
-  },
-  {
-    label: 'Users',
-    to: '/users',
-    icon: Users,
-    requiredPermissions: usersReadPermissions,
-  },
-  {
-    label: 'Patients',
-    to: '/patients',
-    icon: Frown,
-    requiredPermissions: patientsReadPermissions,
-  },
-  {
-    label: 'Sites',
-    to: '/sites',
-    icon: MapPin,
-    requiredPermissions: sitesReadPermissions,
-  },
-  {
-    label: 'Roles',
-    to: '/roles',
-    icon: ShieldCheck,
-    requiredPermissions: rolesReadPermissions,
-  },
-]
+import { useNavItems } from '@/composables/useNavItems'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const { visibleNavItems } = useNavItems()
 authStore.hydrate()
 onMounted(() => {
   void authStore.ensureProfile(true)
 })
 
 const isAuthRoute = computed(() => route.path.startsWith('/auth') || route.path === '/reset-password')
-const visibleNavItems = computed(() =>
-  navItems.filter((item) => authStore.canAccess(item.requiredPermissions, item.requiredRoles)),
-)
 const accountName = computed(() => authStore.accountName)
 const accountRole = computed(() => {
   const primary = authStore.accountRole?.trim()
@@ -104,6 +50,10 @@ const accountMenu = ref()
 function toggleAccountMenu(event: Event) {
   accountMenu.value?.toggle(event)
 }
+
+function isNavMenuItemActive(item: MenuItem) {
+  return typeof item.class === 'string' && item.class.includes('nav-menu-item-active')
+}
 </script>
 
 <template>
@@ -123,22 +73,27 @@ function toggleAccountMenu(event: Event) {
         </div>
       </div>
 
-      <nav class="nav">
-        <RouterLink v-for="item in visibleNavItems" :key="item.to" :to="item.to" custom>
-          <template #default="{ navigate, isActive }">
-            <Button fluid text class="nav-button" :class="{ 'is-active': isActive }" @click="navigate">
-              <span class="nav-item-inner">
-                <component
-                  :is="item.icon"
-                  class="nav-item-icon"
-                  :size="16"
-                  :stroke-width="isActive ? 2.35 : 2.1"
-                />
-                <span class="nav-item-label">{{ item.label }}</span>
-              </span>
-            </Button>
+      <nav class="nav" aria-label="Primary">
+        <PanelMenu :model="visibleNavItems" class="nav-panelmenu">
+          <template #headericon="{ item, class: iconClass }">
+            <component
+              :is="item.iconComponent"
+              v-if="item.iconComponent"
+              :class="[iconClass, 'nav-item-icon']"
+              :size="16"
+              :stroke-width="isNavMenuItemActive(item) ? 2.35 : 2.1"
+            />
           </template>
-        </RouterLink>
+          <template #itemicon="{ item, class: iconClass }">
+            <component
+              :is="item.iconComponent"
+              v-if="item.iconComponent"
+              :class="[iconClass, 'nav-item-icon']"
+              :size="16"
+              :stroke-width="isNavMenuItemActive(item) ? 2.35 : 2.1"
+            />
+          </template>
+        </PanelMenu>
       </nav>
 
       <div class="account-panel">
@@ -254,49 +209,53 @@ function toggleAccountMenu(event: Event) {
 }
 
 .nav {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
   margin-top: 0.35rem;
 }
 
-.nav-button {
-  justify-content: flex-start;
-  border-radius: 0.7rem;
-  color: var(--p-surface-700);
-  border: 1px solid transparent;
+.nav :deep(.nav-panelmenu) {
+  border: none;
+  background: transparent;
 }
 
-.nav-item-inner {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+.nav :deep(.nav-panelmenu .p-panelmenu-header-icon) {
+  color: inherit;
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-item-icon) {
+  color: inherit;
 }
 
 .nav-item-icon {
   flex: 0 0 auto;
 }
 
-.nav-button.is-active {
-  background: var(--p-surface-200);
-  color: var(--p-surface-900);
-  border-color: var(--p-surface-200);
+.nav :deep(.nav-panelmenu .p-panelmenu-header-label) {
+  color: inherit;
+  font-weight: 500;
 }
 
-.nav-button.is-active .nav-item-label {
+.nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content) {
+  background: var(--p-surface-200);
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-link) {
+  color: var(--p-surface-900);
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-label) {
   font-weight: 600;
 }
 
-.nav :deep(.p-button.nav-button:not(:disabled):hover) {
-  background: color-mix(in srgb, var(--p-primary-color) 14%, var(--p-surface-0));
-  border-color: color-mix(in srgb, var(--p-primary-color) 36%, var(--p-surface-0));
-  color: var(--p-primary-800);
+.nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content) {
+  background: var(--p-surface-200);
 }
 
-.nav :deep(.p-button.nav-button.is-active:not(:disabled):hover) {
-  background: color-mix(in srgb, var(--p-primary-color) 22%, var(--p-surface-0));
-  border-color: color-mix(in srgb, var(--p-primary-color) 44%, var(--p-surface-0));
-  color: var(--p-primary-900);
+.nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-link) {
+  color: var(--p-surface-900);
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-label) {
+  font-weight: 600;
 }
 
 .content {
@@ -382,15 +341,6 @@ function toggleAccountMenu(event: Event) {
     border-right: none;
     border-bottom: 1px solid var(--p-surface-200);
     overflow: visible;
-  }
-
-  .nav {
-    flex-direction: row;
-    overflow-x: auto;
-  }
-
-  .nav :deep(.p-button) {
-    white-space: nowrap;
   }
 
   .account-panel {

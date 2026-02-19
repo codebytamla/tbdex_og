@@ -62,6 +62,46 @@ const MonoPreset = definePreset(Aura, {
         },
       },
     },
+    panelmenu: {
+      root: {
+        gap: '0.25rem',
+      },
+      panel: {
+        background: 'transparent',
+        borderWidth: '0',
+        borderColor: 'transparent',
+        color: '{surface.700}',
+        padding: '0',
+        borderRadius: '0.7rem',
+        first: {
+          borderWidth: '0',
+          topBorderRadius: '0.7rem',
+        },
+        last: {
+          borderWidth: '0',
+          bottomBorderRadius: '0.7rem',
+        },
+      },
+      item: {
+        color: '{surface.700}',
+        focusBackground: 'color-mix(in srgb, {primary.color} 14%, {surface.0})',
+        focusColor: '{primary.800}',
+        gap: '0.5rem',
+        padding: '0.56rem 0.72rem',
+        borderRadius: '0.7rem',
+        icon: {
+          color: '{surface.500}',
+          focusColor: '{primary.700}',
+        },
+      },
+      submenu: {
+        indent: '0.8rem',
+      },
+      submenuIcon: {
+        color: '{surface.500}',
+        focusColor: '{primary.700}',
+      },
+    },
   },
 })
 
