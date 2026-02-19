@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+
+# Secrets and local env
+.env
+.env.*
+!.env.example
+
+# Local test workspace
+test/
+
+# Dependencies
+node_modules/
+
+# Go cache
+.gocache/
+
+# Build outputs
+dist/
+build/
+coverage/
+
+# Logs
+*.log
+
+# Editor
+.vscode/
+.idea/

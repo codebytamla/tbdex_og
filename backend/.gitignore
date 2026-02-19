@@ -1,0 +1,28 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Binaries
+/server
+/seed
+*.exe
+*.out
+
+# Go
+/vendor/
+.gocache/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# sqlc generated (optional — regenerate with `sqlc generate`)
+# internal/database/db/

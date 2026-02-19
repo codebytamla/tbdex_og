@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Borderform API Reference</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #1a1a1a;
+      background: #f7f8fa;
+      line-height: 1.5;
+    }
+
+    /* ── Layout ─────────────────────────────────────────── */
+    .wrapper { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
+
+    /* ── Header ─────────────────────────────────────────── */
+    header.top {
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #e2e5ea;
+    }
+    header.top h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+    header.top p  { color: #5a6270; font-size: 14px; }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .meta-card {
+      background: #fff;
+      border: 1px solid #e2e5ea;
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+    .meta-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #8590a0; }
+    .meta-card .value { font-size: 13px; font-weight: 600; margin-top: 2px; }
+
+    /* ── TOC ────────────────────────────────────────────── */
+    nav.toc {
+      background: #fff;
+      border: 1px solid #e2e5ea;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 32px;
+    }
+    nav.toc h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #8590a0; margin-bottom: 10px; }
+    nav.toc ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+    nav.toc a {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1a6b5a;
+      background: #eaf5f2;
+      border: 1px solid #c8e2db;
+      border-radius: 6px;
+      padding: 5px 12px;
+      text-decoration: none;
+      transition: background .15s;
+    }
+    nav.toc a:hover { background: #d2ebe5; }
+
+    /* ── Sections ───────────────────────────────────────── */
+    .section { margin-bottom: 36px; }
+    .section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      padding-top: 8px;
+    }
+    .section > p.desc { color: #5a6270; font-size: 13px; margin-bottom: 14px; }
+
+    /* ── Endpoint card ──────────────────────────────────── */
+    .ep {
+      background: #fff;
+      border: 1px solid #e2e5ea;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 10px;
+    }
+    .ep-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    /* method badges */
+    .m {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: #fff;
+      border-radius: 5px;
+      padding: 3px 8px;
+      min-width: 52px;
+      text-align: center;
+    }
+    .m.get   { background: #1a8c5b; }
+    .m.post  { background: #2563a8; }
+    .m.put   { background: #9b6318; }
+    .m.patch { background: #6d6024; }
+
+    /* path */
+    .p {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 13px;
+      font-weight: 600;
+      background: #f3f5f7;
+      border: 1px solid #dde1e6;
+      border-radius: 5px;
+      padding: 3px 8px;
+    }
+
+    /* auth badge */
+    .a {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      border-radius: 20px;
+      padding: 3px 9px;
+      border: 1px solid;
+    }
+    .a.public  { color: #1a7a4a; background: #e9f7ef; border-color: #b8dfc9; }
+    .a.bearer  { color: #8a6215; background: #fef8e8; border-color: #e8d49e; }
+
+    /* permission badge */
+    .perm {
+      font-family: monospace;
+      font-size: 11px;
+      color: #7a3b0e;
+      background: #fef0e4;
+      border: 1px solid #f0c9a4;
+      border-radius: 5px;
+      padding: 2px 7px;
+    }
+
+    .ep-summary { font-size: 13px; color: #3a4450; margin-bottom: 10px; }
+
+    /* request / response columns */
+    .ep-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 640px) { .ep-cols { grid-template-columns: 1fr; } }
+
+    .ep-box {
+      background: #f8f9fb;
+      border: 1px solid #e8ecf0;
+      border-radius: 7px;
+      padding: 10px 12px;
+    }
+    .ep-box h4 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #8590a0;
+      margin-bottom: 6px;
+    }
+    .ep-box ul { padding-left: 18px; font-size: 12px; color: #3a4450; }
+    .ep-box li { margin-bottom: 3px; }
+    .ep-box code { font-size: 11px; background: #eef1f4; padding: 1px 4px; border-radius: 3px; }
+
+    /* status pills */
+    .statuses { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+    .st {
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 20px;
+      padding: 3px 9px;
+      border: 1px solid;
+    }
+    .st.ok   { color: #1a6b3a; background: #e9f7ef; border-color: #b4dbc5; }
+    .st.warn { color: #7a5a12; background: #fef8e8; border-color: #e4d09e; }
+    .st.err  { color: #8a2a22; background: #fdeae8; border-color: #f0b8b2; }
+
+    /* curl / response example */
+    details { margin-top: 8px; }
+    details summary {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1a6b5a;
+      cursor: pointer;
+    }
+    pre {
+      margin-top: 6px;
+      background: #1a2332;
+      color: #dce8f0;
+      border-radius: 7px;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.5;
+      overflow-x: auto;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    .footer { text-align: center; color: #8590a0; font-size: 12px; padding-top: 24px; border-top: 1px solid #e2e5ea; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ════════════ HEADER ════════════ -->
+  <header class="top">
+    <h1>Borderform API Reference</h1>
+    <p>All routes use the <code>/api/v1</code> prefix. Source of truth: <code>cmd/server/routes.go</code></p>
+    <div class="meta-grid">
+      <div class="meta-card"><div class="label">Base URL</div><div class="value">http://localhost:8080/api/v1</div></div>
+      <div class="meta-card"><div class="label">Auth Scheme</div><div class="value">Bearer JWT</div></div>
+      <div class="meta-card"><div class="label">Access Token TTL</div><div class="value">15 min</div></div>
+      <div class="meta-card"><div class="label">Refresh Token TTL</div><div class="value">7 days</div></div>
+      <div class="meta-card"><div class="label">Password Min</div><div class="value">8 characters</div></div>
+      <div class="meta-card"><div class="label">Total Routes</div><div class="value">28</div></div>
+    </div>
+  </header>
+
+  <!-- ════════════ TOC ════════════ -->
+  <nav class="toc">
+    <h2>Sections</h2>
+    <ul>
+      <li><a href="#auth-public">Auth &middot; Public</a></li>
+      <li><a href="#auth-protected">Auth &middot; Protected</a></li>
+      <li><a href="#admin-users">Admin &middot; Users</a></li>
+      <li><a href="#admin-sites">Admin &middot; Sites</a></li>
+      <li><a href="#admin-roles">Admin &middot; Roles &amp; Permissions</a></li>
+      <li><a href="#patients">Patients</a></li>
+    </ul>
+  </nav>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       AUTH &middot; PUBLIC
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="section" id="auth-public">
+    <h2>Auth &middot; Public</h2>
+    <p class="desc">No JWT required.</p>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m get">GET</span>
+        <span class="p">/health</span>
+        <span class="a public">Public</span>
+      </div>
+      <p class="ep-summary">Health probe.</p>
+      <div class="statuses">
+        <span class="st ok">200 {&quot;status&quot;:&quot;ok&quot;}</span>
+      </div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m post">POST</span>
+        <span class="p">/auth/login</span>
+        <span class="a public">Public</span>
+      </div>
+      <p class="ep-summary">Authenticate by email/password. Returns user + token pair.</p>
+      <div class="ep-cols">
+        <div class="ep-box">
+          <h4>Request</h4>
+          <ul>
+            <li>Body: <code>{ email, password }</code></li>
+            <li>Header (optional): <code>X-Device-Name</code></li>
+          </ul>
+        </div>
+        <div class="ep-box">
+          <h4>Response 200</h4>
+          <ul>
+            <li><code>{ user, tokens: { access_token, refresh_token, expires_in } }</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="statuses">
+        <span class="st ok">200</span>
+        <span class="st warn">400 invalid body</span>
+        <span class="st warn">401 invalid credentials</span>
+        <span class="st err">500</span>
+      </div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m post">POST</span>
+        <span class="p">/auth/refresh</span>
+        <span class="a public">Public</span>
+      </div>
+      <p class="ep-summary">Rotate refresh token. Issues new access + refresh pair.</p>
+      <div class="ep-cols">
+        <div class="ep-box">
+          <h4>Request</h4>
+          <ul><li>Body: <code>{ refresh_token }</code></li></ul>
+        </div>
+        <div class="ep-box">
+          <h4>Response 200</h4>
+          <ul><li><code>{ access_token, refresh_token, expires_in }</code></li></ul>
+        </div>
+      </div>
+      <div class="statuses">
+        <span class="st ok">200</span>
+        <span class="st warn">400 missing token</span>
+        <span class="st warn">401 invalid / expired</span>
+        <span class="st err">500</span>
+      </div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m post">POST</span>
+        <span class="p">/auth/logout</span>
+        <span class="a public">Public</span>
+      </div>
+      <p class="ep-summary">Revoke a refresh token (idempotent).</p>
+      <div class="ep-cols">
+        <div class="ep-box"><h4>Request</h4><ul><li>Body: <code>{ refresh_token }</code></li></ul></div>
+        <div class="ep-box"><h4>Response 200</h4><ul><li><code>{ "status": "ok" }</code></li></ul></div>
+      </div>
+      <div class="statuses">
+        <span class="st ok">200</span>
+        <span class="st warn">400</span>
+        <span class="st err">500</span>
+      </div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m post">POST</span>
+        <span class="p">/auth/forgot-password</span>
+        <span class="a public">Public</span>
+      </div>
+      <p class="ep-summary">Generate password reset token. Always 200 to prevent email enumeration.</p>
+      <div class="ep-cols">
+        <div class="ep-box"><h4>Request</h4><ul><li>Body: <code>{ email }</code></li></ul></div>
+        <div class="ep-box"><h4>Response 200</h4><ul><li><code>{ "status": "ok", "reset_token": "..." }</code></li><li><code>reset_token</code> included in dev mode only</li></ul></div>
+      </div>
+      <div class="statuses">
+        <span class="st ok">200</span>
+        <span class="st warn">400</span>
+        <span class="st err">500</span>
+      </div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m post">POST</span>
+        <span class="p">/auth/reset-password</span>
+        <span class="a public">Public</span>
+      </div>
+      <p class="ep-summary">Reset password using token. Revokes all refresh sessions.</p>
+      <div class="ep-cols">
+        <div class="ep-box"><h4>Request</h4><ul><li>Body: <code>{ token, new_password }</code></li><li><code>new_password</code> min 8 chars</li></ul></div>
+        <div class="ep-box"><h4>Response 200</h4><ul><li><code>{ "status": "ok" }</code></li></ul></div>
+      </div>
+      <div class="statuses">
+        <span class="st ok">200</span>
+        <span class="st warn">400 bad token / weak password</span>
+        <span class="st err">500</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       AUTH &middot; PROTECTED
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="section" id="auth-protected">
+    <h2>Auth &middot; Protected</h2>
+    <p class="desc">Requires <code>Authorization: Bearer &lt;access_token&gt;</code>.</p>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m get">GET</span>
+        <span class="p">/auth/me</span>
+        <span class="a bearer">Bearer</span>
+      </div>
+      <p class="ep-summary">Current user profile with roles, permissions, and sites.</p>
+      <div class="ep-box" style="margin-top:4px">
+        <h4>Response 200</h4>
+        <ul>
+          <li><code>{ id, email, full_name, is_active, created_at, roles[], permissions[], sites[] }</code></li>
+        </ul>
+      </div>
+      <div class="statuses">
+        <span class="st ok">200</span>
+        <span class="st warn">401</span>
+        <span class="st err">500</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       ADMIN &middot; USERS
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="section" id="admin-users">
+    <h2>Admin &middot; Users</h2>
+    <p class="desc">User CRUD, role/site assignment, password reset, enable/disable.</p>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m post">POST</span>
+        <span class="p">/admin/users</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">users.create</span>
+      </div>
+      <p class="ep-summary">Create a user. Optionally assign roles and sites.</p>
+      <div class="ep-cols">
+        <div class="ep-box"><h4>Request</h4><ul>
+          <li>Body: <code>{ email, full_name, password?, roles?, sites? }</code></li>
+          <li>If <code>password</code> omitted, a random one is generated and <code>reset_token</code> returned</li>
+        </ul></div>
+        <div class="ep-box"><h4>Response 201</h4><ul><li><code>{ user, reset_token? }</code></li></ul></div>
+      </div>
+      <div class="statuses">
+        <span class="st ok">201</span>
+        <span class="st warn">400 / 409 exists</span>
+        <span class="st warn">403</span>
+        <span class="st err">500</span>
+      </div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m get">GET</span>
+        <span class="p">/admin/users</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">users.read</span>
+      </div>
+      <p class="ep-summary">List users with cursor pagination and filters.</p>
+      <div class="ep-box" style="margin-top:4px">
+        <h4>Query Params</h4>
+        <ul>
+          <li><code>limit</code> &mdash; page size (default 50, max 100)</li>
+          <li><code>cursor</code> &mdash; opaque next-page token</li>
+          <li><code>search</code> &mdash; match email or full_name</li>
+          <li><code>is_active</code> &mdash; <code>true</code> | <code>false</code></li>
+          <li><code>role</code> &mdash; repeatable, e.g. <code>role=ADMIN&amp;role=DOCTOR</code></li>
+          <li><code>site_id</code> &mdash; repeatable UUID</li>
+          <li><code>include_total</code> &mdash; <code>true</code> | <code>false</code></li>
+        </ul>
+      </div>
+      <div class="ep-box" style="margin-top:6px">
+        <h4>Response 200</h4>
+        <ul><li><code>{ users[], pagination: { next_cursor, has_next, limit }, total? }</code></li></ul>
+      </div>
+      <div class="statuses">
+        <span class="st ok">200</span>
+        <span class="st warn">400 bad params</span>
+        <span class="st warn">403</span>
+        <span class="st err">500</span>
+      </div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m patch">PATCH</span>
+        <span class="p">/admin/users/{id}</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">users.update</span>
+      </div>
+      <p class="ep-summary">Update user profile fields (currently <code>full_name</code>).</p>
+      <div class="ep-cols">
+        <div class="ep-box"><h4>Request</h4><ul><li>Body: <code>{ full_name? }</code></li></ul></div>
+        <div class="ep-box"><h4>Response 200</h4><ul><li>Updated user object</li></ul></div>
+      </div>
+      <div class="statuses"><span class="st ok">200</span><span class="st warn">400 / 403</span><span class="st err">500</span></div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m put">PUT</span>
+        <span class="p">/admin/users/{id}/roles</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">users.assign_roles</span>
+      </div>
+      <p class="ep-summary">Replace all role assignments. Admin role cannot be removed from admin users.</p>
+      <div class="ep-cols">
+        <div class="ep-box"><h4>Request</h4><ul><li>Body: <code>{ roles: ["ADMIN", ...] }</code></li></ul></div>
+        <div class="ep-box"><h4>Response 200</h4><ul><li><code>{ roles: [...] }</code></li></ul></div>
+      </div>
+      <div class="statuses"><span class="st ok">200</span><span class="st warn">409 admin role required</span><span class="st err">500</span></div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m get">GET</span>
+        <span class="p">/admin/users/{id}/sites</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">users.read</span>
+      </div>
+      <p class="ep-summary">Get a user's site and role assignments.</p>
+      <div class="statuses"><span class="st ok">200</span><span class="st warn">400 / 403</span><span class="st err">500</span></div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m put">PUT</span>
+        <span class="p">/admin/users/{id}/sites</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">users.assign_sites</span>
+      </div>
+      <p class="ep-summary">Replace all site assignments for a user.</p>
+      <div class="ep-cols">
+        <div class="ep-box"><h4>Request</h4><ul><li>Body: <code>{ sites: ["&lt;uuid&gt;", ...] }</code></li></ul></div>
+        <div class="ep-box"><h4>Response 200</h4><ul><li><code>{ sites: [...] }</code></li></ul></div>
+      </div>
+      <div class="statuses"><span class="st ok">200</span><span class="st warn">400 / 403</span><span class="st err">500</span></div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m post">POST</span>
+        <span class="p">/admin/users/{id}/password-reset</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">users.reset_password</span>
+      </div>
+      <p class="ep-summary">Generate a password reset token for a target user.</p>
+      <div class="ep-box" style="margin-top:4px"><h4>Response 200</h4><ul><li><code>{ reset_token }</code></li></ul></div>
+      <div class="statuses"><span class="st ok">200</span><span class="st warn">400 / 403</span><span class="st err">500</span></div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m post">POST</span>
+        <span class="p">/admin/users/{id}/disable</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">users.disable</span>
+      </div>
+      <p class="ep-summary">Deactivate user and revoke all refresh sessions.</p>
+      <div class="statuses"><span class="st ok">200</span><span class="st warn">400 / 403</span><span class="st err">500</span></div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m post">POST</span>
+        <span class="p">/admin/users/{id}/enable</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">users.disable</span>
+      </div>
+      <p class="ep-summary">Re-activate user.</p>
+      <div class="statuses"><span class="st ok">200</span><span class="st warn">400 / 403</span><span class="st err">500</span></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       ADMIN &middot; SITES
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="section" id="admin-sites">
+    <h2>Admin &middot; Sites</h2>
+    <p class="desc">Site/clinic management.</p>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m post">POST</span>
+        <span class="p">/admin/sites</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">sites.create</span>
+      </div>
+      <p class="ep-summary">Create a site.</p>
+      <div class="ep-cols">
+        <div class="ep-box"><h4>Request</h4><ul><li>Body: <code>{ name, code, site_type? }</code></li><li><code>code</code> must be uppercase</li></ul></div>
+        <div class="ep-box"><h4>Response 201</h4><ul><li>Site object</li></ul></div>
+      </div>
+      <div class="statuses"><span class="st ok">201</span><span class="st warn">400 / 409 code exists</span><span class="st err">500</span></div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m get">GET</span>
+        <span class="p">/admin/sites</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">sites.read</span>
+      </div>
+      <p class="ep-summary">List all sites.</p>
+      <div class="statuses"><span class="st ok">200 { sites: [...] }</span><span class="st err">500</span></div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m get">GET</span>
+        <span class="p">/admin/sites/{id}</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">sites.read</span>
+      </div>
+      <p class="ep-summary">Get one site by UUID.</p>
+      <div class="statuses"><span class="st ok">200</span><span class="st warn">404</span><span class="st err">500</span></div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m put">PUT</span>
+        <span class="p">/admin/sites/{id}</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">sites.update</span>
+      </div>
+      <p class="ep-summary">Update a site.</p>
+      <div class="ep-cols">
+        <div class="ep-box"><h4>Request</h4><ul><li>Body: <code>{ name, code, site_type? }</code></li></ul></div>
+        <div class="ep-box"><h4>Response 200</h4><ul><li>Updated site object</li></ul></div>
+      </div>
+      <div class="statuses"><span class="st ok">200</span><span class="st warn">404 / 409</span><span class="st err">500</span></div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m patch">PATCH</span>
+        <span class="p">/admin/sites/{id}/disable</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">sites.disable</span>
+      </div>
+      <p class="ep-summary">Disable a site (is_active = false).</p>
+      <div class="statuses"><span class="st ok">200</span><span class="st warn">404</span><span class="st err">500</span></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       ADMIN &middot; ROLES & PERMISSIONS
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="section" id="admin-roles">
+    <h2>Admin &middot; Roles &amp; Permissions</h2>
+    <p class="desc">Role catalog and permission registry.</p>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m get">GET</span>
+        <span class="p">/admin/roles</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">roles.read</span>
+      </div>
+      <p class="ep-summary">List all roles.</p>
+      <div class="statuses"><span class="st ok">200 { roles: [...] }</span><span class="st err">500</span></div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m post">POST</span>
+        <span class="p">/admin/roles</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">roles.create</span>
+      </div>
+      <p class="ep-summary">Create a role with optional permission names.</p>
+      <div class="ep-cols">
+        <div class="ep-box"><h4>Request</h4><ul><li>Body: <code>{ name, description?, permissions? }</code></li></ul></div>
+        <div class="ep-box"><h4>Response 201</h4><ul><li>Role with permissions</li></ul></div>
+      </div>
+      <div class="statuses"><span class="st ok">201</span><span class="st warn">400 / 409</span><span class="st err">500</span></div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m get">GET</span>
+        <span class="p">/admin/roles/{id}</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">roles.read</span>
+      </div>
+      <p class="ep-summary">Get a role with its permissions.</p>
+      <div class="statuses"><span class="st ok">200</span><span class="st warn">404</span><span class="st err">500</span></div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m patch">PATCH</span>
+        <span class="p">/admin/roles/{id}</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">roles.update</span>
+      </div>
+      <p class="ep-summary">Update role name/description.</p>
+      <div class="ep-cols">
+        <div class="ep-box"><h4>Request</h4><ul><li>Body: <code>{ name?, description? }</code></li></ul></div>
+        <div class="ep-box"><h4>Response 200</h4><ul><li>Role with permissions</li></ul></div>
+      </div>
+      <div class="statuses"><span class="st ok">200</span><span class="st warn">404 / 409</span><span class="st err">500</span></div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m get">GET</span>
+        <span class="p">/admin/permissions</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">permissions.read</span>
+      </div>
+      <p class="ep-summary">List all available permissions.</p>
+      <div class="statuses"><span class="st ok">200 { permissions: [...] }</span><span class="st err">500</span></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       PATIENTS
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="section" id="patients">
+    <h2>Patients</h2>
+    <p class="desc">Patient registration, lookup, update, and deactivation. All mutations use database transactions.</p>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m post">POST</span>
+        <span class="p">/patients</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">patients.create</span>
+      </div>
+      <p class="ep-summary">Register a new patient. <code>created_by</code> is set to the authenticated user.</p>
+      <div class="ep-cols">
+        <div class="ep-box"><h4>Request</h4><ul>
+          <li>Body (required): <code>full_name</code></li>
+          <li>Body (optional): <code>date_of_birth</code> (YYYY-MM-DD), <code>is_dob_estimated</code>, <code>sex</code> (male|female|other), <code>phone</code>, <code>national_id</code>, <code>mrn</code>, <code>address</code>, <code>village</code>, <code>origin</code>, <code>status</code> (provisional|active|inactive|deceased)</li>
+        </ul></div>
+        <div class="ep-box"><h4>Response 201</h4><ul>
+          <li>Patient object with all fields</li>
+          <li><code>mrn</code> is immutable once set (DB trigger enforced)</li>
+        </ul></div>
+      </div>
+      <div class="statuses">
+        <span class="st ok">201</span>
+        <span class="st warn">400 missing fields / invalid status</span>
+        <span class="st warn">409 duplicate national_id or mrn</span>
+        <span class="st err">500</span>
+      </div>
+      <details>
+        <summary>Example Request</summary>
+        <pre>{
+  "full_name": "Amina Hassan",
+  "date_of_birth": "1990-03-15",
+  "sex": "female",
+  "phone": "+254700000000",
+  "national_id": "NAT-12345",
+  "address": "Nairobi, Kenya",
+  "village": "Kawangware",
+  "status": "active"
+}</pre>
+      </details>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m get">GET</span>
+        <span class="p">/patients</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">patients.read</span>
+      </div>
+      <p class="ep-summary">List patients with cursor-based pagination.</p>
+      <div class="ep-box" style="margin-top:4px">
+        <h4>Query Params</h4>
+        <ul>
+          <li><code>limit</code> &mdash; page size (default 50, max 100)</li>
+          <li><code>cursor</code> &mdash; opaque next-page token from previous response</li>
+          <li><code>search</code> &mdash; match full_name, mrn, or national_id</li>
+          <li><code>status</code> &mdash; <code>provisional</code> | <code>active</code> | <code>inactive</code> | <code>deceased</code></li>
+          <li><code>include_total</code> &mdash; <code>true</code> | <code>false</code></li>
+        </ul>
+      </div>
+      <div class="ep-box" style="margin-top:6px">
+        <h4>Response 200</h4>
+        <ul>
+          <li><code>{ patients[], has_next, next_cursor?, total? }</code></li>
+        </ul>
+      </div>
+      <div class="statuses">
+        <span class="st ok">200</span>
+        <span class="st warn">400 bad cursor / params</span>
+        <span class="st err">500</span>
+      </div>
+      <details>
+        <summary>Example Response</summary>
+        <pre>{
+  "patients": [
+    {
+      "id": "uuid",
+      "full_name": "Amina Hassan",
+      "date_of_birth": "1990-03-15",
+      "sex": "female",
+      "village": "Kawangware",
+      "status": "active",
+      "created_by": "uuid",
+      "created_at": "2026-02-14T10:00:00Z",
+      "updated_at": "2026-02-14T10:00:00Z"
+    }
+  ],
+  "has_next": true,
+  "next_cursor": "eyJjcmVhdGVkX2F0Ijoi...",
+  "total": 142
+}</pre>
+      </details>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m get">GET</span>
+        <span class="p">/patients/{id}</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">patients.read</span>
+      </div>
+      <p class="ep-summary">Get a single patient by UUID.</p>
+      <div class="statuses">
+        <span class="st ok">200 Patient</span>
+        <span class="st warn">400 bad id</span>
+        <span class="st warn">404 not found</span>
+        <span class="st err">500</span>
+      </div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m patch">PATCH</span>
+        <span class="p">/patients/{id}</span>
+        <span class="a bearer">Bearer</span>
+        <span class="perm">patients.update</span>
+      </div>
+      <p class="ep-summary">Update patient fields. Only provided fields are changed (COALESCE). <code>mrn</code> cannot be changed once set.</p>
+      <div class="ep-cols">
+        <div class="ep-box"><h4>Request</h4><ul>
+          <li>Body (all optional): <code>full_name</code>, <code>date_of_birth</code>, <code>is_dob_estimated</code>, <code>sex</code>, <code>phone</code>, <code>national_id</code>, <code>address</code>, <code>village</code>, <code>origin</code>, <code>status</code></li>
+        </ul></div>
+        <div class="ep-box"><h4>Response 200</h4><ul><li>Updated patient object</li></ul></div>
+      </div>
+      <div class="statuses">
+        <span class="st ok">200</span>
+        <span class="st warn">400 invalid status</span>
+        <span class="st warn">404 not found</span>
+        <span class="st warn">409 duplicate national_id</span>
+        <span class="st err">500</span>
+      </div>
+    </div>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="m post">POST</span>
+        <span class="p">/patients/{id}/disable</span>
+        <span class="a bearer">Bearer</span>
+      </div>
+      <p class="ep-summary">Disable a patient (sets <code>status = inactive</code>). <strong>Only the ADMIN role or the user who created the patient</strong> can call this. No permission middleware &mdash; authorization is checked in the service layer.</p>
+      <div class="ep-box" style="margin-top:4px"><h4>Response 200</h4><ul><li>Updated patient object with <code>status: "inactive"</code></li></ul></div>
+      <div class="statuses">
+        <span class="st ok">200</span>
+        <span class="st warn">400 bad id</span>
+        <span class="st warn">403 not admin or creator</span>
+        <span class="st warn">404 not found</span>
+        <span class="st err">500</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Built from backend source code. Last updated 2026-02-14.</div>
+</div>
+</body>
+</html>

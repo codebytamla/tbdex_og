@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Borderform Database Schema (Latest)</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --ink: #102a43;
+      --muted: #627d98;
+      --line: #d9e2ec;
+      --pk: #0f766e;
+      --fk: #1d4ed8;
+      --idx: #7c3aed;
+      --uniq: #b45309;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eef2ff 0%, var(--bg) 40%);
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+    .meta {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .pk { background: var(--pk); }
+    .fk { background: var(--fk); }
+    .idx { background: var(--idx); }
+    .uniq { background: var(--uniq); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 14px;
+    }
+    .table-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(16, 42, 67, 0.05);
+      overflow: hidden;
+    }
+    .table-name {
+      padding: 10px 12px;
+      font-size: 18px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--line);
+      background: #fbfcfe;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid #eef2f6;
+      vertical-align: top;
+      font-size: 13px;
+    }
+    th {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    tr:last-child td { border-bottom: 0; }
+    .notes {
+      margin-top: 22px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .notes h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+    .notes ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--ink);
+    }
+    code {
+      background: #f0f4f8;
+      border: 1px solid #d9e2ec;
+      border-radius: 6px;
+      padding: 1px 4px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Borderform Database Schema (Latest)</h1>
+    <p class="meta">Based on latest migrations in <code>migrations/</code> (including patient status/village migration and legacy patient-site cleanup).</p>
+
+    <div class="legend">
+      <span class="badge pk">PK</span>
+      <span class="badge fk">FK</span>
+      <span class="badge uniq">UNIQUE</span>
+      <span class="badge idx">INDEXED</span>
+    </div>
+
+    <section class="grid">
+      <article class="table-card">
+        <div class="table-name">users</div>
+        <table>
+          <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+          <tr><td>id</td><td>UUID</td><td>PK, default gen_random_uuid()</td></tr>
+          <tr><td>email</td><td>TEXT</td><td>UNIQUE (lower(email))</td></tr>
+          <tr><td>password_hash</td><td>TEXT</td><td>NOT NULL</td></tr>
+          <tr><td>full_name</td><td>TEXT</td><td>default ''</td></tr>
+          <tr><td>is_active</td><td>BOOLEAN</td><td>default true</td></tr>
+          <tr><td>created_at</td><td>TIMESTAMPTZ</td><td>default now()</td></tr>
+          <tr><td>updated_at</td><td>TIMESTAMPTZ</td><td>default now()</td></tr>
+        </table>
+      </article>
+
+      <article class="table-card">
+        <div class="table-name">sites</div>
+        <table>
+          <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+          <tr><td>id</td><td>UUID</td><td>PK, default gen_random_uuid()</td></tr>
+          <tr><td>name</td><td>TEXT</td><td>NOT NULL</td></tr>
+          <tr><td>code</td><td>TEXT</td><td>UNIQUE (lower(code)), uppercase only (CHECK code = upper(code))</td></tr>
+          <tr><td>site_type</td><td>TEXT</td><td>NOT NULL, default 'clinic'</td></tr>
+          <tr><td>is_active</td><td>BOOLEAN</td><td>default true</td></tr>
+          <tr><td>created_at</td><td>TIMESTAMPTZ</td><td>default now()</td></tr>
+          <tr><td>updated_at</td><td>TIMESTAMPTZ</td><td>default now()</td></tr>
+        </table>
+      </article>
+
+      <article class="table-card">
+        <div class="table-name">user_sites</div>
+        <table>
+          <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+          <tr><td>user_id</td><td>UUID</td><td>PK, FK -> users.id (ON DELETE CASCADE)</td></tr>
+          <tr><td>site_id</td><td>UUID</td><td>PK, FK -> sites.id (ON DELETE CASCADE), indexed</td></tr>
+          <tr><td>assigned_at</td><td>TIMESTAMPTZ</td><td>default now()</td></tr>
+        </table>
+      </article>
+
+      <article class="table-card">
+        <div class="table-name">roles</div>
+        <table>
+          <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+          <tr><td>id</td><td>UUID</td><td>PK, default gen_random_uuid()</td></tr>
+          <tr><td>name</td><td>TEXT</td><td>UNIQUE</td></tr>
+          <tr><td>description</td><td>TEXT</td><td>default ''</td></tr>
+        </table>
+      </article>
+
+      <article class="table-card">
+        <div class="table-name">permissions</div>
+        <table>
+          <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+          <tr><td>id</td><td>UUID</td><td>PK, default gen_random_uuid()</td></tr>
+          <tr><td>name</td><td>TEXT</td><td>UNIQUE (e.g. users.create, sites.read)</td></tr>
+        </table>
+      </article>
+
+      <article class="table-card">
+        <div class="table-name">role_permissions</div>
+        <table>
+          <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+          <tr><td>role_id</td><td>UUID</td><td>PK, FK -> roles.id (ON DELETE CASCADE)</td></tr>
+          <tr><td>permission_id</td><td>UUID</td><td>PK, FK -> permissions.id (ON DELETE CASCADE), indexed</td></tr>
+        </table>
+      </article>
+
+      <article class="table-card">
+        <div class="table-name">user_roles</div>
+        <table>
+          <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+          <tr><td>user_id</td><td>UUID</td><td>PK, FK -> users.id (ON DELETE CASCADE)</td></tr>
+          <tr><td>role_id</td><td>UUID</td><td>PK, FK -> roles.id (ON DELETE CASCADE), indexed</td></tr>
+          <tr><td>assigned_at</td><td>TIMESTAMPTZ</td><td>default now()</td></tr>
+        </table>
+      </article>
+
+      <article class="table-card">
+        <div class="table-name">refresh_tokens</div>
+        <table>
+          <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+          <tr><td>id</td><td>UUID</td><td>PK, default gen_random_uuid()</td></tr>
+          <tr><td>user_id</td><td>UUID</td><td>FK -> users.id (ON DELETE CASCADE), indexed (active rows)</td></tr>
+          <tr><td>token_hash</td><td>TEXT</td><td>UNIQUE index on active rows</td></tr>
+          <tr><td>device_name</td><td>TEXT</td><td>default 'unknown'</td></tr>
+          <tr><td>created_ip</td><td>TEXT</td><td>default ''</td></tr>
+          <tr><td>user_agent</td><td>TEXT</td><td>default ''</td></tr>
+          <tr><td>expires_at</td><td>TIMESTAMPTZ</td><td>NOT NULL</td></tr>
+          <tr><td>last_used_at</td><td>TIMESTAMPTZ</td><td>default now()</td></tr>
+          <tr><td>revoked</td><td>BOOLEAN</td><td>default false</td></tr>
+          <tr><td>created_at</td><td>TIMESTAMPTZ</td><td>default now()</td></tr>
+        </table>
+      </article>
+
+      <article class="table-card">
+        <div class="table-name">password_reset_tokens</div>
+        <table>
+          <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+          <tr><td>id</td><td>UUID</td><td>PK, default gen_random_uuid()</td></tr>
+          <tr><td>user_id</td><td>UUID</td><td>FK -> users.id (ON DELETE CASCADE), indexed</td></tr>
+          <tr><td>token_hash</td><td>TEXT</td><td>UNIQUE index on unused rows</td></tr>
+          <tr><td>expires_at</td><td>TIMESTAMPTZ</td><td>NOT NULL</td></tr>
+          <tr><td>used</td><td>BOOLEAN</td><td>default false</td></tr>
+          <tr><td>created_at</td><td>TIMESTAMPTZ</td><td>default now()</td></tr>
+        </table>
+      </article>
+
+      <article class="table-card">
+        <div class="table-name">audit_events</div>
+        <table>
+          <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+          <tr><td>id</td><td>BIGSERIAL</td><td>PK</td></tr>
+          <tr><td>event_type</td><td>TEXT</td><td>indexed with created_at</td></tr>
+          <tr><td>actor_id</td><td>UUID</td><td>FK -> users.id, nullable, indexed with created_at</td></tr>
+          <tr><td>target_id</td><td>UUID</td><td>FK -> users.id, nullable</td></tr>
+          <tr><td>ip_address</td><td>TEXT</td><td>default ''</td></tr>
+          <tr><td>user_agent</td><td>TEXT</td><td>default ''</td></tr>
+          <tr><td>metadata</td><td>JSONB</td><td>default '{}'</td></tr>
+          <tr><td>created_at</td><td>TIMESTAMPTZ</td><td>default now()</td></tr>
+        </table>
+      </article>
+
+      <article class="table-card">
+        <div class="table-name">patients</div>
+        <table>
+          <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+          <tr><td>id</td><td>UUID</td><td>PK, default gen_random_uuid()</td></tr>
+          <tr><td>full_name</td><td>TEXT</td><td>NOT NULL, indexed</td></tr>
+          <tr><td>date_of_birth</td><td>DATE</td><td>nullable, indexed</td></tr>
+          <tr><td>is_dob_estimated</td><td>BOOLEAN</td><td>default false</td></tr>
+          <tr><td>sex</td><td>TEXT</td><td>CHECK in ('male', 'female', 'other')</td></tr>
+          <tr><td>phone</td><td>TEXT</td><td>nullable</td></tr>
+          <tr><td>address</td><td>TEXT</td><td>nullable</td></tr>
+          <tr><td>village</td><td>TEXT</td><td>nullable</td></tr>
+          <tr><td>origin</td><td>TEXT</td><td>nullable</td></tr>
+          <tr><td>status</td><td>TEXT</td><td>NOT NULL, default 'active', CHECK in ('provisional','active','inactive','deceased'), indexed</td></tr>
+          <tr><td>national_id</td><td>TEXT</td><td>UNIQUE when not NULL</td></tr>
+          <tr><td>mrn</td><td>TEXT</td><td>UNIQUE when not NULL, immutable once set</td></tr>
+          <tr><td>created_by</td><td>UUID</td><td>FK -> users.id, nullable</td></tr>
+          <tr><td>created_at</td><td>TIMESTAMPTZ</td><td>default now()</td></tr>
+          <tr><td>updated_at</td><td>TIMESTAMPTZ</td><td>default now()</td></tr>
+        </table>
+      </article>
+    </section>
+
+    <section class="notes">
+      <h2>Relationship Summary</h2>
+      <ul>
+        <li><code>users</code> many-to-many <code>sites</code> via <code>user_sites</code>.</li>
+        <li><code>users</code> many-to-many <code>roles</code> via <code>user_roles</code>.</li>
+        <li><code>roles</code> many-to-many <code>permissions</code> via <code>role_permissions</code>.</li>
+        <li><code>users</code> one-to-many <code>refresh_tokens</code>, <code>password_reset_tokens</code>.</li>
+        <li><code>audit_events</code> references <code>users</code> through <code>actor_id</code> and <code>target_id</code>.</li>
+        <li><code>patients</code> optionally references <code>users</code> through <code>created_by</code>.</li>
+      </ul>
+    </section>
+  </div>
+</body>
+</html>
