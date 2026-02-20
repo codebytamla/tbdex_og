@@ -69,6 +69,7 @@ const canManageSites = computed(() =>
 )
 
 const sites = ref<Site[]>([])
+const selectedSites = ref<Site[]>([])
 const loading = ref(false)
 const pageError = ref('')
 
@@ -242,9 +243,12 @@ async function loadSites() {
       'Unable to load sites.',
     )
     sites.value = (payload.sites || []).map(normalizeSite).filter((entry): entry is Site => !!entry)
+    const visibleSiteIds = new Set(sites.value.map((site) => site.id))
+    selectedSites.value = selectedSites.value.filter((site) => visibleSiteIds.has(site.id))
   } catch (error) {
     pageError.value = error instanceof Error ? error.message : 'Unable to load sites.'
     sites.value = []
+    selectedSites.value = []
   } finally {
     loading.value = false
   }
@@ -375,7 +379,9 @@ void loadSites()
   <Card class="sites-card">
     <template #content>
       <DataTable
+        v-model:selection="selectedSites"
         :value="sites"
+        dataKey="id"
         tableStyle="min-width: 44rem"
         :loading="loading"
         paginator
@@ -384,6 +390,7 @@ void loadSites()
         :paginatorTemplate="TABLE_PAGINATOR_TEMPLATE"
         :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
       >
+        <Column selectionMode="multiple" style="width: 3rem" />
         <Column field="name" header="Name" />
         <Column field="code" header="Code" />
         <Column header="Type">
@@ -427,7 +434,6 @@ void loadSites()
           </a>
         </template>
       </Menu>
-      <p class="table-meta table-meta-bottom">Total sites: {{ sites.length }}</p>
     </template>
   </Card>
 
@@ -477,24 +483,6 @@ void loadSites()
 <style scoped>
 .sites-card {
   margin-bottom: 0.9rem;
-}
-
-.table-tools {
-  --toolbar-control-height: var(--app-control-height, 2.2rem);
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-bottom: 0.8rem;
-}
-
-.table-meta {
-  margin: 0;
-  color: var(--p-surface-600);
-  font-size: 0.8rem;
-}
-
-.table-meta-bottom {
-  margin-top: 0.7rem;
 }
 
 .actions {

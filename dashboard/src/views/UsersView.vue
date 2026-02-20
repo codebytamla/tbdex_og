@@ -93,6 +93,7 @@ const canDisableUsers = computed(() =>
 const canOpenUserRowActions = computed(() => canManageUsers.value || canDisableUsers.value)
 
 const users = ref<AdminUser[]>([])
+const selectedUsers = ref<AdminUser[]>([])
 const usersLoading = ref(false)
 const usersError = ref('')
 const totalUsers = ref<number | null>(null)
@@ -784,6 +785,8 @@ async function loadUsers() {
       .map(normalizeUser)
       .filter((entry): entry is AdminUser => !!entry)
     users.value = mergeUsersById(normalizedUsers)
+    const visibleUserIds = new Set(users.value.map((user) => user.id))
+    selectedUsers.value = selectedUsers.value.filter((user) => visibleUserIds.has(user.id))
     for (const user of users.value) {
       roleAssignmentsByUser.value[user.id] = mergeUniqueLabels(
         roleAssignmentsByUser.value[user.id] || [],
@@ -827,6 +830,7 @@ async function loadUsers() {
   } catch (error) {
     usersError.value = error instanceof Error ? error.message : 'Unable to load users.'
     users.value = []
+    selectedUsers.value = []
     totalUsers.value = null
     hasNextPage.value = false
     nextCursor.value = null
@@ -1368,7 +1372,9 @@ void loadUsers()
         </TransitionGroup>
       </div>
       <DataTable
+        v-model:selection="selectedUsers"
         :value="users"
+        dataKey="id"
         tableStyle="min-width: 44rem"
         :loading="usersLoading"
         paginator
@@ -1385,6 +1391,7 @@ void loadUsers()
         <template #empty>
           <div class="table-empty">No users match the current filters.</div>
         </template>
+        <Column selectionMode="multiple" style="width: 3rem" />
         <Column field="fullName" header="Name" />
         <Column field="email" header="Email" />
         <Column header="Roles">

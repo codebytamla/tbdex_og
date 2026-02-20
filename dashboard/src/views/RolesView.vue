@@ -73,6 +73,7 @@ const canManageRoles = computed(() =>
 )
 
 const roles = ref<RoleSummary[]>([])
+const selectedRoles = ref<RoleSummary[]>([])
 const rolesLoading = ref(false)
 const permissionsCatalog = computed(() => catalogStore.permissions)
 const permissionsLoading = computed(() => catalogStore.permissionsLoading)
@@ -228,9 +229,12 @@ async function loadRoles() {
       'Unable to load roles.',
     )
     roles.value = (payload.roles || []).map(normalizeRoleSummary).filter((entry): entry is RoleSummary => !!entry)
+    const visibleRoleIds = new Set(roles.value.map((role) => role.id))
+    selectedRoles.value = selectedRoles.value.filter((role) => visibleRoleIds.has(role.id))
   } catch (error) {
     pageError.value = error instanceof Error ? error.message : 'Unable to load roles.'
     roles.value = []
+    selectedRoles.value = []
   } finally {
     rolesLoading.value = false
   }
@@ -414,7 +418,9 @@ void loadRoles()
   <Card class="roles-card">
     <template #content>
       <DataTable
+        v-model:selection="selectedRoles"
         :value="roles"
+        dataKey="id"
         tableStyle="min-width: 32rem"
         :loading="rolesLoading"
         paginator
@@ -423,6 +429,7 @@ void loadRoles()
         :paginatorTemplate="TABLE_PAGINATOR_TEMPLATE"
         :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
       >
+        <Column selectionMode="multiple" style="width: 3rem" />
         <Column field="name" header="Role" />
         <Column field="description" header="Description" />
         <Column header="" style="width: 3.5rem">
@@ -448,7 +455,6 @@ void loadRoles()
           </a>
         </template>
       </Menu>
-      <p class="table-meta table-meta-bottom">Total roles: {{ roles.length }}</p>
     </template>
   </Card>
 
@@ -527,24 +533,6 @@ void loadRoles()
 <style scoped>
 .roles-card {
   margin-bottom: 0.9rem;
-}
-
-.table-tools {
-  --toolbar-control-height: var(--app-control-height, 2.2rem);
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-bottom: 0.8rem;
-}
-
-.table-meta {
-  margin: 0;
-  color: var(--p-surface-600);
-  font-size: 0.82rem;
-}
-
-.table-meta-bottom {
-  margin-top: 0.7rem;
 }
 
 .actions {
@@ -680,10 +668,4 @@ void loadRoles()
   white-space: nowrap;
 }
 
-@media (max-width: 900px) {
-  .table-tools {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
 </style>

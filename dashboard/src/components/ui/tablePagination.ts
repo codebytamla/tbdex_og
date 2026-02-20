@@ -1,5 +1,5 @@
 export const TABLE_PAGINATOR_TEMPLATE =
-  'PrevPageLink CurrentPageReport NextPageLink RowsPerPageDropdown'
+  'PrevPageLink PageLinks NextPageLink RowsPerPageDropdown'
 
 export const TABLE_PAGE_REPORT_TEMPLATE = 'Page {currentPage}'
 
