@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref, type Component } from 'vue'
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
-import { Eye, MoreHorizontal, Pencil, RefreshCcw, Trash2 } from 'lucide-vue-next'
+import { Eye, MoreHorizontal, Pencil, Trash2 } from 'lucide-vue-next'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -19,7 +19,7 @@ import { useCatalogStore } from '@/stores/catalog'
 import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
-import ToolbarIconButton from '@/components/ui/ToolbarIconButton.vue'
+import TableActionDrawerButton from '@/components/ui/TableActionDrawerButton.vue'
 import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
 import {
   TABLE_DEFAULT_ROWS,
@@ -416,10 +416,18 @@ void loadRoles()
 <template>
   <PageSectionHeader title="Roles" description="Manage role definitions and permission assignments">
     <template #actions>
-      <ToolbarIconButton :disabled="!canManageRoles" title="Refresh roles" ariaLabel="Refresh roles" @click="loadRoles">
-        <RefreshCcw :size="16" />
-      </ToolbarIconButton>
       <CreateActionButton label="Create role" :disabled="!canManageRoles" @click="openCreateDialog" />
+      <TableActionDrawerButton
+        title="Role table actions"
+        ariaLabel="Open role table actions"
+        importLabel="Import roles"
+        exportLabel="Export roles"
+        refreshLabel="Refresh roles"
+        :importDisabled="true"
+        :exportDisabled="true"
+        :refreshDisabled="!canManageRoles"
+        @refresh="loadRoles"
+      />
     </template>
   </PageSectionHeader>
 

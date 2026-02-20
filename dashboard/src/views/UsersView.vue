@@ -9,7 +9,6 @@ import {
   Link2,
   MoreHorizontal,
   Pencil,
-  RefreshCcw,
   Shield,
   UserPlus,
 } from 'lucide-vue-next'
@@ -32,7 +31,7 @@ import { useCatalogStore } from '@/stores/catalog'
 import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
-import ToolbarIconButton from '@/components/ui/ToolbarIconButton.vue'
+import TableActionDrawerButton from '@/components/ui/TableActionDrawerButton.vue'
 import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
 import {
   TABLE_PAGE_REPORT_TEMPLATE,
@@ -1180,10 +1179,18 @@ void loadSitesCatalog({ silent: true })
 <template>
   <PageSectionHeader title="Users" description="Manage users, profile data, roles, sites, and password resets">
     <template #actions>
-      <ToolbarIconButton :disabled="!canReadUsers" title="Refresh users" ariaLabel="Refresh users" @click="refreshUsers">
-        <RefreshCcw :size="16" />
-      </ToolbarIconButton>
       <CreateActionButton label="Create user" :disabled="!canManageUsers" @click="openCreateDialog" />
+      <TableActionDrawerButton
+        title="User table actions"
+        ariaLabel="Open user table actions"
+        importLabel="Import users"
+        exportLabel="Export users"
+        refreshLabel="Refresh users"
+        :importDisabled="true"
+        :exportDisabled="true"
+        :refreshDisabled="!canReadUsers"
+        @refresh="refreshUsers"
+      />
     </template>
   </PageSectionHeader>
 

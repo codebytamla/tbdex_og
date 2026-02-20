@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref, type Component } from 'vue'
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
-import { Ban, MoreHorizontal, Pencil, RefreshCcw } from 'lucide-vue-next'
+import { Ban, MoreHorizontal, Pencil } from 'lucide-vue-next'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
@@ -19,7 +19,7 @@ import { useCatalogStore } from '@/stores/catalog'
 import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
-import ToolbarIconButton from '@/components/ui/ToolbarIconButton.vue'
+import TableActionDrawerButton from '@/components/ui/TableActionDrawerButton.vue'
 import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
 import {
   TABLE_DEFAULT_ROWS,
@@ -381,10 +381,18 @@ void loadSites()
 <template>
   <PageSectionHeader title="Sites" description="Create and manage active service sites">
     <template #actions>
-      <ToolbarIconButton :disabled="!canManageSites" title="Refresh sites" ariaLabel="Refresh sites" @click="loadSites">
-        <RefreshCcw :size="16" />
-      </ToolbarIconButton>
       <CreateActionButton label="Create site" :disabled="!canManageSites" @click="openCreateDialog" />
+      <TableActionDrawerButton
+        title="Site table actions"
+        ariaLabel="Open site table actions"
+        importLabel="Import sites"
+        exportLabel="Export sites"
+        refreshLabel="Refresh sites"
+        :importDisabled="true"
+        :exportDisabled="true"
+        :refreshDisabled="!canManageSites"
+        @refresh="loadSites"
+      />
     </template>
   </PageSectionHeader>
 

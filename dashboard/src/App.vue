@@ -493,8 +493,18 @@ function toggleSidebar() {
 }
 
 :global(.p-datatable-column-filter-button[data-p-active="true"]) {
-  color: var(--p-primary-400);
-  background: transparent;
+  color: var(--p-green-600);
+  background: color-mix(in srgb, var(--p-green-500) 12%, transparent);
+}
+
+:global(.p-datatable-column-filter-button[data-p-active="true"]:hover) {
+  color: var(--p-green-700);
+  background: color-mix(in srgb, var(--p-green-500) 18%, transparent);
+}
+
+:global(.p-datatable .p-datatable-header-cell .p-datatable-popover-filter),
+:global(.p-datatable .p-datatable-thead > tr > th .p-datatable-popover-filter) {
+  margin-inline-start: 0.28rem;
 }
 
 /* ── DataTable header slot ───────────────────────────── */

@@ -6,7 +6,6 @@ import {
   MapPinPlus,
   MoreHorizontal,
   Pencil,
-  RefreshCcw,
 } from 'lucide-vue-next'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -28,7 +27,7 @@ import { useCatalogStore } from '@/stores/catalog'
 import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
-import ToolbarIconButton from '@/components/ui/ToolbarIconButton.vue'
+import TableActionDrawerButton from '@/components/ui/TableActionDrawerButton.vue'
 import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
 import {
   TABLE_PAGE_REPORT_TEMPLATE,
@@ -1212,18 +1211,21 @@ void loadSitesCatalog({ silent: true })
     description="Patient registration, lookup, updates, site assignment, and deactivation"
   >
     <template #actions>
-      <ToolbarIconButton
-        :disabled="!canReadPatients"
-        title="Refresh patients"
-        ariaLabel="Refresh patients"
-        @click="refreshPatients"
-      >
-        <RefreshCcw :size="16" />
-      </ToolbarIconButton>
       <CreateActionButton
         label="Register patient"
         :disabled="!canCreatePatients"
         @click="openCreateDialog"
+      />
+      <TableActionDrawerButton
+        title="Patient table actions"
+        ariaLabel="Open patient table actions"
+        importLabel="Import patients"
+        exportLabel="Export patients"
+        refreshLabel="Refresh patients"
+        :importDisabled="true"
+        :exportDisabled="true"
+        :refreshDisabled="!canReadPatients"
+        @refresh="refreshPatients"
       />
     </template>
   </PageSectionHeader>
