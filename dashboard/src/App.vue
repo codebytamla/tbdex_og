@@ -77,7 +77,10 @@ function toggleSidebar() {
       <div class="brand-row">
         <div class="brand">
           <div class="brand-copy">
-            <h1>TBDeX</h1>
+            <div class="brand-wordmark" aria-label="TBDex">
+              <span class="brand-wordmark-primary">TB</span>
+              <span class="brand-wordmark-accent">DeX</span>
+            </div>
           </div>
         </div>
         <button
@@ -138,7 +141,7 @@ function toggleSidebar() {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Space+Grotesk:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@24..48,700;24..48,800&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
 
 :global(:root) {
   --app-font-family: 'IBM Plex Sans', 'Avenir Next', 'SF Pro Text', 'Segoe UI', 'Helvetica Neue', sans-serif;
@@ -151,6 +154,7 @@ function toggleSidebar() {
   --page-content-padding: 1.5rem;
   --page-content-padding-mobile: 1rem;
   --page-content-top-offset: 0.45rem;
+  --sidebar-content-inline-offset: 0.62rem;
 }
 
 :global(body) {
@@ -563,18 +567,40 @@ function toggleSidebar() {
 
 .brand {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.4rem;
   align-items: center;
-  padding: 0.15rem 0;
+  padding: 0.15rem 0 0.15rem var(--sidebar-content-inline-offset);
+  min-width: 0;
 }
 
-.brand-copy h1 {
+.brand-copy {
+  min-width: 0;
+}
+
+.brand-wordmark {
+  display: flex;
+  align-items: baseline;
+  gap: 0.02rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.brand-wordmark-primary,
+.brand-wordmark-accent {
   margin: 0;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--p-primary-700);
-  letter-spacing: -0.03em;
+  font-family: 'Bricolage Grotesque', 'Avenir Next', 'Segoe UI', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  text-rendering: geometricPrecision;
+}
+
+.brand-wordmark-primary {
+  color: #111111;
+}
+
+.brand-wordmark-accent {
+  color: var(--p-primary-600);
 }
 
 .sidebar-toggle-btn {
@@ -582,7 +608,7 @@ function toggleSidebar() {
   height: 2rem;
   border: none;
   background: transparent;
-  color: var(--p-surface-600);
+  color: var(--p-surface-500);
   border-radius: 0.55rem;
   flex: 0 0 auto;
   display: inline-flex;
@@ -592,11 +618,12 @@ function toggleSidebar() {
 }
 
 .sidebar-toggle-btn:hover {
-  background: color-mix(in srgb, var(--p-primary-color) 6%, var(--p-surface-50));
+  background: color-mix(in srgb, var(--p-surface-900) 6%, transparent);
+  color: var(--p-surface-700);
 }
 
 .sidebar-toggle-btn:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--p-primary-color) 30%, transparent);
+  outline: 2px solid color-mix(in srgb, var(--p-surface-600) 42%, transparent);
   outline-offset: 2px;
 }
 
@@ -629,6 +656,7 @@ function toggleSidebar() {
 .nav :deep(.nav-panelmenu .p-panelmenu-item-link) {
   min-height: 2.7rem;
   padding-block: 0.58rem;
+  padding-inline: var(--sidebar-content-inline-offset);
   column-gap: 0.65rem;
 }
 
@@ -882,7 +910,7 @@ function toggleSidebar() {
   .sidebar.collapsed .brand {
     display: flex;
     justify-content: flex-start;
-    padding-left: 0;
+    padding-left: var(--sidebar-content-inline-offset);
   }
 
   .sidebar.collapsed .brand-row {
@@ -900,7 +928,7 @@ function toggleSidebar() {
   .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-header-link),
   .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item-link) {
     justify-content: flex-start;
-    padding-inline: initial;
+    padding-inline: var(--sidebar-content-inline-offset);
     min-height: initial;
   }
 
