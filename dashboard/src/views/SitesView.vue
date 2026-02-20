@@ -420,10 +420,6 @@ void loadSites()
             v-model:selectedColumns="selectedColumns"
             :columns="columns"
             searchPlaceholder="Search sites..."
-            :showImport="true"
-            :showExport="true"
-            @import="() => {}"
-            @export="() => dt?.exportCSV()"
           />
         </template>
         <Column selectionMode="multiple" style="width: 3rem" />

@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { MoreHorizontal } from 'lucide-vue-next'
+import { computed } from 'vue'
 import InputText from 'primevue/inputtext'
 import MultiSelect from 'primevue/multiselect'
-import Button from 'primevue/button'
-import Menu from 'primevue/menu'
 
 const props = defineProps<{
   // Search query
@@ -17,36 +14,13 @@ const props = defineProps<{
   selectedColumns: Array<{ field: string; header: string }>
   columnsLabel?: string
 
-  // Options Menu toggles
-  showImport?: boolean
-  showExport?: boolean
 }>()
 
 const emit = defineEmits<{
   (e: 'update:searchQuery', value: string): void
   (e: 'update:selectedColumns', value: Array<{ field: string; header: string }>): void
-  (e: 'import'): void
-  (e: 'export'): void
+  (e: 'search'): void
 }>()
-
-const optionsMenu = ref()
-
-const optionsMenuItems = computed(() => {
-  const items = []
-  if (props.showImport) {
-    items.push({
-      label: 'Import Data',
-      command: () => emit('import')
-    })
-  }
-  if (props.showExport) {
-    items.push({
-      label: 'Export Data',
-      command: () => emit('export')
-    })
-  }
-  return items
-})
 
 const localSearchQuery = computed({
   get: () => props.searchQuery ?? '',
@@ -57,10 +31,6 @@ const localSelectedColumns = computed({
   get: () => props.selectedColumns,
   set: (val: Array<{ field: string; header: string }>) => emit('update:selectedColumns', val)
 })
-
-function toggleOptionsMenu(event: Event) {
-  optionsMenu.value.toggle(event)
-}
 </script>
 
 <template>
@@ -71,6 +41,7 @@ function toggleOptionsMenu(event: Event) {
         :placeholder="searchPlaceholder || 'Search...'"
         :disabled="searchDisabled"
         class="toolbar-search"
+        @keydown.enter.prevent="emit('search')"
       />
     </div>
 
@@ -85,22 +56,6 @@ function toggleOptionsMenu(event: Event) {
         class="toolbar-columns-select"
         display="comma"
       />
-
-      <Button
-        v-if="optionsMenuItems.length > 0"
-        type="button"
-        icon="pi pi-ellipsis-h"
-        class="toolbar-options-btn p-button-text p-button-secondary"
-        aria-haspopup="true"
-        aria-controls="options_menu"
-        @click="toggleOptionsMenu"
-      >
-        <template #icon>
-          <MoreHorizontal :size="18" />
-        </template>
-      </Button>
-
-      <Menu ref="optionsMenu" id="options_menu" :model="optionsMenuItems" :popup="true" />
     </div>
   </div>
 </template>
@@ -121,9 +76,14 @@ function toggleOptionsMenu(event: Event) {
   gap: 0.5rem;
 }
 
+.toolbar-left {
+  flex: 1;
+  min-width: 0;
+}
+
 .toolbar-search {
-  width: 100%;
-  max-width: 17.33rem;
+  width: min(100%, 24rem);
+  max-width: none;
   height: var(--app-control-height, 2.25rem);
   box-sizing: border-box;
   border-radius: var(--app-control-radius, 0.62rem);
@@ -148,18 +108,6 @@ function toggleOptionsMenu(event: Event) {
 :deep(.toolbar-columns-select .p-multiselect-label) {
   padding: 0.4rem 0.88rem;
   font-size: var(--app-control-font-size, 0.83rem);
-}
-
-.toolbar-options-btn {
-  height: var(--app-control-height, 2.25rem);
-  width: var(--app-control-height, 2.25rem);
-  padding: 0;
-  color: var(--p-surface-600);
-}
-
-.toolbar-options-btn:hover {
-  background: var(--p-surface-100);
-  color: var(--p-surface-800);
 }
 
 @media (max-width: 640px) {

@@ -1253,10 +1253,7 @@ void loadSitesCatalog({ silent: true })
             v-model:selectedColumns="selectedColumns"
             :columns="columns"
             searchPlaceholder="Search name or email..."
-            :showImport="true"
-            :showExport="true"
-            @import="() => {}"
-            @export="() => dt?.exportCSV()"
+            @search="onSearchEnter"
           />
         </template>
         <template #empty>

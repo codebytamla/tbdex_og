@@ -1271,10 +1271,7 @@ void loadSitesCatalog({ silent: true })
             v-model:selectedColumns="selectedColumns"
             :columns="columns"
             searchPlaceholder="Search full name or village..."
-            :showImport="true"
-            :showExport="true"
-            @import="() => {}"
-            @export="() => dt?.exportCSV()"
+            @search="onSearchEnter"
           />
         </template>
         <template #empty>
