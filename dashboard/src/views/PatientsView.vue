@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref, type Component } from 'vue'
+import { computed, onUnmounted, reactive, ref, type Component } from 'vue'
 import {
   Ban,
   MapPinPlus,
@@ -25,6 +25,7 @@ import type { MenuItem } from 'primevue/menuitem'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores/auth'
+import { useCatalogStore } from '@/stores/catalog'
 import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import FilterPanelField from '@/components/ui/FilterPanelField.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
@@ -95,6 +96,7 @@ type ActionMenuItem = MenuItem & {
 }
 
 const authStore = useAuthStore()
+const catalogStore = useCatalogStore()
 authStore.hydrate()
 
 const confirm = useConfirm()
@@ -138,8 +140,8 @@ const siteFilter = ref<string[]>([])
 const appliedSiteFilter = ref<string[]>([])
 const filtersExpanded = ref(false)
 
-const sitesCatalog = ref<SiteOption[]>([])
-const sitesLoading = ref(false)
+const sitesCatalog = computed(() => catalogStore.sites)
+const sitesLoading = computed(() => catalogStore.sitesLoading)
 
 const createDialogVisible = ref(false)
 const createDialogBusy = ref(false)
@@ -841,26 +843,13 @@ function resetSitesForm() {
 }
 
 async function loadSitesCatalog(options?: { silent?: boolean; force?: boolean }) {
-  if (sitesLoading.value) return
-  if (!options?.force && sitesCatalog.value.length > 0) return
-
-  sitesLoading.value = true
   try {
-    const payload = await requestJson<unknown>(
-      '/admin/sites',
-      { method: 'GET' },
-      'Unable to load sites catalog.',
-    )
-    sitesCatalog.value = extractCollection(payload, ['sites'])
-      .map(normalizeSite)
-      .filter((entry): entry is SiteOption => !!entry)
+    await catalogStore.fetchSites({ force: options?.force })
   } catch (error) {
     if (!options?.silent) {
       const message = error instanceof Error ? error.message : 'Unable to load sites catalog.'
       toast.add({ severity: 'warn', summary: 'Sites unavailable', detail: message, life: 3500 })
     }
-  } finally {
-    sitesLoading.value = false
   }
 }
 
@@ -982,6 +971,7 @@ function refreshPatients() {
 }
 
 let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null
+onUnmounted(() => { if (searchDebounceTimer) clearTimeout(searchDebounceTimer) })
 
 function applyFilters() {
   if (searchDebounceTimer) {
@@ -1104,9 +1094,6 @@ async function submitCreatePatient() {
       },
       'Unable to register patient.',
     )
-
-    const normalized = normalizePatient(response)
-    if (normalized) patchPatientListEntry(normalized)
 
     createDialogVisible.value = false
     toast.add({ severity: 'success', summary: 'Patient registered', life: 2500 })
@@ -1232,8 +1219,6 @@ async function submitEditPatient() {
       },
       'Unable to update patient.',
     )
-    const normalized = normalizePatient(response)
-    if (normalized) patchPatientListEntry(normalized)
     toast.add({ severity: 'success', summary: 'Patient updated', life: 2500 })
     editDialogVisible.value = false
     await loadPatients()

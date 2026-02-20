@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref, type Component } from 'vue'
+import { computed, onUnmounted, reactive, ref, type Component } from 'vue'
 import {
   Ban,
   MapPinPlus,
@@ -29,6 +29,7 @@ import type { MenuItem } from 'primevue/menuitem'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores/auth'
+import { useCatalogStore } from '@/stores/catalog'
 import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import FilterPanelField from '@/components/ui/FilterPanelField.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
@@ -67,6 +68,7 @@ type ActionMenuItem = MenuItem & {
 }
 
 const authStore = useAuthStore()
+const catalogStore = useCatalogStore()
 authStore.hydrate()
 
 const confirm = useConfirm()
@@ -110,10 +112,10 @@ const latestResetToken = ref('')
 const latestResetEmail = ref('')
 const latestResetLink = ref('')
 
-const rolesCatalog = ref<RoleOption[]>([])
-const rolesLoading = ref(false)
-const sitesCatalog = ref<SiteOption[]>([])
-const sitesLoading = ref(false)
+const rolesCatalog = computed(() => catalogStore.roles)
+const rolesLoading = computed(() => catalogStore.rolesLoading)
+const sitesCatalog = computed(() => catalogStore.sites)
+const sitesLoading = computed(() => catalogStore.sitesLoading)
 const roleAssignmentsByUser = ref<Record<string, string[]>>({})
 const siteAssignmentsByUser = ref<Record<string, string[]>>({})
 
@@ -718,50 +720,26 @@ function resetSitesForm() {
 }
 
 async function loadRolesCatalog(options?: { silent?: boolean; force?: boolean }) {
-  if (!canReadUsers.value || rolesLoading.value) return
-  if (!options?.force && rolesCatalog.value.length > 0) return
-
-  rolesLoading.value = true
+  if (!canReadUsers.value) return
   try {
-    const payload = await requestJson<unknown>(
-      '/admin/roles',
-      { method: 'GET' },
-      'Unable to load roles catalog.',
-    )
-    rolesCatalog.value = extractCollection(payload, ['roles'])
-      .map(normalizeRole)
-      .filter((entry): entry is RoleOption => !!entry)
+    await catalogStore.fetchRoles({ force: options?.force })
   } catch (error) {
     if (!options?.silent) {
       const message = error instanceof Error ? error.message : 'Unable to load roles catalog.'
       toast.add({ severity: 'error', summary: 'Roles unavailable', detail: message, life: 3500 })
     }
-  } finally {
-    rolesLoading.value = false
   }
 }
 
 async function loadSitesCatalog(options?: { silent?: boolean; force?: boolean }) {
-  if (!canReadUsers.value || sitesLoading.value) return
-  if (!options?.force && sitesCatalog.value.length > 0) return
-
-  sitesLoading.value = true
+  if (!canReadUsers.value) return
   try {
-    const payload = await requestJson<unknown>(
-      '/admin/sites',
-      { method: 'GET' },
-      'Unable to load sites catalog.',
-    )
-    sitesCatalog.value = extractCollection(payload, ['sites'])
-      .map(normalizeSite)
-      .filter((entry): entry is SiteOption => !!entry)
+    await catalogStore.fetchSites({ force: options?.force })
   } catch (error) {
     if (!options?.silent) {
       const message = error instanceof Error ? error.message : 'Unable to load sites catalog.'
       toast.add({ severity: 'error', summary: 'Sites unavailable', detail: message, life: 3500 })
     }
-  } finally {
-    sitesLoading.value = false
   }
 }
 
@@ -893,6 +871,7 @@ function refreshUsers() {
 }
 
 let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null
+onUnmounted(() => { if (searchDebounceTimer) clearTimeout(searchDebounceTimer) })
 
 function applyFilters() {
   if (searchDebounceTimer) {
@@ -1111,7 +1090,7 @@ async function openRolesDialog(user: AdminUser) {
   rolesTargetUser.value = user
   rolesForm.roles = [...(roleAssignmentsByUser.value[user.id] || user.roles || [])]
   rolesDialogVisible.value = true
-  await loadRolesCatalog({ force: true })
+  await loadRolesCatalog()
 }
 
 async function openSitesDialog(user: AdminUser) {
@@ -1121,7 +1100,7 @@ async function openSitesDialog(user: AdminUser) {
   sitesForm.siteIds = resolveSiteSelectionIds(siteAssignmentsByUser.value[user.id] || [])
   sitesDialogVisible.value = true
 
-  await loadSitesCatalog({ force: true })
+  await loadSitesCatalog()
 
   sitesDialogLoading.value = true
   sitesDialogError.value = ''

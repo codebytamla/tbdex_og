@@ -21,7 +21,6 @@ const sidebarCollapsed = ref(false)
 authStore.hydrate()
 onMounted(() => {
   sidebarCollapsed.value = localStorage.getItem(sidebarCollapseStorageKey) === '1'
-  void authStore.ensureProfile(true)
 })
 
 const isAuthRoute = computed(() => route.path.startsWith('/auth') || route.path === '/reset-password')

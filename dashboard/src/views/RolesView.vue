@@ -14,6 +14,7 @@ import type { MenuItem } from 'primevue/menuitem'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores/auth'
+import { useCatalogStore } from '@/stores/catalog'
 import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
@@ -53,6 +54,7 @@ type ActionMenuItem = MenuItem & {
 }
 
 const authStore = useAuthStore()
+const catalogStore = useCatalogStore()
 authStore.hydrate()
 
 const canManageRoles = computed(() =>
@@ -72,8 +74,8 @@ const canManageRoles = computed(() =>
 
 const roles = ref<RoleSummary[]>([])
 const rolesLoading = ref(false)
-const permissionsCatalog = ref<PermissionItem[]>([])
-const permissionsLoading = ref(false)
+const permissionsCatalog = computed(() => catalogStore.permissions)
+const permissionsLoading = computed(() => catalogStore.permissionsLoading)
 const pageError = ref('')
 const confirm = useConfirm()
 const toast = useToast()
@@ -235,21 +237,11 @@ async function loadRoles() {
 }
 
 async function loadPermissionsCatalog() {
-  if (permissionsCatalog.value.length > 0 || permissionsLoading.value) return
-
-  permissionsLoading.value = true
   try {
-    const payload = await requestJson<{ permissions?: unknown[] }>(
-      '/admin/permissions',
-      { method: 'GET' },
-      'Unable to load permissions catalog.',
-    )
-    permissionsCatalog.value = normalizePermissions(payload.permissions || [])
+    await catalogStore.fetchPermissions()
   } catch (error) {
     dialogError.value =
       error instanceof Error ? error.message : 'Unable to load permissions catalog.'
-  } finally {
-    permissionsLoading.value = false
   }
 }
 
@@ -289,8 +281,7 @@ async function openRoleDialog(mode: DialogMode, role: RoleSummary) {
   selectedRoleId.value = role.id
   dialogMode.value = mode
   dialogVisible.value = true
-  await loadPermissionsCatalog()
-  await loadRoleDetails(role.id)
+  await Promise.all([loadPermissionsCatalog(), loadRoleDetails(role.id)])
 }
 
 async function submitRole() {
@@ -355,6 +346,8 @@ async function submitRole() {
     }
 
     dialogVisible.value = false
+    catalogStore.invalidateRoles()
+    catalogStore.invalidatePermissions()
     await loadRoles()
   } catch (error) {
     dialogError.value = error instanceof Error ? error.message : 'Unable to save role.'
@@ -383,6 +376,7 @@ function deleteRole(role: RoleSummary) {
           'Unable to delete role.',
         )
         toast.add({ severity: 'success', summary: 'Role deleted', life: 2500 })
+        catalogStore.invalidateRoles()
         await loadRoles()
       } catch (error) {
         pageError.value = error instanceof Error ? error.message : 'Unable to delete role.'

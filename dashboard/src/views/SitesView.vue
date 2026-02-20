@@ -14,6 +14,7 @@ import type { MenuItem } from 'primevue/menuitem'
 import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores/auth'
+import { useCatalogStore } from '@/stores/catalog'
 import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
@@ -46,6 +47,7 @@ type ActionMenuItem = MenuItem & {
 }
 
 const authStore = useAuthStore()
+const catalogStore = useCatalogStore()
 authStore.hydrate()
 
 const confirm = useConfirm()
@@ -308,6 +310,7 @@ async function submitSite() {
     }
 
     dialogVisible.value = false
+    catalogStore.invalidateSites()
     await loadSites()
   } catch (error) {
     dialogError.value = error instanceof Error ? error.message : 'Unable to save site.'
@@ -334,6 +337,7 @@ function disableSite(site: Site) {
           'Unable to disable site.',
         )
         toast.add({ severity: 'success', summary: 'Site disabled', life: 2400 })
+        catalogStore.invalidateSites()
         await loadSites()
       } catch (error) {
         pageError.value = error instanceof Error ? error.message : 'Unable to disable site.'
