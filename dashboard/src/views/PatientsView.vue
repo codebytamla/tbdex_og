@@ -20,7 +20,6 @@ import InputText from 'primevue/inputtext'
 import Menu from 'primevue/menu'
 import Message from 'primevue/message'
 import MultiSelect from 'primevue/multiselect'
-import Paginator from 'primevue/paginator'
 import Textarea from 'primevue/textarea'
 import type { MenuItem } from 'primevue/menuitem'
 import { useConfirm } from 'primevue/useconfirm'
@@ -31,9 +30,13 @@ import FilterPanelField from '@/components/ui/FilterPanelField.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
 import ToolbarIconButton from '@/components/ui/ToolbarIconButton.vue'
+import {
+  TABLE_PAGE_REPORT_TEMPLATE,
+  TABLE_PAGINATOR_TEMPLATE,
+  TABLE_ROWS_PER_PAGE_OPTIONS,
+} from '@/components/ui/tablePagination'
 
 type PatientStatus = 'provisional' | 'active' | 'inactive' | 'deceased'
-type StatusFilterValue = 'all' | PatientStatus
 
 type SiteSummary = {
   id: string
@@ -73,8 +76,7 @@ type SiteOption = {
 
 type PatientColumnKey =
   | 'fullName'
-  | 'dateOfBirth'
-  | 'sex'
+  | 'ageSex'
   | 'village'
   | 'createdBy'
   | 'createdAt'
@@ -132,8 +134,6 @@ const hasNextPage = ref(false)
 
 const searchText = ref('')
 const appliedSearch = ref('')
-const statusFilter = ref<StatusFilterValue>('all')
-const appliedStatusFilter = ref<StatusFilterValue>('all')
 const siteFilter = ref<string[]>([])
 const appliedSiteFilter = ref<string[]>([])
 const filtersExpanded = ref(false)
@@ -190,8 +190,7 @@ const sitesForm = reactive({
 
 const patientColumnOptions: PatientColumnOption[] = [
   { label: 'Full name', value: 'fullName', minWidthRem: 11 },
-  { label: 'DOB', value: 'dateOfBirth', minWidthRem: 8.5 },
-  { label: 'Sex', value: 'sex', minWidthRem: 7.5 },
+  { label: 'Age/Sex', value: 'ageSex', minWidthRem: 8.5 },
   { label: 'Village', value: 'village', minWidthRem: 10 },
   { label: 'Created by', value: 'createdBy', minWidthRem: 12 },
   { label: 'Created', value: 'createdAt', minWidthRem: 10.5 },
@@ -202,17 +201,12 @@ const patientColumnOptions: PatientColumnOption[] = [
 const allPatientColumnKeys = patientColumnOptions.map((column) => column.value)
 const fallbackPatientColumns: PatientColumnKey[] = ['fullName']
 const visiblePatientColumns = ref<PatientColumnKey[]>([...allPatientColumnKeys])
+const selectedPatients = ref<Patient[]>([])
 
 const statusToggleInFlightPatientId = ref<string | null>(null)
 const rowActionMenu = ref()
 const selectedMenuPatient = ref<Patient | null>(null)
 
-const pageStart = computed(() =>
-  patients.value.length === 0 ? 0 : pageIndex.value * limit.value + 1,
-)
-const pageEnd = computed(() =>
-  patients.value.length === 0 ? 0 : pageIndex.value * limit.value + patients.value.length,
-)
 const paginatorFirst = computed(() => pageIndex.value * limit.value)
 const paginatorTotalRecords = computed(() => {
   if (typeof totalPatients.value === 'number' && Number.isFinite(totalPatients.value)) return totalPatients.value
@@ -222,12 +216,10 @@ const paginatorTotalRecords = computed(() => {
 const hasPendingFilters = computed(
   () =>
     Boolean(searchText.value.trim()) ||
-    statusFilter.value !== 'all' ||
     siteFilter.value.length > 0,
 )
 const activeFilterCount = computed(() => {
   let count = 0
-  if (appliedStatusFilter.value !== 'all') count++
   if (appliedSiteFilter.value.length > 0) count++
   return count
 })
@@ -239,12 +231,6 @@ type FilterChip = {
 
 const activeFilterChips = computed<FilterChip[]>(() => {
   const chips: FilterChip[] = []
-  if (appliedStatusFilter.value !== 'all') {
-    chips.push({
-      key: 'status',
-      label: `Status: ${formatStatus(appliedStatusFilter.value)}`,
-    })
-  }
   if (appliedSiteFilter.value.length > 0) {
     const labels = appliedSiteFilter.value.map((siteId) => {
       const site = sitesCatalog.value.find((entry) => entry.id === siteId)
@@ -263,11 +249,6 @@ const patientStatusOptions: Array<{ label: string; value: PatientStatus }> = [
   { label: 'Active', value: 'active' },
   { label: 'Inactive', value: 'inactive' },
   { label: 'Deceased', value: 'deceased' },
-]
-
-const statusFilterOptions: Array<{ label: string; value: StatusFilterValue }> = [
-  { label: 'All statuses', value: 'all' },
-  ...patientStatusOptions,
 ]
 
 const sexOptions = [
@@ -301,8 +282,9 @@ const patientTableMinWidth = computed(() => {
     .filter((column) => visiblePatientColumns.value.includes(column.value))
     .reduce((total, column) => total + column.minWidthRem, 0)
 
+  const selectionColumnWidth = 3
   const actionColumnWidth = 3.5
-  return Math.max(24, dataColumnsWidth + actionColumnWidth)
+  return Math.max(24, dataColumnsWidth + selectionColumnWidth + actionColumnWidth)
 })
 
 const rowActionItems = computed<ActionMenuItem[]>(() => [
@@ -767,13 +749,25 @@ function formatDateTime(value: string) {
   })
 }
 
-function formatSex(value: string) {
-  if (!value) return 'N/A'
-  const normalized = value.trim().toLowerCase()
-  if (normalized === 'male') return 'Male'
-  if (normalized === 'female') return 'Female'
-  if (normalized === 'other') return 'Other'
-  return value
+function formatAgeSex(dateOfBirth: string, sex: string) {
+  const dob = dateOfBirth ? new Date(dateOfBirth) : null
+  const now = new Date()
+  let ageText = '?'
+
+  if (dob && !Number.isNaN(dob.getTime())) {
+    let age = now.getFullYear() - dob.getFullYear()
+    const birthdayPassed =
+      now.getMonth() > dob.getMonth() ||
+      (now.getMonth() === dob.getMonth() && now.getDate() >= dob.getDate())
+    if (!birthdayPassed) age--
+    ageText = age >= 0 ? String(age) : '?'
+  }
+
+  if (!sex) return ageText === '?' ? 'N/A' : ageText
+  const normalized = sex.trim().toLowerCase()
+  const sexCode = normalized === 'male' ? 'M' : normalized === 'female' ? 'F' : normalized === 'other' ? 'O' : ''
+  if (!sexCode) return ageText === '?' ? 'N/A' : ageText
+  return `${ageText}${sexCode}`
 }
 
 function createdByLabel(patient: Patient) {
@@ -888,7 +882,6 @@ async function loadPatients() {
 
     if (currentCursor) params.set('cursor', currentCursor)
     if (appliedSearch.value.trim()) params.set('search', appliedSearch.value.trim())
-    if (appliedStatusFilter.value !== 'all') params.set('status', appliedStatusFilter.value)
     for (const siteId of appliedSiteFilter.value) params.append('site_id', siteId)
 
     const payload = await requestJson<Record<string, unknown>>(
@@ -901,6 +894,8 @@ async function loadPatients() {
       Array.isArray(payload.patients) ? payload.patients : extractCollection(payload, ['patients'])
     const normalized = collection.map(normalizePatient).filter((entry): entry is Patient => !!entry)
     patients.value = mergePatientsById(normalized)
+    const visiblePatientIds = new Set(patients.value.map((patient) => patient.id))
+    selectedPatients.value = selectedPatients.value.filter((patient) => visiblePatientIds.has(patient.id))
 
     const paginationSource =
       payload.pagination && typeof payload.pagination === 'object'
@@ -942,6 +937,7 @@ async function loadPatients() {
   } catch (error) {
     patientsError.value = error instanceof Error ? error.message : 'Unable to load patients.'
     patients.value = []
+    selectedPatients.value = []
     totalPatients.value = null
     hasNextPage.value = false
     nextCursor.value = null
@@ -994,18 +990,15 @@ function applyFilters() {
   }
 
   const nextSearch = searchText.value.trim()
-  const nextStatus = statusFilter.value
   const nextSiteFilter = normalizeSelection(siteFilter.value)
 
   const changed =
     nextSearch !== appliedSearch.value ||
-    nextStatus !== appliedStatusFilter.value ||
     nextSiteFilter.join('|') !== appliedSiteFilter.value.join('|')
   if (!changed) return
 
   siteFilter.value = [...nextSiteFilter]
   appliedSearch.value = nextSearch
-  appliedStatusFilter.value = nextStatus
   appliedSiteFilter.value = [...nextSiteFilter]
   resetPatientsPagination()
   void loadPatients()
@@ -1027,17 +1020,13 @@ function clearFilters() {
 
   const shouldReload =
     Boolean(appliedSearch.value.trim()) ||
-    appliedStatusFilter.value !== 'all' ||
     Boolean(searchText.value.trim()) ||
-    statusFilter.value !== 'all' ||
     appliedSiteFilter.value.length > 0 ||
     siteFilter.value.length > 0
   if (!shouldReload) return
 
   searchText.value = ''
   appliedSearch.value = ''
-  statusFilter.value = 'all'
-  appliedStatusFilter.value = 'all'
   siteFilter.value = []
   appliedSiteFilter.value = []
   resetPatientsPagination()
@@ -1051,10 +1040,7 @@ async function toggleFilters() {
 }
 
 function removeFilterChip(key: string) {
-  if (key === 'status') {
-    statusFilter.value = 'all'
-    appliedStatusFilter.value = 'all'
-  } else if (key === 'site') {
+  if (key === 'site') {
     siteFilter.value = []
     appliedSiteFilter.value = []
   }
@@ -1372,6 +1358,14 @@ void loadPatients()
     description="Patient registration, lookup, updates, site assignment, and deactivation"
   >
     <template #actions>
+      <ToolbarIconButton
+        :disabled="!canReadPatients"
+        title="Refresh patients"
+        ariaLabel="Refresh patients"
+        @click="refreshPatients"
+      >
+        <RefreshCcw :size="16" />
+      </ToolbarIconButton>
       <CreateActionButton
         label="Register patient"
         :disabled="!canCreatePatients"
@@ -1428,31 +1422,12 @@ void loadPatients()
               selectedItemsLabel="{0} columns"
             />
           </div>
-          <ToolbarIconButton
-            :disabled="!canReadPatients"
-            title="Refresh patients"
-            ariaLabel="Refresh patients"
-            @click="refreshPatients"
-          >
-            <RefreshCcw :size="16" />
-          </ToolbarIconButton>
         </div>
       </div>
 
       <Transition name="panel-slide">
         <div v-if="filtersExpanded" class="filter-panel">
           <div class="filter-panel-grid">
-            <FilterPanelField label="Status">
-              <Select
-                v-model="statusFilter"
-                :options="statusFilterOptions"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="All statuses"
-                :disabled="!canReadPatients"
-                @change="applyFilters"
-              />
-            </FilterPanelField>
             <FilterPanelField label="Site">
               <MultiSelect
                 v-model="siteFilter"
@@ -1494,77 +1469,79 @@ void loadPatients()
         </TransitionGroup>
       </div>
 
-      <div class="patients-table-scroll">
-        <DataTable
-          :value="patients"
-          class="patients-table"
-          :tableStyle="{ minWidth: `${patientTableMinWidth}rem` }"
-          :loading="patientsLoading"
-          stripedRows
-          rowHover
-        >
-          <template #empty>
-            <div class="table-empty">No patients match the current filters.</div>
+      <DataTable
+        v-model:selection="selectedPatients"
+        :value="patients"
+        dataKey="id"
+        class="patients-table"
+        :tableStyle="{ minWidth: `${patientTableMinWidth}rem` }"
+        :loading="patientsLoading"
+        paginator
+        :rows="limit"
+        :first="paginatorFirst"
+        :totalRecords="paginatorTotalRecords"
+        :paginatorTemplate="TABLE_PAGINATOR_TEMPLATE"
+        :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
+        :rowsPerPageOptions="[...TABLE_ROWS_PER_PAGE_OPTIONS]"
+        scrollable
+        @page="onPageChange"
+        stripedRows
+        rowHover
+      >
+        <template #empty>
+          <div class="table-empty">No patients match the current filters.</div>
+        </template>
+        <Column selectionMode="multiple" style="width: 3rem" />
+        <Column v-if="isPatientColumnVisible('fullName')" field="fullName" header="Patient" style="min-width: 11rem" />
+        <Column v-if="isPatientColumnVisible('ageSex')" header="Age/Sex" style="min-width: 8.5rem">
+          <template #body="{ data }">
+            <span>{{ formatAgeSex(data.dateOfBirth, data.sex) }}</span>
           </template>
-          <Column v-if="isPatientColumnVisible('fullName')" field="fullName" header="Patient" style="min-width: 11rem" />
-          <Column v-if="isPatientColumnVisible('dateOfBirth')" header="DOB" style="min-width: 8.5rem">
-            <template #body="{ data }">
-              <div class="cell-stack">
-                <span>{{ formatDate(data.dateOfBirth) }}</span>
-                <span v-if="data.isDobEstimated" class="cell-subtle">Estimated</span>
-              </div>
-            </template>
-          </Column>
-          <Column v-if="isPatientColumnVisible('sex')" header="Sex" style="min-width: 7.5rem">
-            <template #body="{ data }">
-              <span>{{ formatSex(data.sex) }}</span>
-            </template>
-          </Column>
-          <Column v-if="isPatientColumnVisible('village')" header="Village" style="min-width: 10rem">
-            <template #body="{ data }">
-              <span class="cell-truncate" :title="data.village || 'N/A'">{{ data.village || 'N/A' }}</span>
-            </template>
-          </Column>
-          <Column v-if="isPatientColumnVisible('createdBy')" header="Created by" style="min-width: 12rem">
-            <template #body="{ data }">
-              <span class="cell-truncate" :title="createdByLabel(data)">{{ createdByLabel(data) }}</span>
-            </template>
-          </Column>
-          <Column v-if="isPatientColumnVisible('createdAt')" header="Created" style="min-width: 10.5rem">
-            <template #body="{ data }">
-              <span class="cell-date">{{ formatDateTime(data.createdAt) }}</span>
-            </template>
-          </Column>
-          <Column v-if="isPatientColumnVisible('updatedAt')" header="Updated" style="min-width: 10.5rem">
-            <template #body="{ data }">
-              <span class="cell-date">{{ formatDateTime(data.updatedAt) }}</span>
-            </template>
-          </Column>
-          <Column v-if="isPatientColumnVisible('status')" header="Status" style="width: 8rem">
-            <template #body="{ data }">
-              <span class="status-cell" :class="statusClass(data.status)">
-                <span class="status-dot"></span>
-                {{ formatStatus(data.status) }}
-              </span>
-            </template>
-          </Column>
-          <Column header="" style="width: 3.5rem">
-            <template #body="{ data }">
-              <div class="actions">
-                <RowActionButton
-                  :disabled="!canOpenActionsForPatient(data)"
-                  :loading="statusToggleInFlightPatientId === data.id"
-                  ariaLabel="Open patient actions"
-                  title="Open patient actions"
-                  @click="openRowActionMenu($event, data)"
-                >
-                  <MoreHorizontal :size="16" />
-                </RowActionButton>
-              </div>
-            </template>
-          </Column>
-        </DataTable>
-      </div>
+        </Column>
+        <Column v-if="isPatientColumnVisible('village')" header="Village" style="min-width: 10rem">
+          <template #body="{ data }">
+            <span class="cell-truncate" :title="data.village || 'N/A'">{{ data.village || 'N/A' }}</span>
+          </template>
+        </Column>
+        <Column v-if="isPatientColumnVisible('createdBy')" header="Created by" style="min-width: 12rem">
+          <template #body="{ data }">
+            <span class="cell-truncate" :title="createdByLabel(data)">{{ createdByLabel(data) }}</span>
+          </template>
+        </Column>
+        <Column v-if="isPatientColumnVisible('createdAt')" header="Created" style="min-width: 10.5rem">
+          <template #body="{ data }">
+            <span class="cell-date">{{ formatDateTime(data.createdAt) }}</span>
+          </template>
+        </Column>
+        <Column v-if="isPatientColumnVisible('updatedAt')" header="Updated" style="min-width: 10.5rem">
+          <template #body="{ data }">
+            <span class="cell-date">{{ formatDateTime(data.updatedAt) }}</span>
+          </template>
+        </Column>
+        <Column v-if="isPatientColumnVisible('status')" header="Status" style="width: 8rem">
+          <template #body="{ data }">
+            <span class="status-cell" :class="statusClass(data.status)">
+              <span class="status-dot"></span>
+              {{ formatStatus(data.status) }}
+            </span>
+          </template>
+        </Column>
+        <Column header="" style="width: 3.5rem">
+          <template #body="{ data }">
+            <div class="actions">
+              <RowActionButton
+                :disabled="!canOpenActionsForPatient(data)"
+                :loading="statusToggleInFlightPatientId === data.id"
+                ariaLabel="Open patient actions"
+                title="Open patient actions"
+                @click="openRowActionMenu($event, data)"
+              >
+                <MoreHorizontal :size="16" />
+              </RowActionButton>
+            </div>
+          </template>
+        </Column>
+      </DataTable>
 
       <Menu ref="rowActionMenu" :model="rowActionItems" popup>
         <template #item="{ item, props }">
@@ -1581,22 +1558,6 @@ void loadPatients()
           </a>
         </template>
       </Menu>
-
-      <div class="table-footer">
-        <p v-if="totalPatients !== null" class="page-meta">
-          Showing {{ pageStart }}-{{ pageEnd }} of {{ totalPatients }}
-        </p>
-        <p v-else class="page-meta">Showing {{ pageStart }}-{{ pageEnd }}</p>
-        <Paginator
-          :rows="limit"
-          :first="paginatorFirst"
-          :totalRecords="paginatorTotalRecords"
-          template="PrevPageLink CurrentPageReport NextPageLink RowsPerPageDropdown"
-          currentPageReportTemplate="Page {currentPage}"
-          :rowsPerPageOptions="[10, 20, 50, 100]"
-          @page="onPageChange"
-        />
-      </div>
     </template>
   </Card>
 
@@ -2223,19 +2184,6 @@ void loadPatients()
   flex-wrap: wrap;
 }
 
-.patients-table-scroll {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-gutter: stable;
-}
-
-.patients-table-scroll :deep(.patients-table.p-datatable) {
-  width: max-content;
-}
-
 :deep(.patients-card .p-card-body) {
   min-width: 0;
   width: 100%;
@@ -2253,29 +2201,6 @@ void loadPatients()
   padding: 1rem;
   color: var(--p-surface-600);
   font-size: 0.82rem;
-}
-
-.table-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-top: 0.65rem;
-  padding-top: 0.55rem;
-}
-
-.table-footer :deep(.p-paginator) {
-  margin-left: auto;
-  padding: 0;
-  border: none;
-  background: transparent;
-}
-
-.page-meta {
-  margin: 0;
-  color: var(--p-surface-600);
-  font-size: 0.78rem;
 }
 
 .dialog-grid {

@@ -199,6 +199,42 @@ function toggleSidebar() {
   background: var(--p-surface-100);
 }
 
+:global(.p-datatable .p-datatable-paginator-bottom) {
+  border-bottom-width: 0;
+}
+
+:global(.p-datatable .p-paginator) {
+  border: none;
+  background: transparent;
+  padding: 0.55rem 0 0;
+}
+
+:global(.p-datatable .p-paginator .p-paginator-prev),
+:global(.p-datatable .p-paginator .p-paginator-next),
+:global(.p-datatable .p-paginator .p-paginator-page) {
+  min-width: 2rem;
+  height: 2rem;
+  border-radius: 0.55rem;
+  border: 1px solid var(--p-surface-200);
+  background: var(--p-surface-50);
+  color: var(--p-surface-700);
+  transition: all 0.15s ease;
+}
+
+:global(.p-datatable .p-paginator .p-paginator-prev:hover),
+:global(.p-datatable .p-paginator .p-paginator-next:hover),
+:global(.p-datatable .p-paginator .p-paginator-page:hover) {
+  border-color: var(--p-surface-400);
+  background: var(--p-surface-100);
+  color: var(--p-surface-900);
+}
+
+:global(.p-datatable .p-paginator .p-paginator-page.p-highlight) {
+  border-color: color-mix(in srgb, var(--p-primary-color) 35%, var(--p-surface-200));
+  background: color-mix(in srgb, var(--p-primary-color) 12%, var(--p-surface-50));
+  color: var(--p-primary-700);
+}
+
 .layout-shell {
   --sidebar-width: 240px;
   min-height: 100vh;

@@ -6,14 +6,12 @@ import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 <template>
   <PageSectionHeader
     title="Screenings"
-    description="Review screening queue context and readiness for follow-up actions"
+    description="Page temporarily paused for redesign"
   />
 
   <Card>
     <template #content>
-      <p class="helper-copy">
-        Screening workflows will be surfaced on this page.
-      </p>
+      <p class="helper-copy">Screenings redesign is scheduled for tomorrow.</p>
     </template>
   </Card>
 </template>

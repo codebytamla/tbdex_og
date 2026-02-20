@@ -18,6 +18,12 @@ import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
 import ToolbarIconButton from '@/components/ui/ToolbarIconButton.vue'
+import {
+  TABLE_DEFAULT_ROWS,
+  TABLE_PAGE_REPORT_TEMPLATE,
+  TABLE_PAGINATOR_TEMPLATE,
+  TABLE_ROWS_PER_PAGE_OPTIONS,
+} from '@/components/ui/tablePagination'
 
 type Site = {
   id: string
@@ -348,6 +354,9 @@ void loadSites()
 <template>
   <PageSectionHeader title="Sites" description="Create and manage active service sites">
     <template #actions>
+      <ToolbarIconButton :disabled="!canManageSites" title="Refresh sites" ariaLabel="Refresh sites" @click="loadSites">
+        <RefreshCcw :size="16" />
+      </ToolbarIconButton>
       <CreateActionButton label="Create site" :disabled="!canManageSites" @click="openCreateDialog" />
     </template>
   </PageSectionHeader>
@@ -361,13 +370,16 @@ void loadSites()
 
   <Card class="sites-card">
     <template #content>
-      <div class="table-tools">
-        <ToolbarIconButton :disabled="!canManageSites" title="Refresh sites" ariaLabel="Refresh sites" @click="loadSites">
-          <RefreshCcw :size="16" />
-        </ToolbarIconButton>
-      </div>
-
-      <DataTable :value="sites" tableStyle="min-width: 44rem" :loading="loading">
+      <DataTable
+        :value="sites"
+        tableStyle="min-width: 44rem"
+        :loading="loading"
+        paginator
+        :rows="TABLE_DEFAULT_ROWS"
+        :rowsPerPageOptions="[...TABLE_ROWS_PER_PAGE_OPTIONS]"
+        :paginatorTemplate="TABLE_PAGINATOR_TEMPLATE"
+        :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
+      >
         <Column field="name" header="Name" />
         <Column field="code" header="Code" />
         <Column header="Type">

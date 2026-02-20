@@ -24,7 +24,6 @@ import InputText from 'primevue/inputtext'
 import Menu from 'primevue/menu'
 import Message from 'primevue/message'
 import MultiSelect from 'primevue/multiselect'
-import Paginator from 'primevue/paginator'
 import Password from 'primevue/password'
 import type { MenuItem } from 'primevue/menuitem'
 import { useConfirm } from 'primevue/useconfirm'
@@ -35,6 +34,11 @@ import FilterPanelField from '@/components/ui/FilterPanelField.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
 import ToolbarIconButton from '@/components/ui/ToolbarIconButton.vue'
+import {
+  TABLE_PAGE_REPORT_TEMPLATE,
+  TABLE_PAGINATOR_TEMPLATE,
+  TABLE_ROWS_PER_PAGE_OPTIONS,
+} from '@/components/ui/tablePagination'
 
 type AdminUser = {
   id: string
@@ -52,7 +56,6 @@ type RoleOption = {
   description: string
 }
 
-type StatusFilterValue = 'all' | 'active' | 'disabled'
 type SiteOption = {
   id: string
   name: string
@@ -98,8 +101,6 @@ const nextCursor = ref<string | null>(null)
 const hasNextPage = ref(false)
 const searchText = ref('')
 const appliedSearch = ref('')
-const statusFilter = ref<StatusFilterValue>('all')
-const appliedStatusFilter = ref<StatusFilterValue>('all')
 const roleFilter = ref<string[]>([])
 const appliedRoleFilter = ref<string[]>([])
 const siteFilter = ref<string[]>([])
@@ -158,30 +159,21 @@ const statusToggleInFlightUserId = ref<string | null>(null)
 const rowActionMenu = ref()
 const selectedMenuUser = ref<AdminUser | null>(null)
 
-const pageStart = computed(() => (users.value.length === 0 ? 0 : pageIndex.value * limit.value + 1))
-const pageEnd = computed(() => (users.value.length === 0 ? 0 : pageIndex.value * limit.value + users.value.length))
 const paginatorFirst = computed(() => pageIndex.value * limit.value)
 const paginatorTotalRecords = computed(() => {
   if (typeof totalUsers.value === 'number' && Number.isFinite(totalUsers.value)) return totalUsers.value
   if (hasNextPage.value) return paginatorFirst.value + limit.value + 1
   return paginatorFirst.value + users.value.length
 })
-const statusFilterOptions: Array<{ label: string; value: StatusFilterValue }> = [
-  { label: 'All statuses', value: 'all' },
-  { label: 'Active', value: 'active' },
-  { label: 'Disabled', value: 'disabled' },
-]
 const filtersExpanded = ref(false)
 const hasPendingFilters = computed(
   () =>
     Boolean(searchText.value.trim()) ||
-    statusFilter.value !== 'all' ||
     roleFilter.value.length > 0 ||
     siteFilter.value.length > 0,
 )
 const activeFilterCount = computed(() => {
   let count = 0
-  if (appliedStatusFilter.value !== 'all') count++
   if (appliedRoleFilter.value.length > 0) count++
   if (appliedSiteFilter.value.length > 0) count++
   return count
@@ -189,10 +181,6 @@ const activeFilterCount = computed(() => {
 type FilterChip = { key: string; label: string }
 const activeFilterChips = computed<FilterChip[]>(() => {
   const chips: FilterChip[] = []
-  if (appliedStatusFilter.value !== 'all') {
-    const label = appliedStatusFilter.value === 'active' ? 'Active' : 'Disabled'
-    chips.push({ key: 'status', label: `Status: ${label}` })
-  }
   if (appliedRoleFilter.value.length > 0) {
     const names = appliedRoleFilter.value.join(', ')
     chips.push({ key: 'roles', label: appliedRoleFilter.value.length === 1 ? `Role: ${names}` : `Roles: ${names}` })
@@ -208,10 +196,7 @@ const activeFilterChips = computed<FilterChip[]>(() => {
 })
 
 function removeFilterChip(key: string) {
-  if (key === 'status') {
-    statusFilter.value = 'all'
-    appliedStatusFilter.value = 'all'
-  } else if (key === 'roles') {
+  if (key === 'roles') {
     roleFilter.value = []
     appliedRoleFilter.value = []
   } else if (key === 'sites') {
@@ -797,8 +782,6 @@ async function loadUsers() {
     if (appliedSearch.value.trim()) {
       params.set('search', appliedSearch.value.trim())
     }
-    if (appliedStatusFilter.value === 'active') params.set('is_active', 'true')
-    if (appliedStatusFilter.value === 'disabled') params.set('is_active', 'false')
     for (const roleName of appliedRoleFilter.value) {
       params.append('role', roleName)
     }
@@ -918,12 +901,10 @@ function applyFilters() {
   }
 
   const nextSearch = searchText.value.trim()
-  const nextStatus = statusFilter.value
   const nextRoleFilter = normalizeSelection(roleFilter.value)
   const nextSiteFilter = normalizeSelection(siteFilter.value)
   const filtersChanged =
     nextSearch !== appliedSearch.value ||
-    nextStatus !== appliedStatusFilter.value ||
     nextRoleFilter.join('|') !== appliedRoleFilter.value.join('|') ||
     nextSiteFilter.join('|') !== appliedSiteFilter.value.join('|')
   if (!filtersChanged) return
@@ -932,7 +913,6 @@ function applyFilters() {
   siteFilter.value = [...nextSiteFilter]
   resetUsersPagination()
   appliedSearch.value = nextSearch
-  appliedStatusFilter.value = nextStatus
   appliedRoleFilter.value = [...nextRoleFilter]
   appliedSiteFilter.value = [...nextSiteFilter]
   void loadUsers()
@@ -953,20 +933,16 @@ function clearFilters() {
   }
   const shouldReload =
     Boolean(appliedSearch.value.trim()) ||
-    appliedStatusFilter.value !== 'all' ||
     Boolean(searchText.value.trim()) ||
-    statusFilter.value !== 'all' ||
     appliedRoleFilter.value.length > 0 ||
     roleFilter.value.length > 0 ||
     appliedSiteFilter.value.length > 0 ||
     siteFilter.value.length > 0
   if (!shouldReload) return
   searchText.value = ''
-  statusFilter.value = 'all'
   roleFilter.value = []
   siteFilter.value = []
   appliedSearch.value = ''
-  appliedStatusFilter.value = 'all'
   appliedRoleFilter.value = []
   appliedSiteFilter.value = []
   resetUsersPagination()
@@ -1289,6 +1265,9 @@ void loadUsers()
 <template>
   <PageSectionHeader title="Users" description="Manage users, profile data, roles, sites, and password resets">
     <template #actions>
+      <ToolbarIconButton :disabled="!canReadUsers" title="Refresh users" ariaLabel="Refresh users" @click="refreshUsers">
+        <RefreshCcw :size="16" />
+      </ToolbarIconButton>
       <CreateActionButton label="Create user" :disabled="!canManageUsers" @click="openCreateDialog" />
     </template>
   </PageSectionHeader>
@@ -1352,27 +1331,11 @@ void loadUsers()
             <span v-if="activeFilterCount > 0" class="filter-badge">{{ activeFilterCount }}</span>
           </button>
         </div>
-        <div class="toolbar-right">
-          <ToolbarIconButton :disabled="!canReadUsers" title="Refresh users" ariaLabel="Refresh users" @click="refreshUsers">
-            <RefreshCcw :size="16" />
-          </ToolbarIconButton>
-        </div>
       </div>
 
       <Transition name="panel-slide">
         <div v-if="filtersExpanded" class="filter-panel">
           <div class="filter-panel-grid">
-            <FilterPanelField label="Status">
-              <Select
-                v-model="statusFilter"
-                :options="statusFilterOptions"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="All statuses"
-                :disabled="!canReadUsers"
-                @change="applyFilters"
-              />
-            </FilterPanelField>
             <FilterPanelField label="Role">
               <MultiSelect
                 v-model="roleFilter"
@@ -1429,6 +1392,14 @@ void loadUsers()
         :value="users"
         tableStyle="min-width: 44rem"
         :loading="usersLoading"
+        paginator
+        :rows="limit"
+        :first="paginatorFirst"
+        :totalRecords="paginatorTotalRecords"
+        :paginatorTemplate="TABLE_PAGINATOR_TEMPLATE"
+        :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
+        :rowsPerPageOptions="[...TABLE_ROWS_PER_PAGE_OPTIONS]"
+        @page="onPageChange"
         stripedRows
         rowHover
       >
@@ -1499,22 +1470,6 @@ void loadUsers()
           </a>
         </template>
       </Menu>
-
-      <div class="table-footer">
-        <p v-if="totalUsers !== null" class="page-meta">
-          Showing {{ pageStart }}-{{ pageEnd }} of {{ totalUsers }}
-        </p>
-        <p v-else class="page-meta">Showing {{ pageStart }}-{{ pageEnd }}</p>
-        <Paginator
-          :rows="limit"
-          :first="paginatorFirst"
-          :totalRecords="paginatorTotalRecords"
-          template="PrevPageLink CurrentPageReport NextPageLink RowsPerPageDropdown"
-          currentPageReportTemplate="Page {currentPage}"
-          :rowsPerPageOptions="[10, 20, 50, 100]"
-          @page="onPageChange"
-        />
-      </div>
     </template>
   </Card>
 
@@ -2068,29 +2023,6 @@ void loadUsers()
   padding: 1rem;
   color: var(--p-surface-600);
   font-size: 0.82rem;
-}
-
-.table-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-top: 0.65rem;
-  padding-top: 0.55rem;
-}
-
-.table-footer :deep(.p-paginator) {
-  margin-left: auto;
-  padding: 0;
-  border: none;
-  background: transparent;
-}
-
-.page-meta {
-  margin: 0;
-  color: var(--p-surface-600);
-  font-size: 0.78rem;
 }
 
 .dialog-grid {

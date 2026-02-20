@@ -18,6 +18,12 @@ import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
 import ToolbarIconButton from '@/components/ui/ToolbarIconButton.vue'
+import {
+  TABLE_DEFAULT_ROWS,
+  TABLE_PAGE_REPORT_TEMPLATE,
+  TABLE_PAGINATOR_TEMPLATE,
+  TABLE_ROWS_PER_PAGE_OPTIONS,
+} from '@/components/ui/tablePagination'
 
 type DialogMode = 'create' | 'edit' | 'view'
 
@@ -397,6 +403,9 @@ void loadRoles()
 <template>
   <PageSectionHeader title="Roles" description="Manage role definitions and permission assignments">
     <template #actions>
+      <ToolbarIconButton :disabled="!canManageRoles" title="Refresh roles" ariaLabel="Refresh roles" @click="loadRoles">
+        <RefreshCcw :size="16" />
+      </ToolbarIconButton>
       <CreateActionButton label="Create role" :disabled="!canManageRoles" @click="openCreateDialog" />
     </template>
   </PageSectionHeader>
@@ -410,12 +419,16 @@ void loadRoles()
 
   <Card class="roles-card">
     <template #content>
-      <div class="table-tools">
-        <ToolbarIconButton :disabled="!canManageRoles" title="Refresh roles" ariaLabel="Refresh roles" @click="loadRoles">
-          <RefreshCcw :size="16" />
-        </ToolbarIconButton>
-      </div>
-      <DataTable :value="roles" tableStyle="min-width: 32rem" :loading="rolesLoading">
+      <DataTable
+        :value="roles"
+        tableStyle="min-width: 32rem"
+        :loading="rolesLoading"
+        paginator
+        :rows="TABLE_DEFAULT_ROWS"
+        :rowsPerPageOptions="[...TABLE_ROWS_PER_PAGE_OPTIONS]"
+        :paginatorTemplate="TABLE_PAGINATOR_TEMPLATE"
+        :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
+      >
         <Column field="name" header="Role" />
         <Column field="description" header="Description" />
         <Column header="" style="width: 3.5rem">
