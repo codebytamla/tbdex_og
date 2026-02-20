@@ -150,6 +150,7 @@ function toggleSidebar() {
   --page-section-margin-bottom: 1.15rem;
   --page-content-padding: 1.5rem;
   --page-content-padding-mobile: 1rem;
+  --page-content-top-offset: 0.45rem;
 }
 
 :global(body) {
@@ -205,6 +206,25 @@ function toggleSidebar() {
 
 :global(.p-datatable .p-datatable-tbody > tr:not(.p-datatable-row-selected):hover > td) {
   background: var(--p-surface-100);
+}
+
+:global(.p-datatable .p-datatable-thead .p-checkbox),
+:global(.p-datatable .p-datatable-tbody .p-checkbox) {
+  width: 1rem;
+  height: 1rem;
+}
+
+:global(.p-datatable .p-datatable-thead .p-checkbox .p-checkbox-box),
+:global(.p-datatable .p-datatable-tbody .p-checkbox .p-checkbox-box) {
+  width: 1rem;
+  height: 1rem;
+}
+
+:global(.p-datatable .p-datatable-thead .p-checkbox .p-checkbox-icon),
+:global(.p-datatable .p-datatable-tbody .p-checkbox .p-checkbox-icon) {
+  width: 0.75rem;
+  height: 0.75rem;
+  font-size: 0.75rem;
 }
 
 :global(.p-datatable .p-datatable-paginator-bottom) {
@@ -689,7 +709,10 @@ function toggleSidebar() {
 }
 
 .content {
-  padding: var(--page-content-padding);
+  padding:
+    calc(var(--page-content-padding) + var(--page-content-top-offset))
+    var(--page-content-padding)
+    var(--page-content-padding);
   min-width: 0;
   height: 100vh;
   overflow-y: auto;
