@@ -537,7 +537,12 @@ void loadRoles()
 
     <template #footer>
       <div class="dialog-actions">
-        <Button label="Close" text @click="dialogVisible = false" />
+        <Button
+          label="Close"
+          :class="{ 'create-cancel-btn': dialogMode === 'create' }"
+          :text="dialogMode !== 'create'"
+          @click="dialogVisible = false"
+        />
         <Button
           v-if="dialogMode !== 'view'"
           :label="dialogMode === 'create' ? 'Create role' : 'Save changes'"
@@ -563,7 +568,7 @@ void loadRoles()
 
 .table-search {
   width: 100%;
-  max-width: 26rem;
+  max-width: 17.33rem;
   height: var(--app-control-height);
   min-height: var(--app-control-height);
   box-sizing: border-box;
@@ -664,6 +669,21 @@ void loadRoles()
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
+}
+
+:deep(.create-cancel-btn),
+:deep(.create-cancel-btn.p-button) {
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: var(--p-surface-500) !important;
+}
+
+:deep(.create-cancel-btn:hover) {
+  background: transparent !important;
+  color: var(--p-surface-700) !important;
+  box-shadow: none !important;
 }
 
 .menu-action-item {

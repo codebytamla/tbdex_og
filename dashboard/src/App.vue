@@ -175,6 +175,14 @@ function toggleSidebar() {
 
 :global(.p-button) {
   border-radius: var(--app-control-radius);
+  box-sizing: border-box;
+  transform: none;
+}
+
+:global(.p-button:hover),
+:global(.p-button:active),
+:global(.p-button:focus-visible) {
+  transform: none;
 }
 
 :global(#app) {
@@ -356,9 +364,9 @@ function toggleSidebar() {
 /* ── DataTable column filter overlay ─────────────────── */
 
 :global(.p-datatable-filter-overlay) {
-  border: 1px solid var(--p-surface-200);
+  border: none;
   border-radius: 0.62rem;
-  box-shadow: 0 4px 16px rgb(0 0 0 / 10%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 8%);
   background: var(--p-surface-0);
   font-family: var(--app-font-family);
   min-width: 14rem;
@@ -366,13 +374,15 @@ function toggleSidebar() {
 
 :global(.p-datatable-filter-overlay .p-datatable-filter-constraint) {
   padding: 0.75rem;
-  border-color: var(--p-surface-200);
+  border-color: color-mix(in srgb, var(--p-surface-300) 35%, transparent);
 }
 
 :global(.p-datatable-filter-overlay .p-datatable-filter-buttonbar) {
   padding: 0.55rem 0.75rem;
-  display: flex;
-  justify-content: flex-end;
+  display: flex !important;
+  width: 100%;
+  justify-content: flex-end !important;
+  align-items: center;
   gap: 0.4rem;
 }
 
@@ -380,6 +390,69 @@ function toggleSidebar() {
   font-size: 0.82rem;
   padding: 0.35rem 0.8rem;
   min-width: 0;
+  min-height: 2rem;
+  line-height: 1;
+  margin: 0 !important;
+  border: none;
+  box-shadow: none;
+}
+
+:global(.p-datatable-filter-overlay .p-datatable-filter-buttonbar .p-button:hover),
+:global(.p-datatable-filter-overlay .p-datatable-filter-buttonbar .p-button:focus-visible) {
+  border: none;
+  box-shadow: none;
+}
+
+:global(.p-datatable-filter-overlay .p-datatable-filter-buttonbar .p-datatable-filter-clear-button),
+:global(.p-datatable-filter-overlay .p-datatable-filter-buttonbar .p-button:first-child) {
+  color: var(--p-red-600);
+}
+
+:global(.p-datatable-filter-overlay .p-datatable-filter-buttonbar .p-datatable-filter-clear-button:hover),
+:global(.p-datatable-filter-overlay .p-datatable-filter-buttonbar .p-button:first-child:hover) {
+  color: var(--p-red-700);
+  background: color-mix(in srgb, var(--p-red-500) 12%, transparent);
+}
+
+:global(.p-datatable-filter-overlay .p-select),
+:global(.p-datatable-filter-overlay .p-dropdown),
+:global(.p-datatable-filter-overlay .p-multiselect) {
+  border: 1px solid color-mix(in srgb, var(--p-surface-300) 45%, transparent) !important;
+  border-color: color-mix(in srgb, var(--p-surface-300) 45%, transparent) !important;
+  box-shadow: none;
+  background: var(--p-surface-50);
+}
+
+:global(.p-datatable-filter-overlay .p-select:hover),
+:global(.p-datatable-filter-overlay .p-dropdown:hover),
+:global(.p-datatable-filter-overlay .p-multiselect:hover) {
+  border-color: color-mix(in srgb, var(--p-surface-300) 65%, transparent) !important;
+}
+
+:global(.p-datatable-filter-overlay .p-select.p-focus),
+:global(.p-datatable-filter-overlay .p-dropdown.p-focus),
+:global(.p-datatable-filter-overlay .p-multiselect.p-focus),
+:global(.p-datatable-filter-overlay .p-select:focus-within),
+:global(.p-datatable-filter-overlay .p-dropdown:focus-within),
+:global(.p-datatable-filter-overlay .p-multiselect:focus-within) {
+  border-color: color-mix(in srgb, var(--p-surface-400) 70%, transparent) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--p-surface-300) 28%, transparent);
+}
+
+:global(.p-datatable-filter-overlay .p-select.p-filled),
+:global(.p-datatable-filter-overlay .p-dropdown.p-filled),
+:global(.p-datatable-filter-overlay .p-multiselect.p-filled),
+:global(.p-datatable-filter-overlay .p-inputwrapper-filled .p-select),
+:global(.p-datatable-filter-overlay .p-inputwrapper-filled .p-dropdown),
+:global(.p-datatable-filter-overlay .p-inputwrapper-filled .p-multiselect) {
+  border-color: color-mix(in srgb, var(--p-surface-300) 45%, transparent) !important;
+}
+
+:global(.p-select-overlay),
+:global(.p-dropdown-panel),
+:global(.p-multiselect-overlay) {
+  border: 1px solid color-mix(in srgb, var(--p-surface-300) 45%, transparent);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 8%);
 }
 
 :global(.p-datatable-column-filter-button) {
@@ -489,7 +562,7 @@ function toggleSidebar() {
   height: 2rem;
   border: none;
   background: transparent;
-  color: var(--p-surface-700);
+  color: var(--p-surface-600);
   border-radius: 0.55rem;
   flex: 0 0 auto;
   display: inline-flex;
@@ -499,7 +572,7 @@ function toggleSidebar() {
 }
 
 .sidebar-toggle-btn:hover {
-  background: color-mix(in srgb, var(--p-primary-color) 10%, var(--p-surface-0));
+  background: color-mix(in srgb, var(--p-primary-color) 6%, var(--p-surface-50));
 }
 
 .sidebar-toggle-btn:focus-visible {

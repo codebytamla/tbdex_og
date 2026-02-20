@@ -494,7 +494,7 @@ void loadSites()
 
     <template #footer>
       <div class="dialog-actions">
-        <Button label="Cancel" text @click="dialogVisible = false" />
+        <Button label="Cancel" :class="{ 'create-cancel-btn': dialogMode === 'create' }" :text="dialogMode !== 'create'" @click="dialogVisible = false" />
         <Button :label="dialogMode === 'create' ? 'Create site' : 'Save changes'" :loading="dialogBusy" @click="submitSite" />
       </div>
     </template>
@@ -514,7 +514,7 @@ void loadSites()
 
 .table-search {
   width: 100%;
-  max-width: 26rem;
+  max-width: 17.33rem;
   height: var(--app-control-height);
   min-height: var(--app-control-height);
   box-sizing: border-box;
@@ -601,6 +601,21 @@ void loadSites()
   gap: 0.45rem;
   justify-content: flex-end;
   width: 100%;
+}
+
+:deep(.create-cancel-btn),
+:deep(.create-cancel-btn.p-button) {
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: var(--p-surface-500) !important;
+}
+
+:deep(.create-cancel-btn:hover) {
+  background: transparent !important;
+  color: var(--p-surface-700) !important;
+  box-shadow: none !important;
 }
 
 .menu-action-item {

@@ -1388,7 +1388,7 @@ void loadSitesCatalog({ silent: true })
 
     <template #footer>
       <div class="dialog-actions">
-        <Button label="Cancel" text @click="createDialogVisible = false" />
+        <Button label="Cancel" class="create-cancel-btn" @click="createDialogVisible = false" />
         <Button label="Create user" :loading="createDialogBusy" @click="submitCreateUser" />
       </div>
     </template>
@@ -1530,7 +1530,7 @@ void loadSitesCatalog({ silent: true })
 
 .table-search {
   width: 100%;
-  max-width: 26rem;
+  max-width: 17.33rem;
   height: var(--app-control-height);
   min-height: var(--app-control-height);
   box-sizing: border-box;
@@ -1731,6 +1731,21 @@ void loadSitesCatalog({ silent: true })
   align-items: center;
   justify-content: flex-end;
   gap: 0.45rem;
+}
+
+:deep(.create-cancel-btn),
+:deep(.create-cancel-btn.p-button) {
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: var(--p-surface-500) !important;
+}
+
+:deep(.create-cancel-btn:hover) {
+  background: transparent !important;
+  color: var(--p-surface-700) !important;
+  box-shadow: none !important;
 }
 
 .menu-action-item {

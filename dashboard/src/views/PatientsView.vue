@@ -73,22 +73,6 @@ type SiteOption = {
   code: string
 }
 
-type PatientColumnKey =
-  | 'fullName'
-  | 'ageSex'
-  | 'village'
-  | 'site'
-  | 'createdBy'
-  | 'createdAt'
-  | 'updatedAt'
-  | 'status'
-
-type PatientColumnOption = {
-  label: string
-  value: PatientColumnKey
-  minWidthRem: number
-}
-
 type ActionMenuItem = MenuItem & {
   lucideIcon: Component
   tone?: 'danger'
@@ -188,20 +172,6 @@ const sitesForm = reactive({
   site_id: '',
 })
 
-const patientColumnOptions: PatientColumnOption[] = [
-  { label: 'Full name', value: 'fullName', minWidthRem: 11 },
-  { label: 'Age/Sex', value: 'ageSex', minWidthRem: 8.5 },
-  { label: 'Village', value: 'village', minWidthRem: 10 },
-  { label: 'Site', value: 'site', minWidthRem: 10 },
-  { label: 'Created by', value: 'createdBy', minWidthRem: 12 },
-  { label: 'Created', value: 'createdAt', minWidthRem: 10.5 },
-  { label: 'Updated', value: 'updatedAt', minWidthRem: 10.5 },
-  { label: 'Status', value: 'status', minWidthRem: 8 },
-]
-
-const allPatientColumnKeys = patientColumnOptions.map((column) => column.value)
-const fallbackPatientColumns: PatientColumnKey[] = ['fullName']
-const visiblePatientColumns = ref<PatientColumnKey[]>([...allPatientColumnKeys])
 const selectedPatients = ref<Patient[]>([])
 
 const statusToggleInFlightPatientId = ref<string | null>(null)
@@ -240,23 +210,6 @@ const siteOptionsForSelect = computed(() =>
     .map((site) => ({ label: site.name, value: site.id }))
     .sort((a, b) => a.label.localeCompare(b.label)),
 )
-
-const selectedPatientColumns = computed<PatientColumnKey[]>({
-  get: () => visiblePatientColumns.value,
-  set: (value: unknown) => {
-    visiblePatientColumns.value = normalizePatientColumns(value)
-  },
-})
-
-const patientTableMinWidth = computed(() => {
-  const dataColumnsWidth = patientColumnOptions
-    .filter((column) => visiblePatientColumns.value.includes(column.value))
-    .reduce((total, column) => total + column.minWidthRem, 0)
-
-  const selectionColumnWidth = 3
-  const actionColumnWidth = 3.5
-  return Math.max(24, dataColumnsWidth + selectionColumnWidth + actionColumnWidth)
-})
 
 const rowActionItems = computed<ActionMenuItem[]>(() => [
   {
@@ -652,28 +605,6 @@ function normalizeSelection(values: string[]) {
   return [...new Set(values.map((value) => value.trim()).filter(Boolean))].sort((a, b) =>
     a.localeCompare(b),
   )
-}
-
-function isPatientColumnKey(value: unknown): value is PatientColumnKey {
-  return typeof value === 'string' && allPatientColumnKeys.includes(value as PatientColumnKey)
-}
-
-function normalizePatientColumns(values: unknown) {
-  if (!Array.isArray(values)) return [...fallbackPatientColumns]
-
-  const normalized: PatientColumnKey[] = []
-  for (const value of values) {
-    if (!isPatientColumnKey(value)) continue
-    if (normalized.includes(value)) continue
-    normalized.push(value)
-  }
-
-  if (normalized.length === 0) return [...fallbackPatientColumns]
-  return normalized
-}
-
-function isPatientColumnVisible(column: PatientColumnKey) {
-  return visiblePatientColumns.value.includes(column)
 }
 
 function stringifyMetadata(value: unknown) {
@@ -1303,7 +1234,7 @@ void loadSitesCatalog({ silent: true })
         dataKey="id"
         lazy
         class="patients-table"
-        :tableStyle="{ minWidth: `${patientTableMinWidth}rem` }"
+        tableStyle="min-width: 87rem"
         :loading="patientsLoading"
         filterDisplay="menu"
         removableSort
@@ -1329,36 +1260,24 @@ void loadSitesCatalog({ silent: true })
               class="table-search"
               @keydown.enter="onSearchEnter"
             />
-            <div class="column-toggle-wrap">
-              <MultiSelect
-                v-model="selectedPatientColumns"
-                :options="patientColumnOptions"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Columns"
-                :disabled="!canReadPatients"
-                :maxSelectedLabels="1"
-                selectedItemsLabel="{0} columns"
-              />
-            </div>
           </div>
         </template>
         <template #empty>
           <div class="table-empty">No patients match the current filters.</div>
         </template>
         <Column selectionMode="multiple" style="width: 3rem" />
-        <Column v-if="isPatientColumnVisible('fullName')" field="fullName" header="Patient" style="min-width: 11rem" />
-        <Column v-if="isPatientColumnVisible('ageSex')" header="Age/Sex" style="min-width: 8.5rem">
+        <Column field="fullName" header="Patient" style="min-width: 11rem" />
+        <Column header="Age/Sex" style="min-width: 8.5rem">
           <template #body="{ data }">
             <span>{{ formatAgeSex(data.dateOfBirth, data.sex) }}</span>
           </template>
         </Column>
-        <Column v-if="isPatientColumnVisible('village')" header="Village" style="min-width: 10rem">
+        <Column header="Village" style="min-width: 10rem">
           <template #body="{ data }">
             <span class="cell-truncate" :title="data.village || 'N/A'">{{ data.village || 'N/A' }}</span>
           </template>
         </Column>
-        <Column v-if="isPatientColumnVisible('site')" header="Site" field="primarySiteName" filterField="site" style="min-width: 10rem" :showFilterOperator="false" :showAddButton="false" :showFilterMatchModes="false">
+        <Column header="Site" field="primarySiteName" filterField="site" style="min-width: 10rem" :showFilterOperator="false" :showAddButton="false" :showFilterMatchModes="false">
           <template #filter="{ filterModel }">
             <MultiSelect
               v-model="filterModel.value"
@@ -1376,22 +1295,22 @@ void loadSitesCatalog({ silent: true })
             <span class="cell-truncate" :title="data.primarySiteName || 'N/A'">{{ data.primarySiteName || 'N/A' }}</span>
           </template>
         </Column>
-        <Column v-if="isPatientColumnVisible('createdBy')" header="Created by" style="min-width: 12rem">
+        <Column header="Created by" style="min-width: 12rem">
           <template #body="{ data }">
             <span class="cell-truncate" :title="createdByLabel(data)">{{ createdByLabel(data) }}</span>
           </template>
         </Column>
-        <Column v-if="isPatientColumnVisible('createdAt')" header="Created" style="min-width: 10.5rem">
+        <Column header="Created" style="min-width: 10.5rem">
           <template #body="{ data }">
             <span class="cell-date">{{ formatDateTime(data.createdAt) }}</span>
           </template>
         </Column>
-        <Column v-if="isPatientColumnVisible('updatedAt')" header="Updated" style="min-width: 10.5rem">
+        <Column header="Updated" style="min-width: 10.5rem">
           <template #body="{ data }">
             <span class="cell-date">{{ formatDateTime(data.updatedAt) }}</span>
           </template>
         </Column>
-        <Column v-if="isPatientColumnVisible('status')" header="Status" style="width: 8rem">
+        <Column header="Status" style="width: 8rem">
           <template #body="{ data }">
             <span class="status-cell" :class="statusClass(data.status)">
               <span class="status-dot"></span>
@@ -1536,7 +1455,7 @@ void loadSitesCatalog({ silent: true })
 
     <template #footer>
       <div class="dialog-actions">
-        <Button label="Cancel" text @click="createDialogVisible = false" />
+        <Button label="Cancel" class="create-cancel-btn" @click="createDialogVisible = false" />
         <Button label="Register patient" :loading="createDialogBusy" @click="submitCreatePatient" />
       </div>
     </template>
@@ -1704,8 +1623,8 @@ void loadSitesCatalog({ silent: true })
 }
 
 .table-search {
-  flex: 1 1 14rem;
-  max-width: 28rem;
+  flex: 1 1 9.33rem;
+  max-width: 18.67rem;
   height: var(--app-control-height);
   min-height: var(--app-control-height);
   box-sizing: border-box;
@@ -1721,35 +1640,6 @@ void loadSitesCatalog({ silent: true })
 .table-search:focus {
   background: var(--p-surface-0);
   border-color: var(--p-surface-400);
-}
-
-.column-toggle-wrap {
-  min-width: 11rem;
-  width: min(15rem, 46vw);
-  margin-left: auto;
-}
-
-.column-toggle-wrap :deep(.p-multiselect) {
-  width: 100%;
-  height: var(--app-control-height);
-  min-height: var(--app-control-height);
-  border-radius: var(--app-control-radius, 0.62rem);
-  border: 1px solid var(--p-surface-200);
-  background: var(--p-surface-50);
-}
-
-.column-toggle-wrap :deep(.p-multiselect:hover) {
-  border-color: var(--p-surface-400);
-  background: var(--p-surface-100);
-}
-
-.column-toggle-wrap :deep(.p-multiselect-label) {
-  font-size: var(--app-control-font-size, 0.83rem);
-  padding-block: 0.42rem;
-}
-
-.column-toggle-wrap :deep(.p-multiselect-trigger) {
-  width: 2rem;
 }
 
 .cell-stack {
@@ -1948,6 +1838,21 @@ void loadSitesCatalog({ silent: true })
   gap: 0.45rem;
 }
 
+:deep(.create-cancel-btn),
+:deep(.create-cancel-btn.p-button) {
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: var(--p-surface-500) !important;
+}
+
+:deep(.create-cancel-btn:hover) {
+  background: transparent !important;
+  color: var(--p-surface-700) !important;
+  box-shadow: none !important;
+}
+
 .menu-action-item {
   display: inline-flex;
   align-items: center;
@@ -1994,12 +1899,6 @@ void loadSitesCatalog({ silent: true })
 
   .table-search {
     max-width: 100%;
-  }
-
-  .column-toggle-wrap {
-    width: 100%;
-    min-width: 0;
-    margin-left: 0;
   }
 
   .field-inline {
