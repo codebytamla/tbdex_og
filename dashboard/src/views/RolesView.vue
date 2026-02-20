@@ -20,6 +20,7 @@ import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
 import ToolbarIconButton from '@/components/ui/ToolbarIconButton.vue'
+import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
 import {
   TABLE_DEFAULT_ROWS,
   TABLE_PAGE_REPORT_TEMPLATE,
@@ -97,6 +98,13 @@ const selectedRoleId = ref<string | null>(null)
 const originalSnapshot = ref<RoleFormSnapshot | null>(null)
 const rowActionMenu = ref()
 const selectedMenuRole = ref<RoleSummary | null>(null)
+const dt = ref()
+
+const columns = ref([
+  { field: 'name', header: 'Role' },
+  { field: 'description', header: 'Description' }
+])
+const selectedColumns = ref([...columns.value])
 
 const form = reactive({
   name: '',
@@ -425,6 +433,7 @@ void loadRoles()
   <Card class="roles-card">
     <template #content>
       <DataTable
+        ref="dt"
         v-model:selection="selectedRoles"
         v-model:filters="filters"
         :value="roles"
@@ -441,17 +450,27 @@ void loadRoles()
         :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
       >
         <template #header>
-          <div class="table-header">
-            <InputText
-              v-model="filters.global.value"
-              placeholder="Search roles..."
-              class="table-search"
-            />
-          </div>
+          <DataTableToolbar
+            v-model:searchQuery="filters.global.value"
+            v-model:selectedColumns="selectedColumns"
+            :columns="columns"
+            searchPlaceholder="Search roles..."
+            :showImport="true"
+            :showExport="true"
+            @import="() => {}"
+            @export="() => dt?.exportCSV()"
+          />
         </template>
         <Column selectionMode="multiple" style="width: 3rem" />
-        <Column field="name" header="Role" sortable :showFilterOperator="false" :showAddButton="false" />
-        <Column field="description" header="Description" sortable :showFilterOperator="false" :showAddButton="false" />
+        <Column 
+          v-for="col of selectedColumns" 
+          :key="col.field" 
+          :field="col.field" 
+          :header="col.header" 
+          sortable 
+          :showFilterOperator="false" 
+          :showAddButton="false" 
+        />
         <Column header="" style="width: 3.5rem">
           <template #body="{ data }">
             <div class="actions">
@@ -558,32 +577,6 @@ void loadRoles()
 <style scoped>
 .roles-card {
   margin-bottom: 0.9rem;
-}
-
-.table-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.table-search {
-  width: 100%;
-  max-width: 17.33rem;
-  height: var(--app-control-height);
-  min-height: var(--app-control-height);
-  box-sizing: border-box;
-  border-radius: var(--app-control-radius, 0.62rem);
-  padding: 0 0.88rem;
-  font-size: var(--app-control-font-size, 0.83rem);
-  line-height: 1.2;
-  border: 1px solid var(--p-surface-200);
-  background: var(--p-surface-50);
-  transition: border-color 0.15s, background 0.15s;
-}
-
-.table-search:focus {
-  background: var(--p-surface-0);
-  border-color: var(--p-surface-400);
 }
 
 .actions {

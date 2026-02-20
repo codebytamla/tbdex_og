@@ -33,6 +33,7 @@ import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
 import ToolbarIconButton from '@/components/ui/ToolbarIconButton.vue'
+import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
 import {
   TABLE_PAGE_REPORT_TEMPLATE,
   TABLE_PAGINATOR_TEMPLATE,
@@ -158,6 +159,17 @@ const resetInFlightUserId = ref<string | null>(null)
 const statusToggleInFlightUserId = ref<string | null>(null)
 const rowActionMenu = ref()
 const selectedMenuUser = ref<AdminUser | null>(null)
+const dt = ref()
+
+const columns = ref([
+  { field: 'fullName', header: 'Name' },
+  { field: 'email', header: 'Email' },
+  { field: 'roles', header: 'Roles' },
+  { field: 'sites', header: 'Sites' },
+  { field: 'createdAt', header: 'Created' },
+  { field: 'status', header: 'Status' }
+])
+const selectedColumns = ref([...columns.value])
 
 const paginatorFirst = computed(() => pageIndex.value * limit.value)
 const paginatorTotalRecords = computed(() => {
@@ -1213,6 +1225,7 @@ void loadSitesCatalog({ silent: true })
   <Card class="users-card">
     <template #content>
       <DataTable
+        ref="dt"
         v-model:selection="selectedUsers"
         v-model:filters="filters"
         :value="users"
@@ -1235,77 +1248,80 @@ void loadSitesCatalog({ silent: true })
         rowHover
       >
         <template #header>
-          <div class="table-header">
-            <InputText
-              v-model="filters.global.value"
-              placeholder="Search name or email..."
-              :disabled="!canReadUsers"
-              class="table-search"
-              @keydown.enter="onSearchEnter"
-            />
-          </div>
+          <DataTableToolbar
+            v-model:searchQuery="filters.global.value"
+            v-model:selectedColumns="selectedColumns"
+            :columns="columns"
+            searchPlaceholder="Search name or email..."
+            :showImport="true"
+            :showExport="true"
+            @import="() => {}"
+            @export="() => dt?.exportCSV()"
+          />
         </template>
         <template #empty>
           <div class="table-empty">No users match the current filters.</div>
         </template>
         <Column selectionMode="multiple" style="width: 3rem" />
-        <Column field="fullName" header="Name" sortable />
-        <Column field="email" header="Email" sortable />
-        <Column header="Roles" field="roles" filterField="role" :showFilterOperator="false" :showAddButton="false" :showFilterMatchModes="false">
-          <template #filter="{ filterModel }">
-            <MultiSelect
-              v-model="filterModel.value"
-              :options="roleFilterOptions"
-              placeholder="All roles"
-              :loading="rolesLoading"
-              :maxSelectedLabels="1"
-              selectedItemsLabel="{0} selected"
-              style="min-width: 12rem"
-            />
-          </template>
-          <template #body="{ data }">
-            <span v-if="data.roles.length" class="cell-list" :title="data.roles.join(', ')">
-              <span class="cell-pill">{{ data.roles[0] }}</span>
-              <span v-if="data.roles.length > 1" class="cell-pill cell-pill-overflow">+{{ data.roles.length - 1 }}</span>
-            </span>
-            <span v-else class="cell-empty">&mdash;</span>
-          </template>
-        </Column>
-        <Column header="Sites" field="sites" filterField="site" :showFilterOperator="false" :showAddButton="false" :showFilterMatchModes="false">
-          <template #filter="{ filterModel }">
-            <MultiSelect
-              v-model="filterModel.value"
-              :options="siteFilterOptions"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="All sites"
-              :loading="sitesLoading"
-              :maxSelectedLabels="1"
-              selectedItemsLabel="{0} selected"
-              style="min-width: 12rem"
-            />
-          </template>
-          <template #body="{ data }">
-            <span v-if="data.sites.length" class="cell-list" :title="data.sites.join(', ')">
-              <span class="cell-pill">{{ data.sites[0] }}</span>
-              <span v-if="data.sites.length > 1" class="cell-pill cell-pill-overflow">+{{ data.sites.length - 1 }}</span>
-            </span>
-            <span v-else class="cell-empty">&mdash;</span>
-          </template>
-        </Column>
-        <Column header="Created">
-          <template #body="{ data }">
-            <span class="cell-date">{{ formatDate(data.createdAt) }}</span>
-          </template>
-        </Column>
-        <Column header="Status" style="width: 8rem">
-          <template #body="{ data }">
-            <span class="status-cell" :class="data.isActive ? 'status-active' : 'status-disabled'">
-              <span class="status-dot"></span>
-              {{ data.isActive ? 'Active' : 'Disabled' }}
-            </span>
-          </template>
-        </Column>
+        <template v-for="col of selectedColumns" :key="col.field">
+          <Column v-if="col.field === 'fullName'" field="fullName" header="Name" sortable />
+          <Column v-if="col.field === 'email'" field="email" header="Email" sortable />
+          <Column v-if="col.field === 'roles'" header="Roles" field="roles" filterField="role" :showFilterOperator="false" :showAddButton="false" :showFilterMatchModes="false">
+            <template #filter="{ filterModel }">
+              <MultiSelect
+                v-model="filterModel.value"
+                :options="roleFilterOptions"
+                placeholder="All roles"
+                :loading="rolesLoading"
+                :maxSelectedLabels="1"
+                selectedItemsLabel="{0} selected"
+                style="min-width: 12rem"
+              />
+            </template>
+            <template #body="{ data }">
+              <span v-if="data.roles.length" class="cell-list" :title="data.roles.join(', ')">
+                <span class="cell-pill">{{ data.roles[0] }}</span>
+                <span v-if="data.roles.length > 1" class="cell-pill cell-pill-overflow">+{{ data.roles.length - 1 }}</span>
+              </span>
+              <span v-else class="cell-empty">&mdash;</span>
+            </template>
+          </Column>
+          <Column v-if="col.field === 'sites'" header="Sites" field="sites" filterField="site" :showFilterOperator="false" :showAddButton="false" :showFilterMatchModes="false">
+            <template #filter="{ filterModel }">
+              <MultiSelect
+                v-model="filterModel.value"
+                :options="siteFilterOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="All sites"
+                :loading="sitesLoading"
+                :maxSelectedLabels="1"
+                selectedItemsLabel="{0} selected"
+                style="min-width: 12rem"
+              />
+            </template>
+            <template #body="{ data }">
+              <span v-if="data.sites.length" class="cell-list" :title="data.sites.join(', ')">
+                <span class="cell-pill">{{ data.sites[0] }}</span>
+                <span v-if="data.sites.length > 1" class="cell-pill cell-pill-overflow">+{{ data.sites.length - 1 }}</span>
+              </span>
+              <span v-else class="cell-empty">&mdash;</span>
+            </template>
+          </Column>
+          <Column v-if="col.field === 'createdAt'" header="Created">
+            <template #body="{ data }">
+              <span class="cell-date">{{ formatDate(data.createdAt) }}</span>
+            </template>
+          </Column>
+          <Column v-if="col.field === 'status'" header="Status" style="width: 8rem">
+            <template #body="{ data }">
+              <span class="status-cell" :class="data.isActive ? 'status-active' : 'status-disabled'">
+                <span class="status-dot"></span>
+                {{ data.isActive ? 'Active' : 'Disabled' }}
+              </span>
+            </template>
+          </Column>
+        </template>
         <Column header="" style="width: 3.5rem">
           <template #body="{ data }">
             <div class="actions">

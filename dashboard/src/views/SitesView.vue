@@ -20,6 +20,7 @@ import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
 import ToolbarIconButton from '@/components/ui/ToolbarIconButton.vue'
+import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
 import {
   TABLE_DEFAULT_ROWS,
   TABLE_PAGE_REPORT_TEMPLATE,
@@ -89,6 +90,16 @@ const selectedSite = ref<Site | null>(null)
 
 const rowActionMenu = ref()
 const selectedMenuSite = ref<Site | null>(null)
+const dt = ref()
+
+const columns = ref([
+  { field: 'name', header: 'Name' },
+  { field: 'code', header: 'Code' },
+  { field: 'siteType', header: 'Type' },
+  { field: 'updatedAt', header: 'Updated' },
+  { field: 'status', header: 'Status' }
+])
+const selectedColumns = ref([...columns.value])
 
 const form = reactive({
   name: '',
@@ -387,6 +398,7 @@ void loadSites()
   <Card class="sites-card">
     <template #content>
       <DataTable
+        ref="dt"
         v-model:selection="selectedSites"
         v-model:filters="filters"
         :value="sites"
@@ -403,35 +415,40 @@ void loadSites()
         :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
       >
         <template #header>
-          <div class="table-header">
-            <InputText
-              v-model="filters.global.value"
-              placeholder="Search sites..."
-              class="table-search"
-            />
-          </div>
+          <DataTableToolbar
+            v-model:searchQuery="filters.global.value"
+            v-model:selectedColumns="selectedColumns"
+            :columns="columns"
+            searchPlaceholder="Search sites..."
+            :showImport="true"
+            :showExport="true"
+            @import="() => {}"
+            @export="() => dt?.exportCSV()"
+          />
         </template>
         <Column selectionMode="multiple" style="width: 3rem" />
-        <Column field="name" header="Name" sortable :showFilterOperator="false" :showAddButton="false" />
-        <Column field="code" header="Code" sortable :showFilterOperator="false" :showAddButton="false" />
-        <Column field="siteType" header="Type" sortable :showFilterOperator="false" :showAddButton="false">
-          <template #body="{ data }">
-            <span>{{ formatSiteType(data.siteType) }}</span>
-          </template>
-        </Column>
-        <Column header="Updated">
-          <template #body="{ data }">
-            <span>{{ formatDate(data.updatedAt || data.createdAt) }}</span>
-          </template>
-        </Column>
-        <Column header="Status">
-          <template #body="{ data }">
-            <span class="status-cell" :class="data.isActive ? 'status-active' : 'status-disabled'">
-              <span class="status-dot"></span>
-              {{ data.isActive ? 'Active' : 'Disabled' }}
-            </span>
-          </template>
-        </Column>
+        <template v-for="col of selectedColumns" :key="col.field">
+          <Column v-if="col.field === 'name'" field="name" header="Name" sortable :showFilterOperator="false" :showAddButton="false" />
+          <Column v-if="col.field === 'code'" field="code" header="Code" sortable :showFilterOperator="false" :showAddButton="false" />
+          <Column v-if="col.field === 'siteType'" field="siteType" header="Type" sortable :showFilterOperator="false" :showAddButton="false">
+            <template #body="{ data }">
+              <span>{{ formatSiteType(data.siteType) }}</span>
+            </template>
+          </Column>
+          <Column v-if="col.field === 'updatedAt'" header="Updated">
+            <template #body="{ data }">
+              <span>{{ formatDate(data.updatedAt || data.createdAt) }}</span>
+            </template>
+          </Column>
+          <Column v-if="col.field === 'status'" header="Status">
+            <template #body="{ data }">
+              <span class="status-cell" :class="data.isActive ? 'status-active' : 'status-disabled'">
+                <span class="status-dot"></span>
+                {{ data.isActive ? 'Active' : 'Disabled' }}
+              </span>
+            </template>
+          </Column>
+        </template>
         <Column header="" style="width: 3.5rem">
           <template #body="{ data }">
             <div class="actions">
@@ -504,32 +521,6 @@ void loadSites()
 <style scoped>
 .sites-card {
   margin-bottom: 0.9rem;
-}
-
-.table-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.table-search {
-  width: 100%;
-  max-width: 17.33rem;
-  height: var(--app-control-height);
-  min-height: var(--app-control-height);
-  box-sizing: border-box;
-  border-radius: var(--app-control-radius, 0.62rem);
-  padding: 0 0.88rem;
-  font-size: var(--app-control-font-size, 0.83rem);
-  line-height: 1.2;
-  border: 1px solid var(--p-surface-200);
-  background: var(--p-surface-50);
-  transition: border-color 0.15s, background 0.15s;
-}
-
-.table-search:focus {
-  background: var(--p-surface-0);
-  border-color: var(--p-surface-400);
 }
 
 .actions {

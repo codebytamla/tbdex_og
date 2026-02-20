@@ -29,6 +29,7 @@ import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
 import ToolbarIconButton from '@/components/ui/ToolbarIconButton.vue'
+import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
 import {
   TABLE_PAGE_REPORT_TEMPLATE,
   TABLE_PAGINATOR_TEMPLATE,
@@ -177,6 +178,19 @@ const selectedPatients = ref<Patient[]>([])
 const statusToggleInFlightPatientId = ref<string | null>(null)
 const rowActionMenu = ref()
 const selectedMenuPatient = ref<Patient | null>(null)
+const dt = ref()
+
+const columns = ref([
+  { field: 'fullName', header: 'Patient' },
+  { field: 'ageSex', header: 'Age/Sex' },
+  { field: 'village', header: 'Village' },
+  { field: 'primarySiteName', header: 'Site' },
+  { field: 'createdBy', header: 'Created by' },
+  { field: 'createdAt', header: 'Created' },
+  { field: 'updatedAt', header: 'Updated' },
+  { field: 'status', header: 'Status' }
+])
+const selectedColumns = ref([...columns.value])
 
 const paginatorFirst = computed(() => pageIndex.value * limit.value)
 const paginatorTotalRecords = computed(() => {
@@ -1252,72 +1266,75 @@ void loadSitesCatalog({ silent: true })
         rowHover
       >
         <template #header>
-          <div class="table-header">
-            <InputText
-              v-model="filters.global.value"
-              placeholder="Search full name or village..."
-              :disabled="!canReadPatients"
-              class="table-search"
-              @keydown.enter="onSearchEnter"
-            />
-          </div>
+          <DataTableToolbar
+            v-model:searchQuery="filters.global.value"
+            v-model:selectedColumns="selectedColumns"
+            :columns="columns"
+            searchPlaceholder="Search full name or village..."
+            :showImport="true"
+            :showExport="true"
+            @import="() => {}"
+            @export="() => dt?.exportCSV()"
+          />
         </template>
         <template #empty>
           <div class="table-empty">No patients match the current filters.</div>
         </template>
         <Column selectionMode="multiple" style="width: 3rem" />
-        <Column field="fullName" header="Patient" style="min-width: 11rem" />
-        <Column header="Age/Sex" style="min-width: 8.5rem">
-          <template #body="{ data }">
-            <span>{{ formatAgeSex(data.dateOfBirth, data.sex) }}</span>
-          </template>
-        </Column>
-        <Column header="Village" style="min-width: 10rem">
-          <template #body="{ data }">
-            <span class="cell-truncate" :title="data.village || 'N/A'">{{ data.village || 'N/A' }}</span>
-          </template>
-        </Column>
-        <Column header="Site" field="primarySiteName" filterField="site" style="min-width: 10rem" :showFilterOperator="false" :showAddButton="false" :showFilterMatchModes="false">
-          <template #filter="{ filterModel }">
-            <MultiSelect
-              v-model="filterModel.value"
-              :options="siteFilterOptions"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="All sites"
-              :loading="sitesLoading"
-              :maxSelectedLabels="1"
-              selectedItemsLabel="{0} selected"
-              style="min-width: 12rem"
-            />
-          </template>
-          <template #body="{ data }">
-            <span class="cell-truncate" :title="data.primarySiteName || 'N/A'">{{ data.primarySiteName || 'N/A' }}</span>
-          </template>
-        </Column>
-        <Column header="Created by" style="min-width: 12rem">
-          <template #body="{ data }">
-            <span class="cell-truncate" :title="createdByLabel(data)">{{ createdByLabel(data) }}</span>
-          </template>
-        </Column>
-        <Column header="Created" style="min-width: 10.5rem">
-          <template #body="{ data }">
-            <span class="cell-date">{{ formatDateTime(data.createdAt) }}</span>
-          </template>
-        </Column>
-        <Column header="Updated" style="min-width: 10.5rem">
-          <template #body="{ data }">
-            <span class="cell-date">{{ formatDateTime(data.updatedAt) }}</span>
-          </template>
-        </Column>
-        <Column header="Status" style="width: 8rem">
-          <template #body="{ data }">
-            <span class="status-cell" :class="statusClass(data.status)">
-              <span class="status-dot"></span>
-              {{ formatStatus(data.status) }}
-            </span>
-          </template>
-        </Column>
+        <template v-for="col of selectedColumns" :key="col.field">
+          <Column v-if="col.field === 'fullName'" field="fullName" header="Patient" style="min-width: 11rem" />
+          <Column v-if="col.field === 'ageSex'" header="Age/Sex" style="min-width: 8.5rem">
+            <template #body="{ data }">
+              <span>{{ formatAgeSex(data.dateOfBirth, data.sex) }}</span>
+            </template>
+          </Column>
+          <Column v-if="col.field === 'village'" header="Village" style="min-width: 10rem">
+            <template #body="{ data }">
+              <span class="cell-truncate" :title="data.village || 'N/A'">{{ data.village || 'N/A' }}</span>
+            </template>
+          </Column>
+          <Column v-if="col.field === 'primarySiteName'" header="Site" field="primarySiteName" filterField="site" style="min-width: 10rem" :showFilterOperator="false" :showAddButton="false" :showFilterMatchModes="false">
+            <template #filter="{ filterModel }">
+              <MultiSelect
+                v-model="filterModel.value"
+                :options="siteFilterOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="All sites"
+                :loading="sitesLoading"
+                :maxSelectedLabels="1"
+                selectedItemsLabel="{0} selected"
+                style="min-width: 12rem"
+              />
+            </template>
+            <template #body="{ data }">
+              <span class="cell-truncate" :title="data.primarySiteName || 'N/A'">{{ data.primarySiteName || 'N/A' }}</span>
+            </template>
+          </Column>
+          <Column v-if="col.field === 'createdBy'" header="Created by" style="min-width: 12rem">
+            <template #body="{ data }">
+              <span class="cell-truncate" :title="createdByLabel(data)">{{ createdByLabel(data) }}</span>
+            </template>
+          </Column>
+          <Column v-if="col.field === 'createdAt'" header="Created" style="min-width: 10.5rem">
+            <template #body="{ data }">
+              <span class="cell-date">{{ formatDateTime(data.createdAt) }}</span>
+            </template>
+          </Column>
+          <Column v-if="col.field === 'updatedAt'" header="Updated" style="min-width: 10.5rem">
+            <template #body="{ data }">
+              <span class="cell-date">{{ formatDateTime(data.updatedAt) }}</span>
+            </template>
+          </Column>
+          <Column v-if="col.field === 'status'" header="Status" style="width: 8rem">
+            <template #body="{ data }">
+              <span class="status-cell" :class="statusClass(data.status)">
+                <span class="status-dot"></span>
+                {{ formatStatus(data.status) }}
+              </span>
+            </template>
+          </Column>
+        </template>
         <Column header="" style="width: 3.5rem">
           <template #body="{ data }">
             <div class="actions">
