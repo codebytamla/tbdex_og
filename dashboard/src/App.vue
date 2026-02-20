@@ -333,6 +333,81 @@ function toggleSidebar() {
   color: var(--p-surface-500);
 }
 
+/* ── DataTable sort indicators ────────────────────────── */
+
+:global(.p-datatable .p-datatable-sortable-column .p-datatable-sort-icon) {
+  color: var(--p-surface-400);
+  transition: color 0.15s ease;
+  margin-left: 0.3rem;
+}
+
+:global(.p-datatable .p-datatable-sortable-column.p-datatable-column-sorted .p-datatable-sort-icon) {
+  color: var(--p-primary-600);
+}
+
+:global(.p-datatable .p-datatable-sortable-column:hover .p-datatable-sort-icon) {
+  color: var(--p-surface-600);
+}
+
+:global(.p-datatable .p-datatable-sortable-column.p-datatable-column-sorted:hover .p-datatable-sort-icon) {
+  color: var(--p-primary-700);
+}
+
+/* ── DataTable column filter overlay ─────────────────── */
+
+:global(.p-datatable-filter-overlay) {
+  border: 1px solid var(--p-surface-200);
+  border-radius: 0.62rem;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 10%);
+  background: var(--p-surface-0);
+  font-family: var(--app-font-family);
+  min-width: 14rem;
+}
+
+:global(.p-datatable-filter-overlay .p-datatable-filter-constraint) {
+  padding: 0.75rem;
+  border-color: var(--p-surface-200);
+}
+
+:global(.p-datatable-filter-overlay .p-datatable-filter-buttonbar) {
+  padding: 0.55rem 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+:global(.p-datatable-filter-overlay .p-datatable-filter-buttonbar .p-button) {
+  font-size: 0.82rem;
+  padding: 0.35rem 0.8rem;
+  min-width: 0;
+}
+
+:global(.p-datatable-column-filter-button) {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--app-control-radius);
+  color: var(--p-surface-500);
+  transition: color 0.15s, background-color 0.15s;
+}
+
+:global(.p-datatable-column-filter-button:hover) {
+  color: var(--p-surface-700);
+  background: color-mix(in srgb, var(--p-surface-900) 6%, transparent);
+}
+
+:global(.p-datatable-column-filter-button[data-p-active="true"]) {
+  color: var(--p-primary-400);
+  background: transparent;
+}
+
+/* ── DataTable header slot ───────────────────────────── */
+
+:global(.p-datatable .p-datatable-header) {
+  background: transparent;
+  border: none;
+  padding: 0.6rem 0.75rem 0.75rem;
+}
+
 @media (max-width: 760px) {
   :global(.p-datatable .p-datatable-paginator-bottom) {
     padding: 0.5rem 0.3rem;

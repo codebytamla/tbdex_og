@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, onUnmounted, reactive, ref, type Component } from 'vue'
+import { computed, onUnmounted, reactive, ref, watch, type Component } from 'vue'
+import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import {
   Ban,
   MapPinPlus,
@@ -10,9 +11,7 @@ import {
   Pencil,
   RefreshCcw,
   Shield,
-  SlidersHorizontal,
   UserPlus,
-  X,
 } from 'lucide-vue-next'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -31,7 +30,6 @@ import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores/auth'
 import { useCatalogStore } from '@/stores/catalog'
 import CreateActionButton from '@/components/ui/CreateActionButton.vue'
-import FilterPanelField from '@/components/ui/FilterPanelField.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
 import ToolbarIconButton from '@/components/ui/ToolbarIconButton.vue'
@@ -102,12 +100,11 @@ const pageIndex = ref(0)
 const cursorByPage = ref<Array<string | null>>([null])
 const nextCursor = ref<string | null>(null)
 const hasNextPage = ref(false)
-const searchText = ref('')
-const appliedSearch = ref('')
-const roleFilter = ref<string[]>([])
-const appliedRoleFilter = ref<string[]>([])
-const siteFilter = ref<string[]>([])
-const appliedSiteFilter = ref<string[]>([])
+const filters = ref({
+  global: { value: null as string | null, matchMode: FilterMatchMode.CONTAINS },
+  role: { operator: FilterOperator.AND, constraints: [{ value: null as string[] | null, matchMode: FilterMatchMode.IN }] },
+  site: { operator: FilterOperator.AND, constraints: [{ value: null as string[] | null, matchMode: FilterMatchMode.IN }] },
+})
 
 const latestResetToken = ref('')
 const latestResetEmail = ref('')
@@ -168,53 +165,6 @@ const paginatorTotalRecords = computed(() => {
   if (hasNextPage.value) return paginatorFirst.value + limit.value + 1
   return paginatorFirst.value + users.value.length
 })
-const filtersExpanded = ref(false)
-const hasPendingFilters = computed(
-  () =>
-    Boolean(searchText.value.trim()) ||
-    roleFilter.value.length > 0 ||
-    siteFilter.value.length > 0,
-)
-const activeFilterCount = computed(() => {
-  let count = 0
-  if (appliedRoleFilter.value.length > 0) count++
-  if (appliedSiteFilter.value.length > 0) count++
-  return count
-})
-type FilterChip = { key: string; label: string }
-const activeFilterChips = computed<FilterChip[]>(() => {
-  const chips: FilterChip[] = []
-  if (appliedRoleFilter.value.length > 0) {
-    const names = appliedRoleFilter.value.join(', ')
-    chips.push({ key: 'roles', label: appliedRoleFilter.value.length === 1 ? `Role: ${names}` : `Roles: ${names}` })
-  }
-  if (appliedSiteFilter.value.length > 0) {
-    const resolved = appliedSiteFilter.value.map((id) => {
-      const site = sitesCatalog.value.find((s) => s.id === id)
-      return site ? site.name : id.slice(0, 8)
-    })
-    chips.push({ key: 'sites', label: resolved.length === 1 ? `Site: ${resolved[0]}` : `Sites: ${resolved.join(', ')}` })
-  }
-  return chips
-})
-
-function removeFilterChip(key: string) {
-  if (key === 'roles') {
-    roleFilter.value = []
-    appliedRoleFilter.value = []
-  } else if (key === 'sites') {
-    siteFilter.value = []
-    appliedSiteFilter.value = []
-  }
-  resetUsersPagination()
-  void loadUsers()
-}
-
-async function toggleFilters() {
-  filtersExpanded.value = !filtersExpanded.value
-  if (!filtersExpanded.value) return
-  await Promise.all([loadRolesCatalog({ silent: true }), loadSitesCatalog({ silent: true })])
-}
 const roleFilterOptions = computed(() =>
   rolesCatalog.value.map((role) => role.name).sort((a, b) => a.localeCompare(b)),
 )
@@ -758,14 +708,23 @@ async function loadUsers() {
       include_total: 'true',
     })
     if (currentCursor) params.set('cursor', currentCursor)
-    if (appliedSearch.value.trim()) {
-      params.set('search', appliedSearch.value.trim())
+    const searchValue = filters.value.global.value?.trim()
+    if (searchValue) {
+      params.set('search', searchValue)
     }
-    for (const roleName of appliedRoleFilter.value) {
-      params.append('role', roleName)
+    const roleConstraint = filters.value.role.constraints[0]
+    const roleValues = roleConstraint?.value
+    if (roleValues && roleValues.length > 0) {
+      for (const roleName of roleValues) {
+        params.append('role', roleName)
+      }
     }
-    for (const siteId of appliedSiteFilter.value) {
-      params.append('site_id', siteId)
+    const siteConstraint = filters.value.site.constraints[0]
+    const siteValues = siteConstraint?.value
+    if (siteValues && siteValues.length > 0) {
+      for (const siteId of siteValues) {
+        params.append('site_id', siteId)
+      }
     }
     const payload = await requestJson<{
       users?: unknown[]
@@ -874,60 +833,19 @@ function refreshUsers() {
   void loadUsers()
 }
 
-let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null
-onUnmounted(() => { if (searchDebounceTimer) clearTimeout(searchDebounceTimer) })
-
-function applyFilters() {
-  if (searchDebounceTimer) {
-    clearTimeout(searchDebounceTimer)
-    searchDebounceTimer = null
+watch(() => filters.value.global.value, (val) => {
+  if (!val) {
+    resetUsersPagination()
+    void loadUsers()
   }
+})
 
-  const nextSearch = searchText.value.trim()
-  const nextRoleFilter = normalizeSelection(roleFilter.value)
-  const nextSiteFilter = normalizeSelection(siteFilter.value)
-  const filtersChanged =
-    nextSearch !== appliedSearch.value ||
-    nextRoleFilter.join('|') !== appliedRoleFilter.value.join('|') ||
-    nextSiteFilter.join('|') !== appliedSiteFilter.value.join('|')
-  if (!filtersChanged) return
-
-  roleFilter.value = [...nextRoleFilter]
-  siteFilter.value = [...nextSiteFilter]
+function onSearchEnter() {
   resetUsersPagination()
-  appliedSearch.value = nextSearch
-  appliedRoleFilter.value = [...nextRoleFilter]
-  appliedSiteFilter.value = [...nextSiteFilter]
   void loadUsers()
 }
 
-function scheduleSearchFilter() {
-  if (searchDebounceTimer) clearTimeout(searchDebounceTimer)
-  searchDebounceTimer = setTimeout(() => {
-    searchDebounceTimer = null
-    applyFilters()
-  }, 280)
-}
-
-function clearFilters() {
-  if (searchDebounceTimer) {
-    clearTimeout(searchDebounceTimer)
-    searchDebounceTimer = null
-  }
-  const shouldReload =
-    Boolean(appliedSearch.value.trim()) ||
-    Boolean(searchText.value.trim()) ||
-    appliedRoleFilter.value.length > 0 ||
-    roleFilter.value.length > 0 ||
-    appliedSiteFilter.value.length > 0 ||
-    siteFilter.value.length > 0
-  if (!shouldReload) return
-  searchText.value = ''
-  roleFilter.value = []
-  siteFilter.value = []
-  appliedSearch.value = ''
-  appliedRoleFilter.value = []
-  appliedSiteFilter.value = []
+function onFilter() {
   resetUsersPagination()
   void loadUsers()
 }
@@ -1243,6 +1161,8 @@ async function copyLatestResetLink() {
 }
 
 void loadUsers()
+void loadRolesCatalog({ silent: true })
+void loadSitesCatalog({ silent: true })
 </script>
 
 <template>
@@ -1292,91 +1212,16 @@ void loadUsers()
 
   <Card class="users-card">
     <template #content>
-      <div class="toolbar">
-        <div class="toolbar-left">
-          <div class="search-wrap">
-            <InputText
-              v-model="searchText"
-              placeholder="Search name or email..."
-              :disabled="!canReadUsers"
-              @input="scheduleSearchFilter"
-              @keyup.enter="applyFilters"
-            />
-          </div>
-          <button
-            class="filter-toggle"
-            :class="{ active: filtersExpanded, 'has-filters': activeFilterCount > 0 }"
-            :disabled="!canReadUsers"
-            @click="toggleFilters"
-          >
-            <SlidersHorizontal :size="15" />
-            <span>Filters</span>
-            <span v-if="activeFilterCount > 0" class="filter-badge">{{ activeFilterCount }}</span>
-          </button>
-        </div>
-      </div>
-
-      <Transition name="panel-slide">
-        <div v-if="filtersExpanded" class="filter-panel">
-          <div class="filter-panel-grid">
-            <FilterPanelField label="Role">
-              <MultiSelect
-                v-model="roleFilter"
-                :options="roleFilterOptions"
-                placeholder="All roles"
-                :loading="rolesLoading"
-                :disabled="!canReadUsers"
-                :maxSelectedLabels="1"
-                selectedItemsLabel="{0} selected"
-                @change="applyFilters"
-              />
-            </FilterPanelField>
-            <FilterPanelField label="Site">
-              <MultiSelect
-                v-model="siteFilter"
-                :options="siteFilterOptions"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="All sites"
-                :loading="sitesLoading"
-                :disabled="!canReadUsers"
-                :maxSelectedLabels="1"
-                selectedItemsLabel="{0} selected"
-                @change="applyFilters"
-              />
-            </FilterPanelField>
-          </div>
-          <button
-            v-if="hasPendingFilters"
-            class="clear-all-btn"
-            :disabled="!canReadUsers"
-            @click="clearFilters"
-          >
-            <X :size="13" />
-            <span>Clear all filters</span>
-          </button>
-        </div>
-      </Transition>
-
-      <div v-if="activeFilterChips.length > 0" class="active-chips">
-        <TransitionGroup name="chip-fade">
-          <button
-            v-for="chip in activeFilterChips"
-            :key="chip.key"
-            class="filter-chip"
-            @click="removeFilterChip(chip.key)"
-          >
-            <span>{{ chip.label }}</span>
-            <X :size="12" />
-          </button>
-        </TransitionGroup>
-      </div>
       <DataTable
         v-model:selection="selectedUsers"
+        v-model:filters="filters"
         :value="users"
         dataKey="id"
+        lazy
         tableStyle="min-width: 44rem"
         :loading="usersLoading"
+        filterDisplay="menu"
+        removableSort
         paginator
         :rows="limit"
         :first="paginatorFirst"
@@ -1385,16 +1230,39 @@ void loadUsers()
         :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
         :rowsPerPageOptions="[...TABLE_ROWS_PER_PAGE_OPTIONS]"
         @page="onPageChange"
+        @filter="onFilter"
         stripedRows
         rowHover
       >
+        <template #header>
+          <div class="table-header">
+            <InputText
+              v-model="filters.global.value"
+              placeholder="Search name or email..."
+              :disabled="!canReadUsers"
+              class="table-search"
+              @keydown.enter="onSearchEnter"
+            />
+          </div>
+        </template>
         <template #empty>
           <div class="table-empty">No users match the current filters.</div>
         </template>
         <Column selectionMode="multiple" style="width: 3rem" />
-        <Column field="fullName" header="Name" />
-        <Column field="email" header="Email" />
-        <Column header="Roles">
+        <Column field="fullName" header="Name" sortable />
+        <Column field="email" header="Email" sortable />
+        <Column header="Roles" field="roles" filterField="role" :showFilterOperator="false" :showAddButton="false" :showFilterMatchModes="false">
+          <template #filter="{ filterModel }">
+            <MultiSelect
+              v-model="filterModel.value"
+              :options="roleFilterOptions"
+              placeholder="All roles"
+              :loading="rolesLoading"
+              :maxSelectedLabels="1"
+              selectedItemsLabel="{0} selected"
+              style="min-width: 12rem"
+            />
+          </template>
           <template #body="{ data }">
             <span v-if="data.roles.length" class="cell-list" :title="data.roles.join(', ')">
               <span class="cell-pill">{{ data.roles[0] }}</span>
@@ -1403,7 +1271,20 @@ void loadUsers()
             <span v-else class="cell-empty">&mdash;</span>
           </template>
         </Column>
-        <Column header="Sites">
+        <Column header="Sites" field="sites" filterField="site" :showFilterOperator="false" :showAddButton="false" :showFilterMatchModes="false">
+          <template #filter="{ filterModel }">
+            <MultiSelect
+              v-model="filterModel.value"
+              :options="siteFilterOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="All sites"
+              :loading="sitesLoading"
+              :maxSelectedLabels="1"
+              selectedItemsLabel="{0} selected"
+              style="min-width: 12rem"
+            />
+          </template>
           <template #body="{ data }">
             <span v-if="data.sites.length" class="cell-list" :title="data.sites.join(', ')">
               <span class="cell-pill">{{ data.sites[0] }}</span>
@@ -1641,43 +1522,17 @@ void loadUsers()
   margin-bottom: 0.9rem;
 }
 
-/* ── Toolbar ─────────────────────────────────────────── */
-
-.toolbar {
-  --toolbar-control-height: var(--app-control-height, 2.2rem);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.55rem;
-  flex-wrap: wrap;
-  padding-bottom: 0.8rem;
-}
-
-.toolbar-left {
+.table-header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex: 1 1 0;
-  min-width: 0;
 }
 
-.toolbar-right {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  flex-shrink: 0;
-}
-
-.search-wrap {
-  flex: 1 1 14rem;
-  max-width: 26rem;
-  min-width: 0;
-}
-
-.search-wrap :deep(.p-inputtext) {
+.table-search {
   width: 100%;
-  height: var(--toolbar-control-height);
-  min-height: var(--toolbar-control-height);
+  max-width: 26rem;
+  height: var(--app-control-height);
+  min-height: var(--app-control-height);
   box-sizing: border-box;
   border-radius: var(--app-control-radius, 0.62rem);
   padding: 0 0.88rem;
@@ -1688,131 +1543,9 @@ void loadUsers()
   transition: border-color 0.15s, background 0.15s;
 }
 
-.search-wrap :deep(.p-inputtext:focus) {
+.table-search:focus {
   background: var(--p-surface-0);
   border-color: var(--p-surface-400);
-}
-
-/* ── Filter toggle button ────────────────────────────── */
-
-.filter-toggle {
-  display: inline-flex;
-  align-items: center;
-  height: var(--toolbar-control-height);
-  gap: 0.38rem;
-  padding: 0 0.78rem;
-  font-size: var(--app-control-font-size, 0.83rem);
-  font-weight: 550;
-  color: var(--p-surface-700);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--app-control-radius, 0.62rem);
-  background: var(--p-surface-50);
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-  line-height: 1.4;
-}
-
-.filter-toggle:hover:not(:disabled) {
-  border-color: var(--p-surface-400);
-  background: var(--p-surface-100);
-}
-
-.filter-toggle.active {
-  border-color: var(--p-surface-400);
-  background: var(--p-surface-100);
-  color: var(--p-surface-800);
-}
-
-.filter-toggle.has-filters {
-  border-color: var(--p-surface-500);
-  color: var(--p-surface-800);
-}
-
-.filter-toggle:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.filter-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.2rem;
-  height: 1.2rem;
-  padding: 0 0.3rem;
-  border-radius: 0.6rem;
-  background: var(--p-surface-800);
-  color: var(--p-surface-0);
-  font-size: 0.75rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-/* ── Collapsible filter panel ────────────────────────── */
-
-.filter-panel {
-  --filter-control-height: var(--toolbar-control-height, var(--app-control-height, 2.2rem));
-  border: 1px solid var(--p-surface-200);
-  border-radius: 0.72rem;
-  background: var(--p-surface-50);
-  padding: 0.9rem 1rem;
-  margin-bottom: 0.8rem;
-}
-
-.filter-panel-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
-  gap: 0.75rem;
-}
-
-.clear-all-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  margin-top: 0.7rem;
-  padding: 0.3rem 0.55rem;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--p-primary-700);
-  border: 1px solid color-mix(in srgb, var(--p-primary-color) 32%, var(--p-surface-0));
-  border-radius: 0.45rem;
-  background: color-mix(in srgb, var(--p-primary-color) 10%, var(--p-surface-0));
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.clear-all-btn:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--p-primary-color) 18%, var(--p-surface-0));
-  border-color: color-mix(in srgb, var(--p-primary-color) 42%, var(--p-surface-0));
-}
-
-.clear-all-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ── Panel slide transition ──────────────────────────── */
-
-.panel-slide-enter-active,
-.panel-slide-leave-active {
-  transition: all 0.2s ease;
-  overflow: hidden;
-}
-
-.panel-slide-enter-from,
-.panel-slide-leave-to {
-  opacity: 0;
-  max-height: 0;
-  margin-bottom: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.panel-slide-enter-to,
-.panel-slide-leave-from {
-  opacity: 1;
-  max-height: 20rem;
 }
 
 .cell-date {
@@ -1904,52 +1637,6 @@ void loadUsers()
   box-shadow: 0 0 0 3px rgb(249 115 22 / 16%);
 }
 
-/* ── Active filter chips ─────────────────────────────── */
-
-.active-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  padding-bottom: 0.7rem;
-}
-
-.filter-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.25rem 0.55rem;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--p-surface-800);
-  border: 1px solid var(--p-surface-300);
-  border-radius: 0.5rem;
-  background: var(--p-surface-100);
-  cursor: pointer;
-  transition: all 0.15s;
-  line-height: 1.3;
-}
-
-.filter-chip:hover {
-  background: var(--p-surface-200);
-  border-color: var(--p-surface-400);
-}
-
-.filter-chip:hover > :last-child {
-  color: var(--p-primary-700);
-}
-
-.chip-fade-enter-active,
-.chip-fade-leave-active {
-  transition: all 0.18s ease;
-}
-
-.chip-fade-enter-from,
-.chip-fade-leave-to {
-  opacity: 0;
-  transform: scale(0.85);
-}
-
-/* ── Existing styles (preserved) ─────────────────────── */
 
 .reset-link-box {
   display: grid;
@@ -2082,31 +1769,4 @@ void loadUsers()
   color: var(--p-surface-900);
 }
 
-@media (max-width: 900px) {
-  .toolbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .toolbar-left {
-    flex-wrap: wrap;
-  }
-
-  .toolbar-right {
-    justify-content: flex-end;
-  }
-
-  .search-wrap {
-    flex: 1 1 100%;
-    max-width: 100%;
-  }
-
-  .filter-panel-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .table-footer {
-    gap: 0.5rem;
-  }
-}
 </style>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref, type Component } from 'vue'
+import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import { Eye, MoreHorizontal, Pencil, RefreshCcw, Trash2 } from 'lucide-vue-next'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -75,6 +76,12 @@ const canManageRoles = computed(() =>
 const roles = ref<RoleSummary[]>([])
 const selectedRoles = ref<RoleSummary[]>([])
 const rolesLoading = ref(false)
+
+const filters = ref({
+  global: { value: null as string | null, matchMode: FilterMatchMode.CONTAINS },
+  name: { operator: FilterOperator.AND, constraints: [{ value: null as string | null, matchMode: FilterMatchMode.CONTAINS }] },
+  description: { operator: FilterOperator.AND, constraints: [{ value: null as string | null, matchMode: FilterMatchMode.CONTAINS }] },
+})
 const permissionsCatalog = computed(() => catalogStore.permissions)
 const permissionsLoading = computed(() => catalogStore.permissionsLoading)
 const pageError = ref('')
@@ -419,19 +426,32 @@ void loadRoles()
     <template #content>
       <DataTable
         v-model:selection="selectedRoles"
+        v-model:filters="filters"
         :value="roles"
         dataKey="id"
         tableStyle="min-width: 32rem"
         :loading="rolesLoading"
+        filterDisplay="menu"
+        :globalFilterFields="['name', 'description']"
+        removableSort
         paginator
         :rows="TABLE_DEFAULT_ROWS"
         :rowsPerPageOptions="[...TABLE_ROWS_PER_PAGE_OPTIONS]"
         :paginatorTemplate="TABLE_PAGINATOR_TEMPLATE"
         :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
       >
+        <template #header>
+          <div class="table-header">
+            <InputText
+              v-model="filters.global.value"
+              placeholder="Search roles..."
+              class="table-search"
+            />
+          </div>
+        </template>
         <Column selectionMode="multiple" style="width: 3rem" />
-        <Column field="name" header="Role" />
-        <Column field="description" header="Description" />
+        <Column field="name" header="Role" sortable :showFilterOperator="false" :showAddButton="false" />
+        <Column field="description" header="Description" sortable :showFilterOperator="false" :showAddButton="false" />
         <Column header="" style="width: 3.5rem">
           <template #body="{ data }">
             <div class="actions">
@@ -533,6 +553,32 @@ void loadRoles()
 <style scoped>
 .roles-card {
   margin-bottom: 0.9rem;
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.table-search {
+  width: 100%;
+  max-width: 26rem;
+  height: var(--app-control-height);
+  min-height: var(--app-control-height);
+  box-sizing: border-box;
+  border-radius: var(--app-control-radius, 0.62rem);
+  padding: 0 0.88rem;
+  font-size: var(--app-control-font-size, 0.83rem);
+  line-height: 1.2;
+  border: 1px solid var(--p-surface-200);
+  background: var(--p-surface-50);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.table-search:focus {
+  background: var(--p-surface-0);
+  border-color: var(--p-surface-400);
 }
 
 .actions {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref, type Component } from 'vue'
+import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import { Ban, MoreHorizontal, Pencil, RefreshCcw } from 'lucide-vue-next'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -72,6 +73,13 @@ const sites = ref<Site[]>([])
 const selectedSites = ref<Site[]>([])
 const loading = ref(false)
 const pageError = ref('')
+
+const filters = ref({
+  global: { value: null as string | null, matchMode: FilterMatchMode.CONTAINS },
+  name: { operator: FilterOperator.AND, constraints: [{ value: null as string | null, matchMode: FilterMatchMode.CONTAINS }] },
+  code: { operator: FilterOperator.AND, constraints: [{ value: null as string | null, matchMode: FilterMatchMode.CONTAINS }] },
+  siteType: { operator: FilterOperator.AND, constraints: [{ value: null as string | null, matchMode: FilterMatchMode.EQUALS }] },
+})
 
 const dialogVisible = ref(false)
 const dialogMode = ref<'create' | 'edit'>('create')
@@ -380,20 +388,33 @@ void loadSites()
     <template #content>
       <DataTable
         v-model:selection="selectedSites"
+        v-model:filters="filters"
         :value="sites"
         dataKey="id"
         tableStyle="min-width: 44rem"
         :loading="loading"
+        filterDisplay="menu"
+        :globalFilterFields="['name', 'code', 'siteType']"
+        removableSort
         paginator
         :rows="TABLE_DEFAULT_ROWS"
         :rowsPerPageOptions="[...TABLE_ROWS_PER_PAGE_OPTIONS]"
         :paginatorTemplate="TABLE_PAGINATOR_TEMPLATE"
         :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
       >
+        <template #header>
+          <div class="table-header">
+            <InputText
+              v-model="filters.global.value"
+              placeholder="Search sites..."
+              class="table-search"
+            />
+          </div>
+        </template>
         <Column selectionMode="multiple" style="width: 3rem" />
-        <Column field="name" header="Name" />
-        <Column field="code" header="Code" />
-        <Column header="Type">
+        <Column field="name" header="Name" sortable :showFilterOperator="false" :showAddButton="false" />
+        <Column field="code" header="Code" sortable :showFilterOperator="false" :showAddButton="false" />
+        <Column field="siteType" header="Type" sortable :showFilterOperator="false" :showAddButton="false">
           <template #body="{ data }">
             <span>{{ formatSiteType(data.siteType) }}</span>
           </template>
@@ -483,6 +504,32 @@ void loadSites()
 <style scoped>
 .sites-card {
   margin-bottom: 0.9rem;
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.table-search {
+  width: 100%;
+  max-width: 26rem;
+  height: var(--app-control-height);
+  min-height: var(--app-control-height);
+  box-sizing: border-box;
+  border-radius: var(--app-control-radius, 0.62rem);
+  padding: 0 0.88rem;
+  font-size: var(--app-control-font-size, 0.83rem);
+  line-height: 1.2;
+  border: 1px solid var(--p-surface-200);
+  background: var(--p-surface-50);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.table-search:focus {
+  background: var(--p-surface-0);
+  border-color: var(--p-surface-400);
 }
 
 .actions {

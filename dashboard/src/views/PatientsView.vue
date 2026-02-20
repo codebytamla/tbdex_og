@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { computed, onUnmounted, reactive, ref, type Component } from 'vue'
+import { computed, onUnmounted, reactive, ref, watch, type Component } from 'vue'
+import { FilterMatchMode, FilterOperator } from '@primevue/core/api'
 import {
   Ban,
   MapPinPlus,
   MoreHorizontal,
   Pencil,
   RefreshCcw,
-  SlidersHorizontal,
-  X,
 } from 'lucide-vue-next'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
@@ -27,7 +26,6 @@ import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores/auth'
 import { useCatalogStore } from '@/stores/catalog'
 import CreateActionButton from '@/components/ui/CreateActionButton.vue'
-import FilterPanelField from '@/components/ui/FilterPanelField.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
 import ToolbarIconButton from '@/components/ui/ToolbarIconButton.vue'
@@ -79,6 +77,7 @@ type PatientColumnKey =
   | 'fullName'
   | 'ageSex'
   | 'village'
+  | 'site'
   | 'createdBy'
   | 'createdAt'
   | 'updatedAt'
@@ -134,11 +133,10 @@ const cursorByPage = ref<Array<string | null>>([null])
 const nextCursor = ref<string | null>(null)
 const hasNextPage = ref(false)
 
-const searchText = ref('')
-const appliedSearch = ref('')
-const siteFilter = ref<string[]>([])
-const appliedSiteFilter = ref<string[]>([])
-const filtersExpanded = ref(false)
+const filters = ref({
+  global: { value: null as string | null, matchMode: FilterMatchMode.CONTAINS },
+  site: { operator: FilterOperator.AND, constraints: [{ value: null as string[] | null, matchMode: FilterMatchMode.IN }] },
+})
 
 const sitesCatalog = computed(() => catalogStore.sites)
 const sitesLoading = computed(() => catalogStore.sitesLoading)
@@ -194,6 +192,7 @@ const patientColumnOptions: PatientColumnOption[] = [
   { label: 'Full name', value: 'fullName', minWidthRem: 11 },
   { label: 'Age/Sex', value: 'ageSex', minWidthRem: 8.5 },
   { label: 'Village', value: 'village', minWidthRem: 10 },
+  { label: 'Site', value: 'site', minWidthRem: 10 },
   { label: 'Created by', value: 'createdBy', minWidthRem: 12 },
   { label: 'Created', value: 'createdAt', minWidthRem: 10.5 },
   { label: 'Updated', value: 'updatedAt', minWidthRem: 10.5 },
@@ -214,36 +213,6 @@ const paginatorTotalRecords = computed(() => {
   if (typeof totalPatients.value === 'number' && Number.isFinite(totalPatients.value)) return totalPatients.value
   if (hasNextPage.value) return paginatorFirst.value + limit.value + 1
   return paginatorFirst.value + patients.value.length
-})
-const hasPendingFilters = computed(
-  () =>
-    Boolean(searchText.value.trim()) ||
-    siteFilter.value.length > 0,
-)
-const activeFilterCount = computed(() => {
-  let count = 0
-  if (appliedSiteFilter.value.length > 0) count++
-  return count
-})
-
-type FilterChip = {
-  key: string
-  label: string
-}
-
-const activeFilterChips = computed<FilterChip[]>(() => {
-  const chips: FilterChip[] = []
-  if (appliedSiteFilter.value.length > 0) {
-    const labels = appliedSiteFilter.value.map((siteId) => {
-      const site = sitesCatalog.value.find((entry) => entry.id === siteId)
-      return site ? site.name : siteId.slice(0, 8)
-    })
-    chips.push({
-      key: 'site',
-      label: labels.length === 1 ? `Site: ${labels[0]}` : `Sites: ${labels.join(', ')}`,
-    })
-  }
-  return chips
 })
 
 const patientStatusOptions: Array<{ label: string; value: PatientStatus }> = [
@@ -870,8 +839,13 @@ async function loadPatients() {
     })
 
     if (currentCursor) params.set('cursor', currentCursor)
-    if (appliedSearch.value.trim()) params.set('search', appliedSearch.value.trim())
-    for (const siteId of appliedSiteFilter.value) params.append('site_id', siteId)
+    const searchValue = filters.value.global.value?.trim()
+    if (searchValue) params.set('search', searchValue)
+    const siteConstraint = filters.value.site.constraints[0]
+    const siteValues = siteConstraint?.value
+    if (siteValues && siteValues.length > 0) {
+      for (const siteId of siteValues) params.append('site_id', siteId)
+    }
 
     const payload = await requestJson<Record<string, unknown>>(
       `/patients?${params.toString()}`,
@@ -970,70 +944,19 @@ function refreshPatients() {
   void loadPatients()
 }
 
-let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null
-onUnmounted(() => { if (searchDebounceTimer) clearTimeout(searchDebounceTimer) })
-
-function applyFilters() {
-  if (searchDebounceTimer) {
-    clearTimeout(searchDebounceTimer)
-    searchDebounceTimer = null
+watch(() => filters.value.global.value, (val) => {
+  if (!val) {
+    resetPatientsPagination()
+    void loadPatients()
   }
+})
 
-  const nextSearch = searchText.value.trim()
-  const nextSiteFilter = normalizeSelection(siteFilter.value)
-
-  const changed =
-    nextSearch !== appliedSearch.value ||
-    nextSiteFilter.join('|') !== appliedSiteFilter.value.join('|')
-  if (!changed) return
-
-  siteFilter.value = [...nextSiteFilter]
-  appliedSearch.value = nextSearch
-  appliedSiteFilter.value = [...nextSiteFilter]
+function onSearchEnter() {
   resetPatientsPagination()
   void loadPatients()
 }
 
-function scheduleSearchFilter() {
-  if (searchDebounceTimer) clearTimeout(searchDebounceTimer)
-  searchDebounceTimer = setTimeout(() => {
-    searchDebounceTimer = null
-    applyFilters()
-  }, 280)
-}
-
-function clearFilters() {
-  if (searchDebounceTimer) {
-    clearTimeout(searchDebounceTimer)
-    searchDebounceTimer = null
-  }
-
-  const shouldReload =
-    Boolean(appliedSearch.value.trim()) ||
-    Boolean(searchText.value.trim()) ||
-    appliedSiteFilter.value.length > 0 ||
-    siteFilter.value.length > 0
-  if (!shouldReload) return
-
-  searchText.value = ''
-  appliedSearch.value = ''
-  siteFilter.value = []
-  appliedSiteFilter.value = []
-  resetPatientsPagination()
-  void loadPatients()
-}
-
-async function toggleFilters() {
-  filtersExpanded.value = !filtersExpanded.value
-  if (!filtersExpanded.value) return
-  await loadSitesCatalog({ silent: true })
-}
-
-function removeFilterChip(key: string) {
-  if (key === 'site') {
-    siteFilter.value = []
-    appliedSiteFilter.value = []
-  }
+function onFilter() {
   resetPatientsPagination()
   void loadPatients()
 }
@@ -1335,6 +1258,7 @@ function deactivatePatient(patient: Patient) {
 }
 
 void loadPatients()
+void loadSitesCatalog({ silent: true })
 </script>
 
 <template>
@@ -1372,95 +1296,17 @@ void loadPatients()
 
   <Card class="patients-card">
     <template #content>
-      <div class="toolbar">
-        <div class="toolbar-left">
-          <div class="search-wrap">
-            <InputText
-              v-model="searchText"
-              placeholder="Search full name or village..."
-              :disabled="!canReadPatients"
-              @input="scheduleSearchFilter"
-              @keyup.enter="applyFilters"
-            />
-          </div>
-          <button
-            class="filter-toggle"
-            :class="{ active: filtersExpanded, 'has-filters': activeFilterCount > 0 }"
-            :disabled="!canReadPatients"
-            @click="toggleFilters"
-          >
-            <SlidersHorizontal :size="15" />
-            <span>Filters</span>
-            <span v-if="activeFilterCount > 0" class="filter-badge">{{ activeFilterCount }}</span>
-          </button>
-        </div>
-        <div class="toolbar-right">
-          <div class="column-toggle-wrap">
-            <MultiSelect
-              v-model="selectedPatientColumns"
-              :options="patientColumnOptions"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Columns"
-              :disabled="!canReadPatients"
-              :maxSelectedLabels="1"
-              selectedItemsLabel="{0} columns"
-            />
-          </div>
-        </div>
-      </div>
-
-      <Transition name="panel-slide">
-        <div v-if="filtersExpanded" class="filter-panel">
-          <div class="filter-panel-grid">
-            <FilterPanelField label="Site">
-              <MultiSelect
-                v-model="siteFilter"
-                :options="siteFilterOptions"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="All sites"
-                :loading="sitesLoading"
-                :disabled="!canReadPatients"
-                :maxSelectedLabels="1"
-                selectedItemsLabel="{0} selected"
-                @change="applyFilters"
-              />
-            </FilterPanelField>
-          </div>
-          <button
-            v-if="hasPendingFilters"
-            class="clear-all-btn"
-            :disabled="!canReadPatients"
-            @click="clearFilters"
-          >
-            <X :size="13" />
-            <span>Clear all filters</span>
-          </button>
-        </div>
-      </Transition>
-
-      <div v-if="activeFilterChips.length > 0" class="active-chips">
-        <TransitionGroup name="chip-fade">
-          <button
-            v-for="chip in activeFilterChips"
-            :key="chip.key"
-            class="filter-chip"
-            @click="removeFilterChip(chip.key)"
-          >
-            <span>{{ chip.label }}</span>
-            <X :size="12" />
-          </button>
-        </TransitionGroup>
-      </div>
-
       <DataTable
         v-model:selection="selectedPatients"
+        v-model:filters="filters"
         :value="patients"
         dataKey="id"
+        lazy
         class="patients-table"
         :tableStyle="{ minWidth: `${patientTableMinWidth}rem` }"
         :loading="patientsLoading"
+        filterDisplay="menu"
+        removableSort
         paginator
         :rows="limit"
         :first="paginatorFirst"
@@ -1470,9 +1316,33 @@ void loadPatients()
         :rowsPerPageOptions="[...TABLE_ROWS_PER_PAGE_OPTIONS]"
         scrollable
         @page="onPageChange"
+        @filter="onFilter"
         stripedRows
         rowHover
       >
+        <template #header>
+          <div class="table-header">
+            <InputText
+              v-model="filters.global.value"
+              placeholder="Search full name or village..."
+              :disabled="!canReadPatients"
+              class="table-search"
+              @keydown.enter="onSearchEnter"
+            />
+            <div class="column-toggle-wrap">
+              <MultiSelect
+                v-model="selectedPatientColumns"
+                :options="patientColumnOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Columns"
+                :disabled="!canReadPatients"
+                :maxSelectedLabels="1"
+                selectedItemsLabel="{0} columns"
+              />
+            </div>
+          </div>
+        </template>
         <template #empty>
           <div class="table-empty">No patients match the current filters.</div>
         </template>
@@ -1486,6 +1356,24 @@ void loadPatients()
         <Column v-if="isPatientColumnVisible('village')" header="Village" style="min-width: 10rem">
           <template #body="{ data }">
             <span class="cell-truncate" :title="data.village || 'N/A'">{{ data.village || 'N/A' }}</span>
+          </template>
+        </Column>
+        <Column v-if="isPatientColumnVisible('site')" header="Site" field="primarySiteName" filterField="site" style="min-width: 10rem" :showFilterOperator="false" :showAddButton="false" :showFilterMatchModes="false">
+          <template #filter="{ filterModel }">
+            <MultiSelect
+              v-model="filterModel.value"
+              :options="siteFilterOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="All sites"
+              :loading="sitesLoading"
+              :maxSelectedLabels="1"
+              selectedItemsLabel="{0} selected"
+              style="min-width: 12rem"
+            />
+          </template>
+          <template #body="{ data }">
+            <span class="cell-truncate" :title="data.primarySiteName || 'N/A'">{{ data.primarySiteName || 'N/A' }}</span>
           </template>
         </Column>
         <Column v-if="isPatientColumnVisible('createdBy')" header="Created by" style="min-width: 12rem">
@@ -1808,40 +1696,43 @@ void loadPatients()
   max-width: 100%;
 }
 
-.toolbar {
-  --toolbar-control-height: var(--app-control-height, 2.2rem);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.55rem;
-  flex-wrap: wrap;
-  padding-bottom: 0.8rem;
-}
-
-.toolbar-left {
+.table-header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex: 1 1 0;
-  min-width: 0;
+  flex-wrap: wrap;
 }
 
-.toolbar-right {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  flex-shrink: 0;
+.table-search {
+  flex: 1 1 14rem;
+  max-width: 28rem;
+  height: var(--app-control-height);
+  min-height: var(--app-control-height);
+  box-sizing: border-box;
+  border-radius: var(--app-control-radius, 0.62rem);
+  padding: 0 0.88rem;
+  font-size: var(--app-control-font-size, 0.83rem);
+  line-height: 1.2;
+  border: 1px solid var(--p-surface-200);
+  background: var(--p-surface-50);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.table-search:focus {
+  background: var(--p-surface-0);
+  border-color: var(--p-surface-400);
 }
 
 .column-toggle-wrap {
   min-width: 11rem;
   width: min(15rem, 46vw);
+  margin-left: auto;
 }
 
 .column-toggle-wrap :deep(.p-multiselect) {
   width: 100%;
-  height: var(--toolbar-control-height);
-  min-height: var(--toolbar-control-height);
+  height: var(--app-control-height);
+  min-height: var(--app-control-height);
   border-radius: var(--app-control-radius, 0.62rem);
   border: 1px solid var(--p-surface-200);
   background: var(--p-surface-50);
@@ -1859,147 +1750,6 @@ void loadPatients()
 
 .column-toggle-wrap :deep(.p-multiselect-trigger) {
   width: 2rem;
-}
-
-.search-wrap {
-  flex: 1 1 14rem;
-  max-width: 28rem;
-  min-width: 0;
-}
-
-.search-wrap :deep(.p-inputtext) {
-  width: 100%;
-  height: var(--toolbar-control-height);
-  min-height: var(--toolbar-control-height);
-  box-sizing: border-box;
-  border-radius: var(--app-control-radius, 0.62rem);
-  padding: 0 0.88rem;
-  font-size: var(--app-control-font-size, 0.83rem);
-  line-height: 1.2;
-  border: 1px solid var(--p-surface-200);
-  background: var(--p-surface-50);
-  transition: border-color 0.15s, background 0.15s;
-}
-
-.search-wrap :deep(.p-inputtext:focus) {
-  background: var(--p-surface-0);
-  border-color: var(--p-surface-400);
-}
-
-.filter-toggle {
-  display: inline-flex;
-  align-items: center;
-  height: var(--toolbar-control-height);
-  gap: 0.38rem;
-  padding: 0 0.78rem;
-  font-size: var(--app-control-font-size, 0.83rem);
-  font-weight: 550;
-  color: var(--p-surface-700);
-  border: 1px solid var(--p-surface-200);
-  border-radius: var(--app-control-radius, 0.62rem);
-  background: var(--p-surface-50);
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-  line-height: 1.4;
-}
-
-.filter-toggle:hover:not(:disabled) {
-  border-color: var(--p-surface-400);
-  background: var(--p-surface-100);
-}
-
-.filter-toggle.active {
-  border-color: var(--p-surface-400);
-  background: var(--p-surface-100);
-  color: var(--p-surface-800);
-}
-
-.filter-toggle.has-filters {
-  border-color: var(--p-surface-500);
-  color: var(--p-surface-800);
-}
-
-.filter-toggle:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.filter-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.2rem;
-  height: 1.2rem;
-  padding: 0 0.3rem;
-  border-radius: 0.6rem;
-  background: var(--p-surface-800);
-  color: var(--p-surface-0);
-  font-size: 0.75rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.filter-panel {
-  --filter-control-height: var(--toolbar-control-height, var(--app-control-height, 2.2rem));
-  border: 1px solid var(--p-surface-200);
-  border-radius: 0.72rem;
-  background: var(--p-surface-50);
-  padding: 0.9rem 1rem;
-  margin-bottom: 0.8rem;
-}
-
-.filter-panel-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
-  gap: 0.75rem;
-}
-
-.clear-all-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  margin-top: 0.7rem;
-  padding: 0.3rem 0.55rem;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--p-primary-700);
-  border: 1px solid color-mix(in srgb, var(--p-primary-color) 32%, var(--p-surface-0));
-  border-radius: 0.45rem;
-  background: color-mix(in srgb, var(--p-primary-color) 10%, var(--p-surface-0));
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.clear-all-btn:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--p-primary-color) 18%, var(--p-surface-0));
-  border-color: color-mix(in srgb, var(--p-primary-color) 42%, var(--p-surface-0));
-}
-
-.clear-all-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.panel-slide-enter-active,
-.panel-slide-leave-active {
-  transition: all 0.2s ease;
-  overflow: hidden;
-}
-
-.panel-slide-enter-from,
-.panel-slide-leave-to {
-  opacity: 0;
-  max-height: 0;
-  margin-bottom: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.panel-slide-enter-to,
-.panel-slide-leave-from {
-  opacity: 1;
-  max-height: 18rem;
 }
 
 .cell-stack {
@@ -2119,48 +1869,6 @@ void loadPatients()
   box-shadow: 0 0 0 3px rgb(124 135 152 / 16%);
 }
 
-.active-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  padding-bottom: 0.7rem;
-}
-
-.filter-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.25rem 0.55rem;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--p-surface-800);
-  border: 1px solid var(--p-surface-300);
-  border-radius: 0.5rem;
-  background: var(--p-surface-100);
-  cursor: pointer;
-  transition: all 0.15s;
-  line-height: 1.3;
-}
-
-.filter-chip:hover {
-  background: var(--p-surface-200);
-  border-color: var(--p-surface-400);
-}
-
-.filter-chip:hover > :last-child {
-  color: var(--p-primary-700);
-}
-
-.chip-fade-enter-active,
-.chip-fade-leave-active {
-  transition: all 0.18s ease;
-}
-
-.chip-fade-enter-from,
-.chip-fade-leave-to {
-  opacity: 0;
-  transform: scale(0.85);
-}
 
 .actions {
   display: inline-flex;
@@ -2279,36 +1987,19 @@ void loadPatients()
 }
 
 @media (max-width: 900px) {
-  .toolbar {
+  .table-header {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .toolbar-left {
-    flex-wrap: wrap;
-  }
-
-  .toolbar-right {
-    justify-content: flex-end;
-    flex-wrap: wrap;
+  .table-search {
+    max-width: 100%;
   }
 
   .column-toggle-wrap {
     width: 100%;
     min-width: 0;
-  }
-
-  .search-wrap {
-    flex: 1 1 100%;
-    max-width: 100%;
-  }
-
-  .filter-panel-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .table-footer {
-    gap: 0.5rem;
+    margin-left: 0;
   }
 
   .field-inline {
