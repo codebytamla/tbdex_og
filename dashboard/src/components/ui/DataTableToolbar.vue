@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { Table2 } from 'lucide-vue-next'
 import InputText from 'primevue/inputtext'
 import MultiSelect from 'primevue/multiselect'
 
@@ -54,8 +55,14 @@ const localSelectedColumns = computed({
         :maxSelectedLabels="1"
         selectedItemsLabel="{0} columns"
         class="toolbar-columns-select"
+        overlayClass="toolbar-columns-overlay"
+        aria-label="Toggle columns"
         display="comma"
-      />
+      >
+        <template #dropdownicon>
+          <Table2 :size="16" />
+        </template>
+      </MultiSelect>
     </div>
   </div>
 </template>
@@ -101,13 +108,51 @@ const localSelectedColumns = computed({
 }
 
 .toolbar-columns-select {
-  min-width: 10rem;
-  height: var(--app-control-height, 2.25rem);
+  width: auto;
+  min-width: 0;
+  height: auto;
 }
 
-:deep(.toolbar-columns-select .p-multiselect-label) {
-  padding: 0.4rem 0.88rem;
-  font-size: var(--app-control-font-size, 0.83rem);
+:deep(.toolbar-columns-select.p-multiselect) {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transition: color 0.15s;
+}
+
+:deep(.toolbar-columns-select .p-multiselect-label-container) {
+  display: none;
+}
+
+:deep(.toolbar-columns-select .p-multiselect-dropdown) {
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  justify-content: center;
+  background: transparent !important;
+  color: var(--p-surface-600);
+}
+
+:deep(.toolbar-columns-select:not(.p-disabled):hover .p-multiselect-dropdown) {
+  color: var(--p-surface-800);
+}
+
+:deep(.toolbar-columns-select.p-focus) {
+  box-shadow: none !important;
+}
+
+:deep(.toolbar-columns-select.p-focus .p-multiselect-dropdown) {
+  color: var(--p-surface-800);
+}
+
+:deep(.toolbar-columns-select .p-multiselect-dropdown-icon) {
+  width: 1rem;
+  height: 1rem;
+}
+
+:deep(.toolbar-columns-overlay) {
+  min-width: 14rem;
 }
 
 @media (max-width: 640px) {
