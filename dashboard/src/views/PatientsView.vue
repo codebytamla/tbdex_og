@@ -1784,6 +1784,7 @@ void loadSitesCatalog({ silent: true })
 }
 
 :deep(.patients-card .p-card-body) {
+  padding: 0.25rem 0;
   min-width: 0;
   width: 100%;
   max-width: 100%;
@@ -1791,6 +1792,7 @@ void loadSitesCatalog({ silent: true })
 }
 
 :deep(.patients-card .p-card-content) {
+  padding: 0;
   min-width: 0;
   width: 100%;
   max-width: 100%;

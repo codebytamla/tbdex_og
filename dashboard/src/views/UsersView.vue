@@ -1795,6 +1795,14 @@ void loadSitesCatalog({ silent: true })
   box-shadow: none;
 }
 
+:deep(.p-card-body) {
+  padding: 0.25rem 0;
+}
+
+:deep(.p-card-content) {
+  padding: 0;
+}
+
 :deep(.p-datatable-header-cell) {
   background: var(--p-surface-50);
   color: var(--p-surface-700);

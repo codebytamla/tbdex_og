@@ -631,4 +631,12 @@ void loadSites()
   border: 1px solid var(--p-surface-200);
   box-shadow: none;
 }
+
+:deep(.p-card-body) {
+  padding: 0.25rem 0;
+}
+
+:deep(.p-card-content) {
+  padding: 0;
+}
 </style>
