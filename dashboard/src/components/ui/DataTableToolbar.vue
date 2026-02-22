@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ChevronDown, Columns2 } from 'lucide-vue-next'
+import { Check, ChevronDown, Columns2 } from 'lucide-vue-next'
 import InputText from 'primevue/inputtext'
 import MultiSelect from 'primevue/multiselect'
 
@@ -42,9 +42,17 @@ function onKeydown(event: KeyboardEvent) {
       optionLabel="header"
       :placeholder="columnsLabel ?? 'Columns'"
       class="toolbar-columns"
+      panelClass="toolbar-columns-panel"
+      :showToggleAll="false"
       :maxSelectedLabels="0"
       selectedItemsLabel=""
     >
+      <template #option="{ option, selected }">
+        <span class="columns-option-content">
+          <Check :size="14" class="columns-option-check" :class="{ 'is-selected': selected }" aria-hidden="true" />
+          <span>{{ option.header }}</span>
+        </span>
+      </template>
       <template #value>
         <span class="columns-trigger-content">
           <Columns2 :size="15" class="columns-trigger-icon" aria-hidden="true" />
@@ -141,5 +149,25 @@ function onKeydown(event: KeyboardEvent) {
 }
 .columns-trigger-icon {
   color: #9ca3af;
+}
+
+.columns-option-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.columns-option-check {
+  opacity: 0;
+  color: #64748b;
+  flex: 0 0 auto;
+}
+
+.columns-option-check.is-selected {
+  opacity: 1;
+}
+
+:global(.toolbar-columns-panel .p-multiselect-option .p-checkbox) {
+  display: none;
 }
 </style>
