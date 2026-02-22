@@ -34,7 +34,6 @@ export type ThemePresetId =
   | 'monochrome-edge'
   | 'vibrant-violet'
   | 'holistic-forest'
-  | 'midnight-slate-dark'
   | 'sunrise-coral'
   | 'royal-fintech'
 
@@ -125,13 +124,6 @@ export const THEME_PRESET_OPTIONS: ThemePresetOption[] = [
     description: 'Calming sage and deep green natural tones.',
     primary: 'emerald',
     secondary: 'stone',
-  },
-  {
-    id: 'midnight-slate-dark',
-    name: 'Midnight Slate (Dark)',
-    description: 'True dark-mode leaning shell for low-light environments.',
-    primary: 'blue',
-    secondary: 'slate',
   },
   {
     id: 'sunrise-coral',

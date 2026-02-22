@@ -57,8 +57,7 @@ const isThemeExplorerOpen = ref(true)
 const themeExplorerLabel = 'Theme explorer'
 const themePresets = computed(() => themeColors.themePresets)
 const activeThemePresetId = computed(() => themeColors.activeThemePresetId.value)
-const isMidnightSlatePreset = computed(() => activeThemePresetId.value === 'midnight-slate-dark')
-const isNavbarDark = computed(() => isMidnightSlatePreset.value || sidebarDarkMode.value)
+const isNavbarDark = computed(() => sidebarDarkMode.value)
 
 onMounted(() => {
   sidebarCollapsed.value = localStorage.getItem(sidebarCollapseStorageKey) === '1'
@@ -83,7 +82,6 @@ function toggleSidebar() {
 }
 
 function toggleSidebarColorMode() {
-  if (isMidnightSlatePreset.value) return
   sidebarDarkMode.value = !sidebarDarkMode.value
   localStorage.setItem(sidebarColorModeStorageKey, sidebarDarkMode.value ? '1' : '0')
 }
@@ -184,19 +182,15 @@ function toggleSidebarColorMode() {
           class="theme-explorer-navbar-toggle"
           :class="{
             'theme-explorer-navbar-toggle-active': isNavbarDark,
-            'theme-explorer-navbar-toggle-locked': isMidnightSlatePreset,
           }"
           :aria-pressed="isNavbarDark"
-          :disabled="isMidnightSlatePreset"
           @click="toggleSidebarColorMode"
         >
           <span class="theme-explorer-navbar-copy">
             <span class="theme-explorer-navbar-title">Dark navbar</span>
-            <span class="theme-explorer-navbar-subtitle">
-              {{ isMidnightSlatePreset ? 'Locked for Midnight Slate' : 'Only affects sidebar colors' }}
-            </span>
+            <span class="theme-explorer-navbar-subtitle">Only affects sidebar colors</span>
           </span>
-          <span class="theme-explorer-navbar-state">{{ isMidnightSlatePreset ? 'Locked' : sidebarDarkMode ? 'On' : 'Off' }}</span>
+          <span class="theme-explorer-navbar-state">{{ sidebarDarkMode ? 'On' : 'Off' }}</span>
         </button>
 
         <div class="theme-explorer-list">
@@ -257,7 +251,7 @@ function toggleSidebarColorMode() {
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
   --shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04);
   --shadow-lg: 0 12px 24px -4px rgb(0 0 0 / 0.08), 0 4px 8px -4px rgb(0 0 0 / 0.04);
-  --brand-accent: var(--p-primary-400);
+  --brand-accent: var(--p-primary-color);
   --brand-accent-strong: var(--p-primary-500);
   --brand-wordmark-primary: var(--p-surface-900);
 
@@ -302,33 +296,6 @@ function toggleSidebarColorMode() {
   --theme-explorer-trigger-icon-hover-bg: color-mix(in srgb, var(--p-primary-color) 20%, transparent);
   --theme-explorer-trigger-shadow: var(--shadow-md);
   --theme-explorer-trigger-shadow-hover: var(--shadow-lg);
-}
-
-:global(:root[data-dashboard-theme='midnight-slate-dark']) {
-  --app-body-bg: var(--p-surface-950);
-  --app-body-text: var(--p-surface-100);
-  --content-bg: var(--p-surface-950);
-
-  --theme-explorer-panel-bg: var(--p-surface-900);
-  --theme-explorer-panel-border: color-mix(in srgb, var(--p-surface-400) 24%, transparent);
-  --theme-explorer-title: var(--p-surface-100);
-  --theme-explorer-subtitle: var(--p-surface-400);
-  --theme-explorer-close: var(--p-surface-400);
-  --theme-explorer-close-hover: var(--p-surface-100);
-  --theme-explorer-close-hover-bg: color-mix(in srgb, var(--p-surface-500) 24%, transparent);
-  --theme-explorer-option-bg-hover: color-mix(in srgb, var(--p-surface-600) 38%, transparent);
-  --theme-explorer-option-title: var(--p-surface-200);
-  --theme-explorer-option-description: var(--p-surface-400);
-  --theme-explorer-option-active-bg: color-mix(in srgb, var(--p-primary-color) 22%, transparent);
-  --theme-explorer-option-active-border: color-mix(in srgb, var(--p-primary-color) 44%, transparent);
-  --theme-explorer-option-active-title: var(--p-primary-200);
-  --theme-explorer-option-active-description: var(--p-primary-100);
-  --theme-explorer-trigger-bg: var(--p-surface-900);
-  --theme-explorer-trigger-border: color-mix(in srgb, var(--p-surface-400) 24%, transparent);
-  --theme-explorer-trigger-text: var(--p-surface-300);
-  --theme-explorer-trigger-text-hover: var(--p-primary-200);
-  --theme-explorer-trigger-icon-bg: color-mix(in srgb, var(--p-surface-500) 22%, transparent);
-  --theme-explorer-trigger-icon-hover-bg: color-mix(in srgb, var(--p-primary-color) 24%, transparent);
 }
 
 :global(body) {
@@ -902,7 +869,7 @@ function toggleSidebarColorMode() {
   --profile-avatar-text: var(--p-surface-900);
   --profile-avatar-border: color-mix(in srgb, var(--p-surface-0) 45%, var(--p-surface-500));
   --brand-wordmark-primary: var(--p-surface-0);
-  --brand-accent: var(--p-primary-300);
+  --brand-accent: var(--p-primary-color);
 }
 
 .sidebar::-webkit-scrollbar {
