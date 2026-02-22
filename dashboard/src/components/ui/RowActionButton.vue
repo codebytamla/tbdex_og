@@ -42,22 +42,24 @@ function onClick(event: MouseEvent) {
 
 <style scoped>
 .row-action-btn {
-  color: #52525b !important;
+  color: #9ca3af !important;
+  border-radius: var(--radius-sm, 6px) !important;
+  transition: color 0.15s ease, background 0.15s ease !important;
 }
 
 .row-action-btn:hover:not(:disabled) {
-  color: #3f3f46 !important;
-  background: #f4f4f5 !important;
+  color: #374151 !important;
+  background: #f4f5f7 !important;
 }
 
 .row-action-btn:focus-visible {
-  outline: 2px solid #d4d4d8;
+  outline: 2px solid rgb(13 148 136 / 0.3);
   outline-offset: 1px;
 }
 
 .row-action-btn :deep(.p-button-label) {
   display: inline-flex;
   align-items: center;
-  gap: 0.28rem;
+  gap: 0.25rem;
 }
 </style>

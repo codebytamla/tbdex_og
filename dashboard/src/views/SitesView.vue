@@ -16,10 +16,9 @@ import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores/auth'
 import { useCatalogStore } from '@/stores/catalog'
-import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
-import TableActionDrawerButton from '@/components/ui/TableActionDrawerButton.vue'
+import PrimaryActionDropdown from '@/components/ui/PrimaryActionDropdown.vue'
 import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
 import {
   TABLE_DEFAULT_ROWS,
@@ -381,16 +380,17 @@ void loadSites()
 <template>
   <PageSectionHeader title="Sites" description="Create and manage active service sites">
     <template #actions>
-      <CreateActionButton label="Create site" :disabled="!canManageSites" @click="openCreateDialog" />
-      <TableActionDrawerButton
-        title="Site table actions"
-        ariaLabel="Open site table actions"
+      <PrimaryActionDropdown
+        label="Create site"
+        :disabled="!canManageSites"
+        title="Create new site options"
         importLabel="Import sites"
         exportLabel="Export sites"
         refreshLabel="Refresh sites"
         :importDisabled="true"
         :exportDisabled="true"
         :refreshDisabled="!canManageSites"
+        @click="openCreateDialog"
         @refresh="loadSites"
       />
     </template>
@@ -421,6 +421,8 @@ void loadSites()
         :rowsPerPageOptions="[...TABLE_ROWS_PER_PAGE_OPTIONS]"
         :paginatorTemplate="TABLE_PAGINATOR_TEMPLATE"
         :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
+        stripedRows
+        rowHover
       >
         <template #header>
           <DataTableToolbar
@@ -446,7 +448,7 @@ void loadSites()
           </Column>
           <Column v-if="col.field === 'status'" header="Status">
             <template #body="{ data }">
-              <span class="status-cell" :class="data.isActive ? 'status-active' : 'status-disabled'">
+              <span class="status-badge" :class="data.isActive ? 'status-active' : 'status-disabled'">
                 <span class="status-dot"></span>
                 {{ data.isActive ? 'Active' : 'Disabled' }}
               </span>
@@ -534,51 +536,51 @@ void loadSites()
   flex-wrap: wrap;
 }
 
-.status-cell {
+/* ── Status badge ── */
+.status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.46rem;
-  padding: 0.22rem 0.58rem 0.22rem 0.46rem;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  font-size: 0.74rem;
-  font-weight: 700;
-  line-height: 1;
+  gap: 0.38rem;
+  padding: 0.24rem 0.6rem;
+  border-radius: var(--radius-full, 999px);
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
   letter-spacing: 0.012em;
 }
 
 .status-dot {
-  width: 0.46rem;
-  height: 0.46rem;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .status-active {
-  color: #0f7a3f;
-  border-color: #bfe9cd;
-  background: #eaf8f0;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid rgb(4 120 87 / 0.1);
 }
 
 .status-active .status-dot {
-  background: #16c35d;
-  box-shadow: 0 0 0 3px rgb(22 195 93 / 18%);
+  background: #10b981;
+  box-shadow: 0 0 0 2px rgb(16 185 129 / 0.15);
 }
 
 .status-disabled {
-  color: #9a4214;
-  border-color: #f8d2bd;
-  background: #fff2e8;
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid rgb(180 83 9 / 0.1);
 }
 
 .status-disabled .status-dot {
-  background: #f97316;
-  box-shadow: 0 0 0 3px rgb(249 115 22 / 16%);
+  background: #f59e0b;
+  box-shadow: 0 0 0 2px rgb(245 158 11 / 0.15);
 }
 
 .dialog-grid {
   display: grid;
-  gap: 0.8rem;
+  gap: 1rem;
 }
 
 .field {
@@ -587,13 +589,15 @@ void loadSites()
 }
 
 .field span {
-  font-size: 0.8rem;
-  color: var(--p-surface-600);
+  font-size: 0.825rem;
+  color: #374151;
+  font-weight: 600;
+  letter-spacing: -0.005em;
 }
 
 .dialog-actions {
   display: inline-flex;
-  gap: 0.45rem;
+  gap: 0.5rem;
   justify-content: flex-end;
   width: 100%;
 }
@@ -604,12 +608,12 @@ void loadSites()
   border-color: transparent !important;
   box-shadow: none !important;
   background: transparent !important;
-  color: var(--p-surface-500) !important;
+  color: #9ca3af !important;
 }
 
 :deep(.create-cancel-btn:hover) {
   background: transparent !important;
-  color: var(--p-surface-700) !important;
+  color: #374151 !important;
   box-shadow: none !important;
 }
 
@@ -628,15 +632,38 @@ void loadSites()
 }
 
 :deep(.p-card) {
-  border: 1px solid var(--p-surface-200);
-  box-shadow: none;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-xl, 18px) !important;
+  box-shadow: var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.06));
+  background: #ffffff;
+  overflow: hidden;
 }
 
 :deep(.p-card-body) {
-  padding: 0.25rem 0;
+  padding: 0;
 }
 
 :deep(.p-card-content) {
   padding: 0;
+}
+
+:deep(.p-datatable-header-cell) {
+  background: #ffffff;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e8eaed;
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
+}
+
+:deep(.p-datatable-tbody > tr > td) {
+  color: #1a1d23;
+  padding: 0.75rem 1rem;
+  border-color: #f4f5f7;
+  font-size: 0.875rem;
+  white-space: nowrap;
 }
 </style>

@@ -16,10 +16,9 @@ import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores/auth'
 import { useCatalogStore } from '@/stores/catalog'
-import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
-import TableActionDrawerButton from '@/components/ui/TableActionDrawerButton.vue'
+import PrimaryActionDropdown from '@/components/ui/PrimaryActionDropdown.vue'
 import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
 import {
   TABLE_DEFAULT_ROWS,
@@ -416,16 +415,17 @@ void loadRoles()
 <template>
   <PageSectionHeader title="Roles" description="Manage role definitions and permission assignments">
     <template #actions>
-      <CreateActionButton label="Create role" :disabled="!canManageRoles" @click="openCreateDialog" />
-      <TableActionDrawerButton
-        title="Role table actions"
-        ariaLabel="Open role table actions"
+      <PrimaryActionDropdown
+        label="Create role"
+        :disabled="!canManageRoles"
+        title="Create new role options"
         importLabel="Import roles"
         exportLabel="Export roles"
         refreshLabel="Refresh roles"
         :importDisabled="true"
         :exportDisabled="true"
         :refreshDisabled="!canManageRoles"
+        @click="openCreateDialog"
         @refresh="loadRoles"
       />
     </template>
@@ -456,6 +456,8 @@ void loadRoles()
         :rowsPerPageOptions="[...TABLE_ROWS_PER_PAGE_OPTIONS]"
         :paginatorTemplate="TABLE_PAGINATOR_TEMPLATE"
         :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
+        stripedRows
+        rowHover
       >
         <template #header>
           <DataTableToolbar
@@ -592,7 +594,7 @@ void loadRoles()
 
 .dialog-content {
   display: grid;
-  gap: 0.85rem;
+  gap: 1rem;
   min-width: 0;
 }
 
@@ -603,15 +605,16 @@ void loadRoles()
 }
 
 .field span {
-  font-size: 0.83rem;
-  color: var(--p-surface-700);
+  font-size: 0.825rem;
+  color: #374151;
   font-weight: 600;
+  letter-spacing: -0.005em;
 }
 
 .loading-copy {
   margin: 0;
-  color: var(--p-surface-600);
-  font-size: 0.86rem;
+  color: #6b7280;
+  font-size: 0.875rem;
 }
 
 .permissions-field {
@@ -626,7 +629,7 @@ void loadRoles()
 
 .permissions-preview-meta {
   margin: 0;
-  color: var(--p-surface-600);
+  color: #6b7280;
   font-size: 0.77rem;
 }
 
@@ -639,9 +642,9 @@ void loadRoles()
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0.42rem;
-  border: 1px solid var(--p-surface-200);
-  border-radius: 0.56rem;
-  background: var(--p-surface-0);
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-sm, 6px);
+  background: #ffffff;
 }
 
 .permissions-preview-chip {
@@ -650,12 +653,12 @@ void loadRoles()
   max-width: 100%;
   min-height: 1.25rem;
   padding: 0.14rem 0.48rem;
-  border-radius: 999px;
+  border-radius: var(--radius-full, 999px);
   font-size: 0.74rem;
   line-height: 1.2;
   color: var(--p-primary-700);
-  background: color-mix(in srgb, var(--p-primary-color) 10%, var(--p-surface-0));
-  border: 1px solid color-mix(in srgb, var(--p-primary-color) 20%, var(--p-surface-0));
+  background: color-mix(in srgb, var(--p-primary-color) 10%, #ffffff);
+  border: 1px solid color-mix(in srgb, var(--p-primary-color) 20%, #ffffff);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -674,12 +677,12 @@ void loadRoles()
   border-color: transparent !important;
   box-shadow: none !important;
   background: transparent !important;
-  color: var(--p-surface-500) !important;
+  color: #9ca3af !important;
 }
 
 :deep(.create-cancel-btn:hover) {
   background: transparent !important;
-  color: var(--p-surface-700) !important;
+  color: #374151 !important;
   box-shadow: none !important;
 }
 
@@ -698,12 +701,15 @@ void loadRoles()
 }
 
 :deep(.p-card) {
-  border: 1px solid var(--p-surface-200);
-  box-shadow: none;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-xl, 18px) !important;
+  box-shadow: var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.06));
+  background: #ffffff;
+  overflow: hidden;
 }
 
 :deep(.p-card-body) {
-  padding: 0.25rem 0;
+  padding: 0;
 }
 
 :deep(.p-card-content) {
@@ -711,12 +717,23 @@ void loadRoles()
 }
 
 :deep(.p-datatable-header-cell) {
-  background: var(--p-surface-50);
-  color: var(--p-surface-700);
+  background: #ffffff;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e8eaed;
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
 }
 
 :deep(.p-datatable-tbody > tr > td) {
-  color: var(--p-surface-900);
+  color: #1a1d23;
+  padding: 0.75rem 1rem;
+  border-color: #f4f5f7;
+  font-size: 0.875rem;
+  white-space: nowrap;
 }
 
 :deep(.p-dialog-content) {

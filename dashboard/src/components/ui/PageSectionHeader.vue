@@ -33,39 +33,38 @@ const hasActions = computed(() => !!slots.actions)
 
 <style scoped>
 .page-section-header {
-  margin-bottom: var(--page-section-margin-bottom, 1rem);
+  margin-bottom: var(--page-section-margin-bottom, 1.5rem);
 }
 
 .page-section-top {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .page-section-copy {
   display: flex;
   flex-direction: column;
-  gap: 0.32rem;
+  gap: 0.25rem;
   min-width: 0;
 }
 
 .page-section-title {
   margin: 0;
-  font-size: 1.34rem;
-  font-weight: 650;
-  line-height: 1.18;
-  letter-spacing: -0.012em;
-  color: var(--p-surface-900);
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: #111827;
 }
 
 .page-section-description {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 400;
-  line-height: 1.38;
-  letter-spacing: 0.002em;
-  color: var(--p-surface-600);
+  line-height: 1.5;
+  color: #6b7280;
 }
 
 .page-section-actions {
@@ -73,27 +72,27 @@ const hasActions = computed(() => !!slots.actions)
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.42rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
 .page-section-header.compact {
-  margin-bottom: 0.72rem;
+  margin-bottom: 1rem;
 }
 
 .page-section-header.compact .page-section-title {
-  font-size: 1.16rem;
+  font-size: 1.25rem;
 }
 
 .page-section-header.compact .page-section-description {
-  font-size: 0.84rem;
+  font-size: 0.825rem;
 }
 
 @media (max-width: 900px) {
   .page-section-top {
     flex-direction: column;
     align-items: stretch;
-    gap: 0.58rem;
+    gap: 0.75rem;
   }
 
   .page-section-actions {
@@ -102,11 +101,11 @@ const hasActions = computed(() => !!slots.actions)
   }
 
   .page-section-title {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
   }
 
   .page-section-description {
-    font-size: 0.84rem;
+    font-size: 0.825rem;
   }
 }
 </style>

@@ -42,7 +42,7 @@ const MonoPreset = definePreset(Aura, {
       },
     },
     focusRing: {
-      width: '1px',
+      width: '2px',
       style: 'solid',
       color: '{primary.400}',
       offset: '2px',
@@ -50,6 +50,14 @@ const MonoPreset = definePreset(Aura, {
   },
   components: {
     card: {
+      root: {
+        borderRadius: '14px',
+        shadow: '0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04)',
+        background: '#ffffff',
+      },
+      body: {
+        padding: '0',
+      },
       colorScheme: {
         dark: {
           root: {
@@ -64,7 +72,7 @@ const MonoPreset = definePreset(Aura, {
     },
     panelmenu: {
       root: {
-        gap: '0.125rem',
+        gap: '2px',
       },
       panel: {
         background: 'transparent',
@@ -72,26 +80,26 @@ const MonoPreset = definePreset(Aura, {
         borderColor: 'transparent',
         color: '{surface.700}',
         padding: '0',
-        borderRadius: '0.7rem',
+        borderRadius: '10px',
         first: {
           borderWidth: '0',
-          topBorderRadius: '0.7rem',
+          topBorderRadius: '10px',
         },
         last: {
           borderWidth: '0',
-          bottomBorderRadius: '0.7rem',
+          bottomBorderRadius: '10px',
         },
       },
       item: {
         color: '{surface.600}',
-        focusBackground: 'color-mix(in srgb, {primary.color} 8%, {surface.0})',
-        focusColor: '{primary.600}',
+        focusBackground: 'rgb(255 255 255 / 0.06)',
+        focusColor: '#ffffff',
         gap: '0.5rem',
-        padding: '0.48rem 0.62rem',
-        borderRadius: '0.7rem',
+        padding: '0.5rem 0.75rem',
+        borderRadius: '10px',
         icon: {
           color: '{surface.400}',
-          focusColor: '{primary.600}',
+          focusColor: '#2dd4bf',
         },
       },
       submenu: {
@@ -100,6 +108,36 @@ const MonoPreset = definePreset(Aura, {
       submenuIcon: {
         color: '{surface.400}',
         focusColor: '{primary.500}',
+      },
+    },
+    button: {
+      root: {
+        borderRadius: '8px',
+      },
+    },
+    inputtext: {
+      root: {
+        borderRadius: '8px',
+      },
+    },
+    select: {
+      root: {
+        borderRadius: '8px',
+      },
+    },
+    multiselect: {
+      root: {
+        borderRadius: '8px',
+      },
+    },
+    dialog: {
+      root: {
+        borderRadius: '18px',
+      },
+    },
+    toast: {
+      root: {
+        borderRadius: '14px',
       },
     },
   },

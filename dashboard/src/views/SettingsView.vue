@@ -63,6 +63,17 @@ const sites = computed(() => authStore.sites)
 </template>
 
 <style scoped>
+:deep(.p-card) {
+  border: 1px solid #e5e7eb;
+  box-shadow: var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.06));
+  border-radius: var(--radius-xl, 18px) !important;
+  overflow: hidden;
+}
+
+:deep(.p-card .p-card-content) {
+  padding: 1.5rem;
+}
+
 .account-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -70,73 +81,80 @@ const sites = computed(() => authStore.sites)
 }
 
 .account-item {
-  border: 1px solid var(--p-surface-200);
-  border-radius: 0.8rem;
-  padding: 0.85rem;
-  background: var(--p-surface-50);
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-lg, 14px);
+  padding: 1rem 1.125rem;
+  background: #f9fafb;
+  transition: border-color 0.15s ease;
+}
+
+.account-item:hover {
+  border-color: #d1d5db;
 }
 
 .account-item h3 {
   margin: 0;
-  font-size: 0.8rem;
-  color: var(--p-surface-600);
-  font-weight: 600;
+  font-size: 0.7rem;
+  color: #9ca3af;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .account-item p {
-  margin: 0.5rem 0 0;
-  color: var(--p-surface-900);
+  margin: 0.375rem 0 0;
+  color: #111827;
   font-weight: 700;
   font-size: 1rem;
+  letter-spacing: -0.01em;
   overflow-wrap: anywhere;
 }
 
 .claim-grid {
-  margin-top: 0.75rem;
+  margin-top: 1rem;
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.75rem;
 }
 
 .claim-item {
-  border: 1px solid var(--p-surface-200);
-  border-radius: 0.8rem;
-  padding: 0.85rem;
-  background: var(--p-surface-0);
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-lg, 14px);
+  padding: 1rem 1.125rem;
+  background: #ffffff;
 }
 
 .claim-item h3 {
-  margin: 0 0 0.5rem;
-  font-size: 0.82rem;
-  color: var(--p-surface-600);
-  font-weight: 600;
+  margin: 0 0 0.625rem;
+  font-size: 0.78rem;
+  color: #6b7280;
+  font-weight: 700;
+  letter-spacing: -0.005em;
 }
 
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
+  gap: 0.375rem;
 }
 
 .chip {
   display: inline-flex;
   align-items: center;
-  border-radius: 999px;
-  border: 1px solid var(--p-surface-200);
-  background: var(--p-surface-100);
-  color: var(--p-surface-800);
-  font-size: 0.73rem;
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #374151;
+  font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.24rem 0.58rem;
+  padding: 0.25rem 0.5rem;
+  letter-spacing: -0.005em;
 }
 
 .chip.muted {
-  color: var(--p-surface-600);
-}
-
-:deep(.p-card) {
-  border: 1px solid var(--p-surface-200);
-  box-shadow: none;
+  color: #9ca3af;
+  background: transparent;
+  border-style: dashed;
 }
 
 @media (max-width: 900px) {

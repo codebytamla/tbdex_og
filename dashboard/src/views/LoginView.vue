@@ -75,27 +75,62 @@ async function submit() {
   display: grid;
   place-items: center;
   padding: 1.5rem;
+  background: #f8f9fb;
 }
 
 .login-card {
-  width: min(100%, 27rem);
-  border: 1px solid var(--p-surface-200);
-  box-shadow: none;
+  width: min(100%, 26rem);
+  border: 1px solid #e5e7eb;
+  box-shadow: var(--shadow-lg, 0 12px 24px -4px rgb(0 0 0 / 0.08));
+  border-radius: var(--radius-xl, 18px) !important;
+}
+
+:deep(.login-card .p-card-title) {
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: #111827;
+}
+
+:deep(.login-card .p-card-subtitle) {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+:deep(.login-card .p-card-content) {
+  padding: 1.5rem;
 }
 
 .form {
   display: grid;
-  gap: 0.85rem;
+  gap: 1rem;
 }
 
 .field {
   display: grid;
-  gap: 0.38rem;
+  gap: 0.375rem;
 }
 
 .field span {
-  font-size: 0.83rem;
-  color: var(--p-surface-700);
+  font-size: 0.825rem;
+  color: #374151;
   font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+:deep(.form .p-button) {
+  margin-top: 0.25rem;
+  height: 2.625rem;
+  font-size: 0.935rem;
+  font-weight: 700;
+  background: #0f172a;
+  border-color: #0f172a;
+  border-radius: var(--radius-md, 10px);
+}
+
+:deep(.form .p-button:hover:not(:disabled)) {
+  background: #1e293b;
+  border-color: #1e293b;
 }
 </style>

@@ -28,10 +28,9 @@ import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores/auth'
 import { useCatalogStore } from '@/stores/catalog'
-import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
-import TableActionDrawerButton from '@/components/ui/TableActionDrawerButton.vue'
+import PrimaryActionDropdown from '@/components/ui/PrimaryActionDropdown.vue'
 import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
 import {
   TABLE_PAGE_REPORT_TEMPLATE,
@@ -1179,16 +1178,17 @@ void loadSitesCatalog({ silent: true })
 <template>
   <PageSectionHeader title="Users" description="Manage users, profile data, roles, sites, and password resets">
     <template #actions>
-      <CreateActionButton label="Create user" :disabled="!canManageUsers" @click="openCreateDialog" />
-      <TableActionDrawerButton
-        title="User table actions"
-        ariaLabel="Open user table actions"
+      <PrimaryActionDropdown
+        label="Invite user"
+        :disabled="!canManageUsers"
+        title="Invite new user"
         importLabel="Import users"
         exportLabel="Export users"
         refreshLabel="Refresh users"
         :importDisabled="true"
         :exportDisabled="true"
         :refreshDisabled="!canReadUsers"
+        @click="openCreateDialog"
         @refresh="refreshUsers"
       />
     </template>
@@ -1283,11 +1283,12 @@ void loadSitesCatalog({ silent: true })
               />
             </template>
             <template #body="{ data }">
-              <span v-if="data.roles.length" class="cell-list" :title="data.roles.join(', ')">
-                <span class="cell-pill">{{ data.roles[0] }}</span>
-                <span v-if="data.roles.length > 1" class="cell-pill cell-pill-overflow">+{{ data.roles.length - 1 }}</span>
-              </span>
-              <span v-else class="cell-empty">&mdash;</span>
+              <div class="role-tags">
+                <span v-for="role in data.roles" :key="role" class="role-tag" :title="role">
+                  {{ role }}
+                </span>
+                <span v-if="!data.roles?.length" class="cell-empty">None</span>
+              </div>
             </template>
           </Column>
           <Column v-if="col.field === 'sites'" header="Sites" field="sites" filterField="site" :showFilterOperator="false" :showAddButton="false" :showFilterMatchModes="false">
@@ -1319,7 +1320,7 @@ void loadSitesCatalog({ silent: true })
           </Column>
           <Column v-if="col.field === 'status'" header="Status" style="width: 8rem">
             <template #body="{ data }">
-              <span class="status-cell" :class="data.isActive ? 'status-active' : 'status-disabled'">
+              <span class="status-badge" :class="data.isActive ? 'status-active' : 'status-disabled'">
                 <span class="status-dot"></span>
                 {{ data.isActive ? 'Active' : 'Disabled' }}
               </span>
@@ -1551,26 +1552,27 @@ void loadSitesCatalog({ silent: true })
 .table-search {
   width: 100%;
   max-width: 17.33rem;
-  height: var(--app-control-height);
-  min-height: var(--app-control-height);
+  height: var(--app-control-height, 2.25rem);
+  min-height: var(--app-control-height, 2.25rem);
   box-sizing: border-box;
-  border-radius: var(--app-control-radius, 0.62rem);
+  border-radius: var(--app-control-radius, 8px);
   padding: 0 0.88rem;
   font-size: var(--app-control-font-size, 0.83rem);
   line-height: 1.2;
-  border: 1px solid var(--p-surface-200);
-  background: var(--p-surface-50);
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
   transition: border-color 0.15s, background 0.15s;
 }
 
 .table-search:focus {
-  background: var(--p-surface-0);
-  border-color: var(--p-surface-400);
+  background: #ffffff;
+  border-color: var(--p-primary-400, #2dd4bf);
+  box-shadow: 0 0 0 3px rgb(13 148 136 / 0.08);
 }
 
 .cell-date {
-  font-size: 0.82rem;
-  color: var(--p-surface-600);
+  font-size: 0.825rem;
+  color: #6b7280;
 }
 
 /* ── Role / Site list cells ──────────────────────────── */
@@ -1587,11 +1589,11 @@ void loadSitesCatalog({ silent: true })
   align-items: center;
   max-width: 11rem;
   padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  border: 1px solid var(--p-surface-200);
-  background: var(--p-surface-100);
-  color: var(--p-surface-900);
-  font-size: 0.8rem;
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #374151;
+  font-size: 0.855rem;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -1603,14 +1605,14 @@ void loadSitesCatalog({ silent: true })
   min-width: 2rem;
   max-width: none;
   border-style: dashed;
-  background: var(--p-surface-0);
-  color: var(--p-surface-700);
+  background: #ffffff;
+  color: #374151;
   font-weight: 700;
 }
 
 .cell-empty {
-  color: var(--p-surface-400);
-  font-size: 0.84rem;
+  color: #9ca3af;
+  font-size: 0.875rem;
 }
 
 /* ── Status dot + text ───────────────────────────────── */
@@ -1620,7 +1622,7 @@ void loadSitesCatalog({ silent: true })
   align-items: center;
   gap: 0.46rem;
   padding: 0.22rem 0.58rem 0.22rem 0.46rem;
-  border-radius: 999px;
+  border-radius: var(--radius-full, 999px);
   border: 1px solid transparent;
   font-size: 0.8rem;
   font-weight: 700;
@@ -1636,25 +1638,25 @@ void loadSitesCatalog({ silent: true })
 }
 
 .status-active {
-  color: #0f7a3f;
-  border-color: #bfe9cd;
-  background: #eaf8f0;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid rgb(4 120 87 / 0.1);
 }
 
 .status-active .status-dot {
-  background: #16c35d;
-  box-shadow: 0 0 0 3px rgb(22 195 93 / 18%);
+  background: #10b981;
+  box-shadow: 0 0 0 2px rgb(16 185 129 / 0.15);
 }
 
 .status-disabled {
-  color: #9a4214;
-  border-color: #f8d2bd;
-  background: #fff2e8;
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid rgb(180 83 9 / 0.1);
 }
 
 .status-disabled .status-dot {
-  background: #f97316;
-  box-shadow: 0 0 0 3px rgb(249 115 22 / 16%);
+  background: #f59e0b;
+  box-shadow: 0 0 0 2px rgb(245 158 11 / 0.15);
 }
 
 
@@ -1702,7 +1704,7 @@ void loadSitesCatalog({ silent: true })
 
 .reset-token-inline {
   font-size: 0.75rem;
-  color: var(--p-surface-600);
+  color: #6b7280;
 }
 
 .actions {
@@ -1713,20 +1715,21 @@ void loadSitesCatalog({ silent: true })
 }
 
 .table-empty {
-  padding: 1rem;
-  color: var(--p-surface-600);
-  font-size: 0.82rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.875rem;
 }
 
 .dialog-grid {
   display: grid;
-  gap: 0.82rem;
+  gap: 1rem;
 }
 
 .dialog-subtitle {
   margin: 0;
-  font-size: 0.82rem;
-  color: var(--p-surface-600);
+  font-size: 0.825rem;
+  color: #6b7280;
 }
 
 .field {
@@ -1735,22 +1738,23 @@ void loadSitesCatalog({ silent: true })
 }
 
 .field span {
-  font-size: 0.82rem;
-  color: var(--p-surface-700);
+  font-size: 0.825rem;
+  color: #374151;
   font-weight: 600;
+  letter-spacing: -0.005em;
 }
 
 .help-text {
   margin: 0;
   font-size: 0.78rem;
-  color: var(--p-surface-600);
+  color: #6b7280;
 }
 
 .dialog-actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.45rem;
+  gap: 0.5rem;
 }
 
 :deep(.create-cancel-btn),
@@ -1759,12 +1763,12 @@ void loadSitesCatalog({ silent: true })
   border-color: transparent !important;
   box-shadow: none !important;
   background: transparent !important;
-  color: var(--p-surface-500) !important;
+  color: #9ca3af !important;
 }
 
 :deep(.create-cancel-btn:hover) {
   background: transparent !important;
-  color: var(--p-surface-700) !important;
+  color: #374151 !important;
   box-shadow: none !important;
 }
 
@@ -1783,20 +1787,23 @@ void loadSitesCatalog({ silent: true })
 }
 
 .menu-action-item-danger {
-  color: var(--p-red-600);
+  color: #dc2626;
 }
 
 :deep(.p-menu-item-link.menu-action-item-danger:hover) {
-  color: var(--p-red-700);
+  color: #dc2626;
 }
 
 :deep(.p-card) {
-  border: 1px solid var(--p-surface-200);
-  box-shadow: none;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-xl, 18px) !important;
+  box-shadow: var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.06));
+  background: #ffffff;
+  overflow: hidden;
 }
 
 :deep(.p-card-body) {
-  padding: 0.25rem 0;
+  padding: 0;
 }
 
 :deep(.p-card-content) {
@@ -1804,12 +1811,60 @@ void loadSitesCatalog({ silent: true })
 }
 
 :deep(.p-datatable-header-cell) {
-  background: var(--p-surface-50);
-  color: var(--p-surface-700);
+  background: #ffffff;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e8eaed;
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
 }
 
 :deep(.p-datatable-tbody > tr > td) {
-  color: var(--p-surface-900);
+  color: #1a1d23;
+  padding: 0.75rem 1rem;
+  border-color: #f4f5f7;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.role-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.role-tag {
+  display: inline-flex;
+  align-items: center;
+  max-width: 12rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #374151;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Status badge ── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  padding: 0.24rem 0.6rem;
+  border-radius: var(--radius-full, 999px);
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: 0.012em;
 }
 
 </style>

@@ -24,10 +24,9 @@ import { useConfirm } from 'primevue/useconfirm'
 import { useToast } from 'primevue/usetoast'
 import { useAuthStore } from '@/stores/auth'
 import { useCatalogStore } from '@/stores/catalog'
-import CreateActionButton from '@/components/ui/CreateActionButton.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
-import TableActionDrawerButton from '@/components/ui/TableActionDrawerButton.vue'
+import PrimaryActionDropdown from '@/components/ui/PrimaryActionDropdown.vue'
 import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
 import {
   TABLE_PAGE_REPORT_TEMPLATE,
@@ -190,6 +189,7 @@ const columns = ref([
   { field: 'status', header: 'Status' }
 ])
 const selectedColumns = ref([...columns.value])
+
 
 const paginatorFirst = computed(() => pageIndex.value * limit.value)
 const paginatorTotalRecords = computed(() => {
@@ -785,7 +785,7 @@ async function loadPatients() {
     if (currentCursor) params.set('cursor', currentCursor)
     const searchValue = filters.value.global.value?.trim()
     if (searchValue) params.set('search', searchValue)
-    const siteConstraint = filters.value.site.constraints[0]
+const siteConstraint = filters.value.site.constraints[0]
     const siteValues = siteConstraint?.value
     if (siteValues && siteValues.length > 0) {
       for (const siteId of siteValues) params.append('site_id', siteId)
@@ -894,6 +894,7 @@ watch(() => filters.value.global.value, (val) => {
     void loadPatients()
   }
 })
+
 
 function onSearchEnter() {
   resetPatientsPagination()
@@ -1211,20 +1212,18 @@ void loadSitesCatalog({ silent: true })
     description="Patient registration, lookup, updates, site assignment, and deactivation"
   >
     <template #actions>
-      <CreateActionButton
+      <PrimaryActionDropdown
         label="Register patient"
         :disabled="!canCreatePatients"
-        @click="openCreateDialog"
-      />
-      <TableActionDrawerButton
-        title="Patient table actions"
-        ariaLabel="Open patient table actions"
+        title="Register new patient"
+        ariaLabel="Register new patient options"
         importLabel="Import patients"
         exportLabel="Export patients"
         refreshLabel="Refresh patients"
         :importDisabled="true"
         :exportDisabled="true"
         :refreshDisabled="!canReadPatients"
+        @click="openCreateDialog"
         @refresh="refreshPatients"
       />
     </template>
@@ -1327,7 +1326,7 @@ void loadSitesCatalog({ silent: true })
           </Column>
           <Column v-if="col.field === 'status'" header="Status" style="width: 8rem">
             <template #body="{ data }">
-              <span class="status-cell" :class="statusClass(data.status)">
+              <span class="status-badge" :class="statusClass(data.status)">
                 <span class="status-dot"></span>
                 {{ formatStatus(data.status) }}
               </span>
@@ -1624,8 +1623,9 @@ void loadSitesCatalog({ silent: true })
 </template>
 
 <style scoped>
+
 .patients-card {
-  margin-bottom: 0.9rem;
+  margin-bottom: 1rem;
   min-width: 0;
   width: 100%;
   max-width: 100%;
@@ -1639,34 +1639,40 @@ void loadSitesCatalog({ silent: true })
 }
 
 .table-search {
-  flex: 1 1 9.33rem;
-  max-width: 18.67rem;
+  flex: 1 1 10rem;
+  max-width: 20rem;
   height: var(--app-control-height);
   min-height: var(--app-control-height);
   box-sizing: border-box;
-  border-radius: var(--app-control-radius, 0.62rem);
-  padding: 0 0.88rem;
-  font-size: var(--app-control-font-size, 0.83rem);
+  border-radius: var(--app-control-radius, 8px);
+  padding: 0 0.875rem;
+  font-size: var(--app-control-font-size, 0.855rem);
   line-height: 1.2;
-  border: 1px solid var(--p-surface-200);
-  background: var(--p-surface-50);
-  transition: border-color 0.15s, background 0.15s;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.table-search:hover {
+  border-color: #d1d5db;
+  background: #ffffff;
 }
 
 .table-search:focus {
-  background: var(--p-surface-0);
-  border-color: var(--p-surface-400);
+  background: #ffffff;
+  border-color: var(--p-primary-400, #2dd4bf);
+  box-shadow: 0 0 0 3px rgb(13 148 136 / 0.08);
 }
 
 .cell-stack {
   display: grid;
-  gap: 0.1rem;
+  gap: 0.125rem;
 }
 
 .cell-subtle,
 .cell-date {
-  font-size: 0.82rem;
-  color: var(--p-surface-600);
+  font-size: 0.825rem;
+  color: #6b7280;
   white-space: nowrap;
 }
 
@@ -1676,14 +1682,14 @@ void loadSitesCatalog({ silent: true })
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.82rem;
-  color: var(--p-surface-600);
+  font-size: 0.855rem;
+  color: #4b5563;
 }
 
 .cell-list {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.375rem;
   max-width: 13rem;
   min-width: 0;
 }
@@ -1692,12 +1698,12 @@ void loadSitesCatalog({ silent: true })
   display: inline-flex;
   align-items: center;
   max-width: 11rem;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  border: 1px solid var(--p-surface-200);
-  background: var(--p-surface-100);
-  color: var(--p-surface-900);
-  font-size: 0.8rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #374151;
+  font-size: 0.78rem;
   font-weight: 600;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1705,86 +1711,85 @@ void loadSitesCatalog({ silent: true })
 }
 
 .cell-pill-overflow {
-  padding: 0.15rem 0.42rem;
-  font-size: 0.78rem;
+  padding: 0.125rem 0.375rem;
+  font-size: 0.75rem;
 }
 
 .cell-empty {
-  color: var(--p-surface-400);
+  color: #d1d5db;
 }
 
 .status-cell {
   display: inline-flex;
   align-items: center;
-  gap: 0.38rem;
-  border-radius: 999px;
-  padding: 0.14rem 0.48rem;
-  font-size: 0.8rem;
+  gap: 0.375rem;
+  border-radius: var(--radius-full, 999px);
+  padding: 0.1875rem 0.625rem;
+  font-size: 0.78rem;
   font-weight: 600;
   border: 1px solid transparent;
 }
 
 .status-dot {
-  width: 0.46rem;
-  height: 0.46rem;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .status-active {
-  color: #0f7a3f;
-  border-color: #bfe9cd;
-  background: #eaf8f0;
+  color: #047857;
+  border-color: rgb(4 120 87 / 0.1);
+  background: #ecfdf5;
 }
 
 .status-active .status-dot {
-  background: #16c35d;
-  box-shadow: 0 0 0 3px rgb(22 195 93 / 18%);
+  background: #10b981;
+  box-shadow: 0 0 0 2px rgb(16 185 129 / 0.15);
 }
 
 .status-provisional {
-  color: #005f82;
-  border-color: #b9e6f2;
-  background: #ebf8fd;
+  color: #0e7490;
+  border-color: rgb(14 116 144 / 0.1);
+  background: #ecfeff;
 }
 
 .status-provisional .status-dot {
   background: #06b6d4;
-  box-shadow: 0 0 0 3px rgb(6 182 212 / 16%);
+  box-shadow: 0 0 0 2px rgb(6 182 212 / 0.15);
 }
 
 .status-inactive {
-  color: #9a4214;
-  border-color: #f8d2bd;
-  background: #fff2e8;
+  color: #b45309;
+  border-color: rgb(180 83 9 / 0.1);
+  background: #fffbeb;
 }
 
 .status-inactive .status-dot {
-  background: #f97316;
-  box-shadow: 0 0 0 3px rgb(249 115 22 / 16%);
+  background: #f59e0b;
+  box-shadow: 0 0 0 2px rgb(245 158 11 / 0.15);
 }
 
 .status-deceased {
-  color: #5f6671;
-  border-color: #d8dbe1;
-  background: #f4f5f7;
+  color: #6b7280;
+  border-color: #e5e7eb;
+  background: #f9fafb;
 }
 
 .status-deceased .status-dot {
-  background: #7c8798;
-  box-shadow: 0 0 0 3px rgb(124 135 152 / 16%);
+  background: #9ca3af;
 }
 
 
 .actions {
   display: inline-flex;
   align-items: center;
-  gap: 0.2rem;
+  gap: 0.25rem;
   flex-wrap: wrap;
 }
 
 :deep(.patients-card .p-card-body) {
-  padding: 0.25rem 0;
+  padding: 0;
   min-width: 0;
   width: 100%;
   max-width: 100%;
@@ -1799,61 +1804,63 @@ void loadSitesCatalog({ silent: true })
 }
 
 .table-empty {
-  padding: 1rem;
-  color: var(--p-surface-600);
-  font-size: 0.82rem;
+  padding: 3rem 1.5rem;
+  color: #9ca3af;
+  font-size: 0.875rem;
+  text-align: center;
 }
 
 .dialog-grid {
   display: grid;
-  gap: 0.82rem;
+  gap: 1rem;
 }
 
 .dialog-subtitle {
   margin: 0;
-  font-size: 0.82rem;
-  color: var(--p-surface-600);
+  font-size: 0.875rem;
+  color: #6b7280;
   overflow-wrap: anywhere;
 }
 
 .field {
   display: grid;
-  gap: 0.36rem;
+  gap: 0.375rem;
 }
 
 .field span {
-  font-size: 0.82rem;
-  color: var(--p-surface-700);
+  font-size: 0.825rem;
+  color: #374151;
   font-weight: 600;
+  letter-spacing: -0.005em;
 }
 
 .field-inline {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: end;
-  gap: 0.85rem;
+  gap: 1rem;
 }
 
 .checkbox-field {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  min-height: 2.1rem;
-  font-size: 0.8rem;
-  color: var(--p-surface-700);
+  gap: 0.5rem;
+  min-height: 2.25rem;
+  font-size: 0.855rem;
+  color: #374151;
 }
 
 .help-text {
   margin: 0;
   font-size: 0.78rem;
-  color: var(--p-surface-600);
+  color: #9ca3af;
 }
 
 .dialog-actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.45rem;
+  gap: 0.5rem;
 }
 
 :deep(.create-cancel-btn),
@@ -1862,23 +1869,25 @@ void loadSitesCatalog({ silent: true })
   border-color: transparent !important;
   box-shadow: none !important;
   background: transparent !important;
-  color: var(--p-surface-500) !important;
+  color: #9ca3af !important;
+  font-weight: 500 !important;
 }
 
 :deep(.create-cancel-btn:hover) {
-  background: transparent !important;
-  color: var(--p-surface-700) !important;
+  background: #f4f5f7 !important;
+  color: #374151 !important;
   box-shadow: none !important;
 }
 
 .menu-action-item {
   display: inline-flex;
   align-items: center;
-  gap: 0.48rem;
+  gap: 0.5rem;
 }
 
 .menu-action-icon {
   flex: 0 0 auto;
+  color: #9ca3af;
 }
 
 .menu-action-label {
@@ -1886,27 +1895,111 @@ void loadSitesCatalog({ silent: true })
 }
 
 .menu-action-item-danger {
-  color: var(--p-red-600);
+  color: #dc2626;
+}
+
+.menu-action-item-danger .menu-action-icon {
+  color: #dc2626;
 }
 
 :deep(.p-menu-item-link.menu-action-item-danger:hover) {
-  color: var(--p-red-700);
+  color: #b91c1c;
+  background: #fef2f2;
 }
 
 :deep(.p-card) {
-  border: 1px solid var(--p-surface-200);
-  box-shadow: none;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-xl, 18px) !important;
+  box-shadow: var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.06));
+  background: #ffffff;
+  overflow: hidden;
+}
+
+:deep(.p-card-body) {
+  padding: 0;
+}
+
+:deep(.p-card-content) {
+  padding: 0;
 }
 
 :deep(.p-datatable-header-cell) {
-  background: var(--p-surface-50);
-  color: var(--p-surface-700);
+  background: #ffffff;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e8eaed;
+  padding: 0.75rem 1rem;
   white-space: nowrap;
 }
 
 :deep(.p-datatable-tbody > tr > td) {
-  color: var(--p-surface-900);
+  color: #1a1d23;
+  padding: 0.75rem 1rem;
   white-space: nowrap;
+  border-color: #f4f5f7;
+  font-size: 0.875rem;
+}
+
+/* ── Status badge ── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.1875rem 0.625rem;
+  border-radius: var(--radius-full, 999px);
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: -0.005em;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-active {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid rgb(4 120 87 / 0.1);
+}
+.status-active .status-dot {
+  background: #10b981;
+  box-shadow: 0 0 0 2px rgb(16 185 129 / 0.15);
+}
+
+.status-inactive {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid rgb(180 83 9 / 0.1);
+}
+.status-inactive .status-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 0 2px rgb(245 158 11 / 0.15);
+}
+
+.status-provisional {
+  background: #ecfeff;
+  color: #0e7490;
+  border: 1px solid rgb(14 116 144 / 0.1);
+}
+.status-provisional .status-dot {
+  background: #06b6d4;
+  box-shadow: 0 0 0 2px rgb(6 182 212 / 0.15);
+}
+
+.status-deceased {
+  background: #f9fafb;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+}
+.status-deceased .status-dot {
+  background: #9ca3af;
 }
 
 @media (max-width: 900px) {
@@ -1922,7 +2015,7 @@ void loadSitesCatalog({ silent: true })
   .field-inline {
     grid-template-columns: 1fr;
     align-items: stretch;
-    gap: 0.55rem;
+    gap: 0.75rem;
   }
 }
 </style>

@@ -9,10 +9,9 @@ import InputText from 'primevue/inputtext'
 import Menu from 'primevue/menu'
 import MultiSelect from 'primevue/multiselect'
 import type { MenuItem } from 'primevue/menuitem'
-import CreateActionButton from '@/components/ui/CreateActionButton.vue'
+import PrimaryActionDropdown from '@/components/ui/PrimaryActionDropdown.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
-import TableActionDrawerButton from '@/components/ui/TableActionDrawerButton.vue'
 import {
   TABLE_PAGE_REPORT_TEMPLATE,
   TABLE_PAGINATOR_TEMPLATE,
@@ -20,8 +19,8 @@ import {
 } from '@/components/ui/tablePagination'
 
 type ReferralPriority = 'URGENT' | 'ROUTINE'
-type ReferralStatus = 'Pending' | 'Accepted' | 'Completed'
-type ReferralStatusTab = 'all' | 'pending' | 'accepted' | 'completed'
+type ReferralStatus = 'In Progress' | 'Arrived' | 'Canceled'
+type ReferralStatusTab = 'all' | 'in-progress' | 'arrived' | 'canceled'
 
 type Referral = {
   id: string
@@ -41,7 +40,7 @@ const referrals = ref<Referral[]>([
     referredTo: 'Pulmonology Dept',
     date: '02/20/2026',
     priority: 'URGENT',
-    status: 'Pending',
+    status: 'In Progress',
   },
   {
     id: 'REF-002',
@@ -50,7 +49,7 @@ const referrals = ref<Referral[]>([
     referredTo: 'Dr. Smith (Cardiology)',
     date: '02/19/2026',
     priority: 'ROUTINE',
-    status: 'Accepted',
+    status: 'Arrived',
   },
   {
     id: 'REF-003',
@@ -59,17 +58,17 @@ const referrals = ref<Referral[]>([
     referredTo: 'Main Hospital',
     date: '02/18/2026',
     priority: 'ROUTINE',
-    status: 'Completed',
+    status: 'Canceled',
   },
 ])
 
 const statusTabs: Array<{ key: ReferralStatusTab; label: string }> = [
   { key: 'all', label: 'All' },
-  { key: 'pending', label: 'Pending' },
-  { key: 'accepted', label: 'Accepted' },
-  { key: 'completed', label: 'Completed' },
+  { key: 'in-progress', label: 'In Progress' },
+  { key: 'arrived', label: 'Arrived' },
+  { key: 'canceled', label: 'Canceled' },
 ]
-const activeStatusTab = ref<ReferralStatusTab>('all')
+const activeStatusTab = ref<ReferralStatusTab>('in-progress')
 
 const columns = ref([
   { field: 'id', header: 'Ref ID' },
@@ -87,9 +86,16 @@ const filters = ref({
 })
 
 const selectedReferrals = ref<Referral[]>([])
+const statusTabMap: Record<ReferralStatusTab, ReferralStatus | null> = {
+  'all': null,
+  'in-progress': 'In Progress',
+  'arrived': 'Arrived',
+  'canceled': 'Canceled',
+}
 const filteredReferrals = computed(() => {
-  if (activeStatusTab.value === 'all') return referrals.value
-  return referrals.value.filter((entry) => entry.status.toLowerCase() === activeStatusTab.value)
+  const statusFilter = statusTabMap[activeStatusTab.value]
+  if (!statusFilter) return referrals.value
+  return referrals.value.filter((entry) => entry.status === statusFilter)
 })
 
 watch(filteredReferrals, (visibleRows) => {
@@ -119,10 +125,9 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
     description="Manage incoming and outgoing patient referrals across all sites"
   >
     <template #actions>
-      <CreateActionButton label="New Referral" />
-      <TableActionDrawerButton
-        title="Referral table actions"
-        ariaLabel="Open referral table actions"
+      <PrimaryActionDropdown
+        label="New Referral"
+        title="Create new referral options"
         importLabel="Import referrals"
         exportLabel="Export to CSV"
         refreshLabel="Refresh data"
@@ -153,7 +158,28 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
       >
         <template #header>
           <div class="table-toolbar">
-            <div class="toolbar-left">
+            <div class="toolbar-row toolbar-row-tabs">
+              <div class="status-tabs" role="tablist" aria-label="Filter referrals by status">
+                <button
+                  v-for="tab in statusTabs"
+                  :key="tab.key"
+                  type="button"
+                  role="tab"
+                  class="status-tab"
+                  :class="{ 'status-tab-active': activeStatusTab === tab.key }"
+                  :aria-selected="activeStatusTab === tab.key"
+                  @click="activeStatusTab = tab.key"
+                >
+                  {{ tab.label }}
+                </button>
+              </div>
+            </div>
+            <div class="toolbar-row toolbar-row-controls">
+              <InputText
+                v-model="filters.global.value"
+                placeholder="Search patient, provider, or ID..."
+                class="toolbar-search"
+              />
               <MultiSelect
                 v-model="selectedColumns"
                 :options="columns"
@@ -171,27 +197,7 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
                   <ChevronDown :size="13" />
                 </template>
               </MultiSelect>
-
-              <div class="status-tabs" role="tablist" aria-label="Filter referrals by status">
-                <button
-                  v-for="tab in statusTabs"
-                  :key="tab.key"
-                  type="button"
-                  role="tab"
-                  class="status-tab"
-                  :class="{ 'status-tab-active': activeStatusTab === tab.key }"
-                  :aria-selected="activeStatusTab === tab.key"
-                  @click="activeStatusTab = tab.key"
-                >
-                  {{ tab.label }}
-                </button>
-              </div>
             </div>
-            <InputText
-              v-model="filters.global.value"
-              placeholder="Search patient, provider, or ID..."
-              class="toolbar-search"
-            />
           </div>
         </template>
 
@@ -263,7 +269,7 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
             <template #body="{ data }">
               <span
                 class="status-badge"
-                :class="`status-${data.status.toLowerCase()}`"
+                :class="`status-${data.status.toLowerCase().replace(/\s+/g, '-')}`"
               >
                 <span class="status-dot" />
                 {{ data.status }}
@@ -294,12 +300,14 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
 
 <style scoped>
 :deep(.p-card) {
-  border: 1px solid var(--p-surface-200);
-  box-shadow: none;
+  border: 1px solid #e5e7eb;
+  box-shadow: var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.06));
+  border-radius: var(--radius-xl, 18px) !important;
+  overflow: hidden;
 }
 
 :deep(.p-card-body) {
-  padding: 0.25rem 0;
+  padding: 0;
 }
 
 :deep(.p-card-content) {
@@ -307,54 +315,71 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
 }
 
 :deep(.p-datatable-header-cell) {
-  background: var(--p-surface-50);
-  color: var(--p-surface-700);
+  background: #ffffff;
+  color: #6b7280;
 }
 
 /* ── Toolbar ── */
 .table-toolbar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.1rem 0;
+  flex-direction: column;
+  gap: 0;
 }
-.toolbar-left {
+.toolbar-row {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  min-width: 0;
+}
+.toolbar-row-tabs {
+  border-bottom: 1px solid #f0f1f3;
+  padding: 0 1rem 0;
+}
+.toolbar-row-controls {
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
 }
 
 .toolbar-search {
   width: 20rem;
-  height: var(--app-control-height, 2.4rem);
-  border-radius: var(--app-control-radius, 0.46rem);
-  padding: 0 0.78rem;
-  font-size: var(--app-control-font-size, 0.9rem);
+  height: var(--app-control-height, 2.25rem);
+  border-radius: var(--app-control-radius, 8px);
+  padding: 0 0.875rem;
+  font-size: var(--app-control-font-size, 0.855rem);
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+.toolbar-search:hover {
+  border-color: #d1d5db;
+  background: #ffffff;
+}
+.toolbar-search:focus {
+  border-color: var(--p-primary-400, #2dd4bf);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgb(13 148 136 / 0.08);
 }
 
 /* Make the MultiSelect look like a compact button */
 :deep(.toolbar-columns.p-multiselect) {
-  height: var(--app-control-height, 2.4rem);
-  border: 1px solid var(--p-surface-300);
-  border-radius: var(--app-control-radius, 0.46rem);
-  background: var(--p-surface-0);
-  font-size: var(--app-control-font-size, 0.9rem);
+  height: var(--app-control-height, 2.25rem);
+  border: 1px solid #e5e7eb;
+  border-radius: var(--app-control-radius, 8px);
+  background: #ffffff;
+  font-size: var(--app-control-font-size, 0.855rem);
   font-weight: 600;
-  color: var(--p-surface-900);
-  padding: 0 0.78rem;
-  gap: 0.45rem;
-  box-shadow: 0 1px 1px rgb(15 23 42 / 0.04);
+  color: #374151;
+  padding: 0 0.75rem;
+  gap: 0.375rem;
+  box-shadow: var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.04));
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 :deep(.toolbar-columns.p-multiselect:hover) {
-  border-color: var(--p-surface-400);
-  background: var(--p-surface-50);
+  border-color: #d1d5db;
 }
 :deep(.toolbar-columns.p-multiselect.p-focus),
 :deep(.toolbar-columns.p-multiselect:focus-within) {
-  border-color: color-mix(in srgb, var(--p-surface-400) 70%, transparent);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--p-surface-300) 28%, transparent);
+  border-color: var(--p-primary-400, #2dd4bf);
+  box-shadow: 0 0 0 3px rgb(13 148 136 / 0.08);
 }
 :deep(.toolbar-columns .p-multiselect-label-container) {
   display: flex;
@@ -368,55 +393,63 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
 :deep(.toolbar-columns .p-multiselect-dropdown) {
   padding: 0;
   width: auto;
-  color: var(--p-surface-600);
+  color: #9ca3af;
 }
 .columns-trigger-content {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.375rem;
   white-space: nowrap;
-  color: var(--p-surface-900);
+  color: #374151;
   line-height: 1;
 }
 .columns-trigger-icon {
-  color: var(--p-surface-600);
-  font-size: 0.82rem;
+  color: #9ca3af;
 }
 
 .status-tabs {
   display: inline-flex;
   align-items: center;
-  gap: 0.18rem;
-  padding: 0.16rem;
-  border: 1px solid var(--p-surface-300);
-  border-radius: var(--app-control-radius, 0.46rem);
-  background: var(--p-surface-50);
+  gap: 0;
 }
 .status-tab {
   border: none;
   background: transparent;
-  color: var(--p-surface-600);
-  height: calc(var(--app-control-height, 2.4rem) - 0.32rem);
-  border-radius: calc(var(--app-control-radius, 0.46rem) - 0.08rem);
-  padding: 0 0.65rem;
-  font-size: 0.84rem;
-  font-weight: 600;
+  color: #9ca3af;
+  height: 2.5rem;
+  padding: 0 1rem;
+  font-size: 0.855rem;
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  position: relative;
+  transition: color 0.15s ease;
+  font-family: inherit;
+}
+.status-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0.5rem;
+  right: 0.5rem;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: transparent;
+  transition: background 0.2s ease;
 }
 .status-tab:hover {
-  background: color-mix(in srgb, var(--p-surface-900) 8%, transparent);
-  color: var(--p-surface-800);
+  color: #374151;
 }
 .status-tab:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--p-primary-color) 16%, transparent);
+  color: #374151;
 }
 .status-tab-active {
-  background: var(--p-surface-0);
-  color: var(--p-surface-950);
-  box-shadow: 0 1px 1px rgb(15 23 42 / 0.06);
+  color: #111827;
+  font-weight: 700;
+}
+.status-tab-active::after {
+  background: #0f172a;
 }
 
 /* ── Ref ID link ── */
@@ -425,73 +458,70 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
   align-items: center;
   background: none;
   border: none;
-  padding: 0.08rem 0.12rem;
-  margin: -0.08rem -0.12rem;
+  padding: 0.125rem 0.25rem;
+  margin: -0.125rem -0.25rem;
   cursor: pointer;
-  border-radius: var(--app-control-radius, 0.46rem);
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  border-radius: var(--radius-sm, 6px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
   font-size: inherit;
   font-family: inherit;
-  color: var(--p-primary-600);
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: 0.14em;
-  text-decoration-thickness: 1.2px;
-  transition:
-    color 0.15s ease,
-    text-decoration-color 0.15s ease,
-    background-color 0.15s ease;
+  color: #0d9488;
+  text-decoration: none;
+  transition: color 0.15s ease, background-color 0.15s ease;
 }
 .ref-id-link:hover {
-  color: var(--p-primary-700);
-  text-decoration-color: currentColor;
+  color: #0f766e;
+  background: rgb(13 148 136 / 0.06);
 }
 .ref-id-link:focus-visible {
   outline: none;
-  color: var(--p-primary-700);
-  text-decoration-color: currentColor;
-  background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--p-primary-color) 20%, transparent);
+  color: #0f766e;
+  background: rgb(13 148 136 / 0.08);
+  box-shadow: 0 0 0 2px rgb(13 148 136 / 0.15);
 }
 
 /* ── Patient name ── */
 .patient-name {
-  font-weight: 400;
-  color: var(--p-surface-900);
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.005em;
 }
 
 /* ── Priority badge ── */
 .priority-badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.2rem 0.55rem;
-  border-radius: 999px;
+  padding: 0.1875rem 0.5rem;
+  border-radius: var(--radius-sm, 6px);
   font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 .priority-urgent {
-  background: #fff7ed;
-  color: #c2410c;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid rgb(220 38 38 / 0.12);
 }
 .priority-routine {
-  background: var(--p-surface-100);
-  color: var(--p-surface-600);
+  background: #f9fafb;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
 }
 
 /* ── Status badge ── */
 .status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.38rem;
-  padding: 0.24rem 0.6rem;
-  border-radius: 999px;
+  gap: 0.375rem;
+  padding: 0.1875rem 0.625rem;
+  border-radius: var(--radius-full, 999px);
   font-size: 0.78rem;
   font-weight: 600;
   white-space: nowrap;
+  letter-spacing: -0.005em;
 }
 .status-dot {
   width: 6px;
@@ -499,26 +529,31 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
   border-radius: 50%;
   flex-shrink: 0;
 }
-.status-pending {
+.status-in-progress {
   background: #fffbeb;
-  color: #92400e;
+  color: #b45309;
+  border: 1px solid rgb(180 83 9 / 0.1);
 }
-.status-pending .status-dot {
+.status-in-progress .status-dot {
   background: #f59e0b;
+  box-shadow: 0 0 0 2px rgb(245 158 11 / 0.15);
 }
-.status-accepted {
+.status-arrived {
   background: #ecfdf5;
-  color: #065f46;
+  color: #047857;
+  border: 1px solid rgb(4 120 87 / 0.1);
 }
-.status-accepted .status-dot {
+.status-arrived .status-dot {
   background: #10b981;
+  box-shadow: 0 0 0 2px rgb(16 185 129 / 0.15);
 }
-.status-completed {
-  background: #eff6ff;
-  color: #1e40af;
+.status-canceled {
+  background: #f9fafb;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
 }
-.status-completed .status-dot {
-  background: #3b82f6;
+.status-canceled .status-dot {
+  background: #9ca3af;
 }
 
 /* ── Row actions ── */
@@ -529,9 +564,9 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
 
 /* ── Empty state ── */
 .table-empty {
-  padding: 1.5rem;
+  padding: 3rem 1.5rem;
   text-align: center;
-  color: var(--p-surface-500);
-  font-size: 0.9rem;
+  color: #9ca3af;
+  font-size: 0.875rem;
 }
 </style>

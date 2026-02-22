@@ -141,20 +141,39 @@ function toggleSidebar() {
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@24..48,700;24..48,800&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@24..48,700;24..48,800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap');
 
 :global(:root) {
-  --app-font-family: 'IBM Plex Sans', 'Avenir Next', 'SF Pro Text', 'Segoe UI', 'Helvetica Neue', sans-serif;
-  --app-font-size-base: 15px;
-  --app-line-height-base: 1.5;
-  --app-control-height: 2.4rem;
-  --app-control-radius: 0.46rem;
-  --app-control-font-size: 0.9rem;
-  --page-section-margin-bottom: 1.15rem;
-  --page-content-padding: 1.5rem;
-  --page-content-padding-mobile: 1rem;
-  --page-content-top-offset: 0.45rem;
-  --sidebar-content-inline-offset: 0.62rem;
+  --app-font-family: 'Plus Jakarta Sans', 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --app-font-size-base: 14.5px;
+  --app-line-height-base: 1.55;
+  --app-control-height: 2.25rem;
+  --app-control-radius: 8px;
+  --app-control-font-size: 0.855rem;
+  --page-section-margin-bottom: 1.5rem;
+  --page-content-padding: 2rem;
+  --page-content-padding-mobile: 1.25rem;
+  --page-content-top-offset: 0.5rem;
+  --sidebar-content-inline-offset: 0.75rem;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-full: 999px;
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 12px 24px -4px rgb(0 0 0 / 0.08), 0 4px 8px -4px rgb(0 0 0 / 0.04);
+
+  --sidebar-bg: #0f172a;
+  --sidebar-text: #94a3b8;
+  --sidebar-text-hover: #e2e8f0;
+  --sidebar-text-active: #ffffff;
+  --sidebar-hover-bg: rgb(255 255 255 / 0.06);
+  --sidebar-active-bg: rgb(255 255 255 / 0.1);
+  --sidebar-border: rgb(255 255 255 / 0.07);
 }
 
 :global(body) {
@@ -162,11 +181,10 @@ function toggleSidebar() {
   font-family: var(--app-font-family);
   font-size: var(--app-font-size-base);
   line-height: var(--app-line-height-base);
-  background:
-    radial-gradient(circle at top left, var(--p-surface-50) 0%, transparent 45%),
-    radial-gradient(circle at bottom right, var(--p-surface-100) 0%, transparent 40%),
-  var(--p-surface-100);
-  color: var(--p-surface-900);
+  background: #f8f9fb;
+  color: #1a1d23;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 :global(#app),
@@ -182,6 +200,9 @@ function toggleSidebar() {
   border-radius: var(--app-control-radius);
   box-sizing: border-box;
   transform: none;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  transition: all 0.15s ease;
 }
 
 :global(.p-button:hover),
@@ -190,26 +211,106 @@ function toggleSidebar() {
   transform: none;
 }
 
+:global(.p-inputtext) {
+  border-radius: var(--app-control-radius);
+  font-size: var(--app-control-font-size);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+:global(.p-inputtext:focus) {
+  border-color: var(--p-primary-400);
+  box-shadow: 0 0 0 3px rgb(13 148 136 / 0.1);
+}
+
+:global(.p-dialog) {
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgb(0 0 0 / 0.03);
+  border: none;
+}
+
+:global(.p-dialog .p-dialog-header) {
+  border-bottom: 1px solid #f0f1f3;
+  padding: 1.25rem 1.5rem;
+}
+
+:global(.p-dialog .p-dialog-header .p-dialog-title) {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+:global(.p-dialog .p-dialog-content) {
+  padding: 1.5rem;
+}
+
+:global(.p-dialog .p-dialog-footer) {
+  border-top: 1px solid #f0f1f3;
+  padding: 1rem 1.5rem;
+}
+
+:global(.p-select) {
+  border-radius: var(--app-control-radius);
+}
+
+:global(.p-confirmdialog) {
+  border-radius: var(--radius-xl);
+}
+
+:global(.p-toast-message) {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+:global(.p-menu.p-menu-overlay) {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgb(0 0 0 / 0.04);
+  border: none;
+  padding: 6px;
+}
+
+:global(.p-menu .p-menu-item-link) {
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.75rem;
+  font-size: 0.855rem;
+  font-weight: 500;
+  gap: 0.5rem;
+}
+
+:global(.p-menu .p-menu-item-link:hover) {
+  background: #f4f5f7;
+}
+
 :global(#app) {
   min-height: 100vh;
 }
 
 :global(.p-datatable .p-datatable-thead > tr > th),
 :global(.p-datatable .p-datatable-header-cell) {
-  background: var(--p-surface-100);
-  color: var(--p-surface-900);
-  border-color: var(--p-surface-200);
-  font-weight: 700;
+  background: #ffffff;
+  color: #6b7280;
+  border-color: #f0f1f3;
+  border-bottom: 1px solid #e8eaed;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.75rem 1rem;
 }
 
 :global(.p-datatable .p-datatable-tbody > tr > td) {
-  background: var(--p-surface-0);
-  color: var(--p-surface-900);
-  border-color: var(--p-surface-200);
+  background: #ffffff;
+  color: #1a1d23;
+  border-color: #f4f5f7;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
 }
 
 :global(.p-datatable .p-datatable-tbody > tr:not(.p-datatable-row-selected):hover > td) {
-  background: var(--p-surface-100);
+  background: #f8f9fb;
+}
+
+:global(.p-datatable .p-datatable-tbody > tr.p-datatable-row-selected > td) {
+  background: rgb(13 148 136 / 0.04);
 }
 
 :global(.p-datatable .p-datatable-thead .p-checkbox),
@@ -222,6 +323,7 @@ function toggleSidebar() {
 :global(.p-datatable .p-datatable-tbody .p-checkbox .p-checkbox-box) {
   width: 1rem;
   height: 1rem;
+  border-radius: 4px;
 }
 
 :global(.p-datatable .p-datatable-thead .p-checkbox .p-checkbox-icon),
@@ -232,10 +334,10 @@ function toggleSidebar() {
 }
 
 :global(.p-datatable .p-datatable-paginator-bottom) {
-  border-top: 1px solid color-mix(in srgb, var(--p-surface-300) 56%, transparent);
+  border-top: 1px solid #f0f1f3;
   border-bottom-width: 0;
   background: transparent;
-  padding: 0.5rem 0.75rem;
+  padding: 0.625rem 1rem;
   min-height: 3.25rem;
   box-sizing: border-box;
 }
@@ -280,15 +382,15 @@ function toggleSidebar() {
 }
 
 :global(.p-datatable .p-paginator .p-paginator-page) {
-  min-width: 2.42rem;
-  height: 2.42rem;
-  border-radius: var(--app-control-radius);
+  min-width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-sm);
   border: none;
   background: transparent;
-  color: var(--p-surface-700);
+  color: #6b7280;
   box-shadow: none;
-  transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
-  font-size: 0.95rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  font-size: 0.855rem;
   font-weight: 500;
 }
 
@@ -316,8 +418,8 @@ function toggleSidebar() {
 :global(.p-datatable .p-paginator .p-paginator-page.p-paginator-page-selected),
 :global(.p-datatable .p-paginator .p-paginator-page[aria-current='page']) {
   border: none;
-  background: var(--p-surface-100);
-  color: var(--p-surface-950);
+  background: #0f172a;
+  color: #ffffff;
   font-weight: 600;
   box-shadow: none;
 }
@@ -389,9 +491,9 @@ function toggleSidebar() {
 
 :global(.p-datatable-filter-overlay) {
   border: none;
-  border-radius: 0.62rem;
-  box-shadow: 0 8px 24px rgb(0 0 0 / 8%);
-  background: var(--p-surface-0);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgb(0 0 0 / 0.04);
+  background: #ffffff;
   font-family: var(--app-font-family);
   min-width: 14rem;
 }
@@ -475,8 +577,9 @@ function toggleSidebar() {
 :global(.p-select-overlay),
 :global(.p-dropdown-panel),
 :global(.p-multiselect-overlay) {
-  border: 1px solid color-mix(in srgb, var(--p-surface-300) 45%, transparent);
-  box-shadow: 0 8px 24px rgb(0 0 0 / 8%);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgb(0 0 0 / 0.04);
 }
 
 :global(.p-datatable-column-filter-button) {
@@ -510,8 +613,9 @@ function toggleSidebar() {
 /* ── DataTable header slot ───────────────────────────── */
 
 :global(.p-datatable .p-datatable-header) {
-  background: transparent;
+  background: #ffffff;
   border: none;
+  padding: 1rem;
 }
 
 @media (max-width: 760px) {
@@ -537,46 +641,57 @@ function toggleSidebar() {
 }
 
 .layout-shell {
-  --sidebar-width: 240px;
+  --sidebar-width-val: 260px;
   min-height: 100vh;
   height: 100vh;
   display: grid;
-  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  grid-template-columns: var(--sidebar-width-val) minmax(0, 1fr);
   overflow: hidden;
-  transition: grid-template-columns 180ms ease;
+  transition: grid-template-columns 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .layout-shell.layout-shell-collapsed {
-  --sidebar-width: 88px;
+  --sidebar-width-val: 76px;
 }
 
 .sidebar {
-  background: linear-gradient(180deg, var(--p-surface-50) 0%, var(--p-surface-100) 100%);
-  border-right: 1px solid var(--p-surface-200);
-  padding: 2rem 1.25rem 1.25rem;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  padding: 1.5rem 1rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
   min-height: 0;
   overflow-y: auto;
-  transition: padding 180ms ease, gap 180ms ease;
+  overflow-x: hidden;
+  transition: padding 200ms cubic-bezier(0.4, 0, 0.2, 1), gap 200ms ease;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgb(255 255 255 / 0.1);
+  border-radius: 4px;
 }
 
 .sidebar.collapsed {
-  padding: 1.6rem 0.65rem 1rem;
-  gap: 1.1rem;
+  padding: 1.5rem 0.5rem 1rem;
+  gap: 1rem;
 }
 
 .brand-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.45rem;
+  gap: 0.5rem;
+  padding: 0.25rem 0.25rem 0;
 }
 
 .brand {
   display: flex;
-  gap: 0.4rem;
+  gap: 0.5rem;
   align-items: center;
   padding: 0.15rem 0 0.15rem var(--sidebar-content-inline-offset);
   min-width: 0;
@@ -598,18 +713,18 @@ function toggleSidebar() {
 .brand-wordmark-accent {
   margin: 0;
   font-family: 'Bricolage Grotesque', 'Avenir Next', 'Segoe UI', sans-serif;
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   font-weight: 800;
   letter-spacing: -0.045em;
   text-rendering: geometricPrecision;
 }
 
 .brand-wordmark-primary {
-  color: #111111;
+  color: #ffffff;
 }
 
 .brand-wordmark-accent {
-  color: var(--p-primary-600);
+  color: #2dd4bf;
 }
 
 .sidebar-toggle-btn {
@@ -617,27 +732,29 @@ function toggleSidebar() {
   height: 2rem;
   border: none;
   background: transparent;
-  color: var(--p-surface-500);
-  border-radius: 0.55rem;
+  color: var(--sidebar-text);
+  border-radius: var(--radius-sm);
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 
 .sidebar-toggle-btn:hover {
-  background: color-mix(in srgb, var(--p-surface-900) 6%, transparent);
-  color: var(--p-surface-700);
+  background: var(--sidebar-hover-bg);
+  color: var(--sidebar-text-hover);
 }
 
 .sidebar-toggle-btn:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--p-surface-600) 42%, transparent);
+  outline: 2px solid rgb(255 255 255 / 0.2);
   outline-offset: 2px;
 }
 
 .nav {
-  margin-top: 0.35rem;
+  margin-top: 0.5rem;
+  flex: 1;
 }
 
 .nav :deep(.nav-panelmenu) {
@@ -663,86 +780,107 @@ function toggleSidebar() {
 
 .nav :deep(.nav-panelmenu .p-panelmenu-header-link),
 .nav :deep(.nav-panelmenu .p-panelmenu-item-link) {
-  min-height: 2.7rem;
-  padding-block: 0.58rem;
+  min-height: 2.5rem;
+  padding-block: 0.5rem;
   padding-inline: var(--sidebar-content-inline-offset);
-  column-gap: 0.65rem;
+  column-gap: 0.75rem;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-header-label) {
   color: inherit;
-  font-size: 1rem;
-  font-weight: 400;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item-label) {
-  font-size: 1rem;
-  font-weight: 400;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-panel > .p-panelmenu-header .p-panelmenu-header-link) {
+  color: var(--sidebar-text);
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-item > .p-panelmenu-item-content .p-panelmenu-item-link) {
+  color: var(--sidebar-text);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel > .p-panelmenu-header .p-panelmenu-header-link:hover) {
-  color: var(--p-primary-600);
+  color: var(--sidebar-text-hover);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item > .p-panelmenu-item-content .p-panelmenu-item-link:hover) {
-  color: var(--p-primary-600);
+  color: var(--sidebar-text-hover);
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-panel > .p-panelmenu-header .p-panelmenu-header-content) {
+  background: transparent;
+  border-radius: var(--radius-md);
+}
+
+.nav :deep(.nav-panelmenu .p-panelmenu-item > .p-panelmenu-item-content) {
+  background: transparent;
+  border-radius: var(--radius-md);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel > .p-panelmenu-header .p-panelmenu-header-content:hover) {
-  background: var(--p-surface-200);
+  background: var(--sidebar-hover-bg);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item > .p-panelmenu-item-content:hover) {
-  background: var(--p-surface-200);
+  background: var(--sidebar-hover-bg);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content) {
-  background: var(--p-surface-200);
-  box-shadow: inset 0 0 0 1px var(--p-surface-300);
+  background: var(--sidebar-active-bg);
+  box-shadow: none;
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-link) {
-  color: var(--p-primary-600);
+  color: var(--sidebar-text-active);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-label) {
-  color: var(--p-primary-600);
-  font-weight: 500;
+  color: var(--sidebar-text-active);
+  font-weight: 600;
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content) {
-  background: var(--p-surface-200);
-  box-shadow: inset 0 0 0 1px var(--p-surface-300);
+  background: var(--sidebar-active-bg);
+  box-shadow: none;
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-link) {
-  color: var(--p-primary-600);
+  color: var(--sidebar-text-active);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-label) {
-  color: var(--p-primary-600);
-  font-weight: 500;
+  color: var(--sidebar-text-active);
+  font-weight: 600;
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-icon),
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-icon) {
-  color: var(--p-primary-600);
+  color: #2dd4bf;
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content:hover) {
-  background: var(--p-surface-200);
+  background: var(--sidebar-active-bg);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content:hover) {
-  background: var(--p-surface-200);
+  background: var(--sidebar-active-bg);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-link:hover) {
-  color: var(--p-primary-600);
+  color: var(--sidebar-text-active);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-link:hover) {
-  color: var(--p-primary-600);
+  color: var(--sidebar-text-active);
 }
 
 .content {
@@ -753,14 +891,15 @@ function toggleSidebar() {
   min-width: 0;
   height: 100vh;
   overflow-y: auto;
+  background: #f8f9fb;
 }
 
 
 .account-panel {
   margin-top: auto;
-  background: var(--p-surface-0);
-  border: 1px solid var(--p-surface-200);
-  border-radius: 12px;
+  background: rgb(255 255 255 / 0.05);
+  border: 1px solid var(--sidebar-border);
+  border-radius: var(--radius-lg);
   padding: 0.5rem;
   display: flex;
   align-items: center;
@@ -781,9 +920,9 @@ function toggleSidebar() {
 
 .account-avatar,
 .account-menu-avatar {
-  background: var(--p-surface-100);
-  color: var(--p-surface-900);
-  border: 1px solid var(--p-surface-200);
+  background: rgb(255 255 255 / 0.1);
+  color: var(--sidebar-text-active);
+  border: 1px solid var(--sidebar-border);
   flex: 0 0 auto;
 }
 
@@ -795,9 +934,9 @@ function toggleSidebar() {
 
 .account-name {
   margin: 0;
-  color: var(--p-surface-900);
-  font-size: 0.88rem;
-  font-weight: 500;
+  color: var(--sidebar-text-active);
+  font-size: 0.855rem;
+  font-weight: 600;
   line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
@@ -806,26 +945,27 @@ function toggleSidebar() {
 
 .account-role {
   margin: 0.14rem 0 0;
-  color: var(--p-surface-600);
-  font-size: 0.8rem;
+  color: var(--sidebar-text);
+  font-size: 0.78rem;
   line-height: 1.1;
 }
 
 .account-menu-btn {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: var(--app-control-radius);
-  color: var(--p-surface-800);
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-sm);
+  color: var(--sidebar-text);
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 
 .account-menu-btn:hover {
-  background: color-mix(in srgb, var(--p-primary-color) 10%, var(--p-surface-0));
-  border-color: color-mix(in srgb, var(--p-primary-color) 28%, var(--p-surface-0));
+  background: var(--sidebar-hover-bg);
+  color: var(--sidebar-text-hover);
 }
 
 .sidebar.collapsed .brand {
@@ -835,6 +975,7 @@ function toggleSidebar() {
 
 .sidebar.collapsed .brand-row {
   justify-content: center;
+  padding: 0;
 }
 
 .sidebar.collapsed .brand-copy {
@@ -848,24 +989,24 @@ function toggleSidebar() {
 .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-header-link),
 .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item-link) {
   justify-content: center;
-  padding-inline: 0.58rem;
-  min-height: 2.7rem;
+  padding-inline: 0;
+  min-height: 2.5rem;
 }
 
 .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content),
 .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content) {
-  width: 2.9rem;
-  min-height: 2.7rem;
+  width: 2.75rem;
+  min-height: 2.5rem;
   margin-inline: auto;
-  border-radius: 0.62rem;
+  border-radius: var(--radius-md);
 }
 
 .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-panel > .p-panelmenu-header .p-panelmenu-header-content:hover),
 .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-item > .p-panelmenu-item-content:hover) {
-  width: 2.9rem;
-  min-height: 2.7rem;
+  width: 2.75rem;
+  min-height: 2.5rem;
   margin-inline: auto;
-  border-radius: 0.62rem;
+  border-radius: var(--radius-md);
 }
 
 .sidebar.collapsed .nav :deep(.nav-panelmenu .p-panelmenu-header-label),
@@ -876,7 +1017,7 @@ function toggleSidebar() {
 .sidebar.collapsed .account-panel {
   justify-content: center;
   gap: 0;
-  padding: 0.42rem;
+  padding: 0.375rem;
 }
 
 .sidebar.collapsed .account-meta {
@@ -886,7 +1027,7 @@ function toggleSidebar() {
 .sidebar.collapsed .account-menu-btn {
   width: 2.25rem;
   height: 2.25rem;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
 }
 
 @media (max-width: 900px) {
@@ -903,7 +1044,7 @@ function toggleSidebar() {
 
   .sidebar {
     border-right: none;
-    border-bottom: 1px solid var(--p-surface-200);
+    border-bottom: 1px solid var(--sidebar-border);
     overflow: visible;
   }
 
@@ -912,8 +1053,8 @@ function toggleSidebar() {
   }
 
   .sidebar.collapsed {
-    padding: 2rem 1.25rem 1.25rem;
-    gap: 1.5rem;
+    padding: 1.5rem 1rem 1rem;
+    gap: 1.25rem;
   }
 
   .sidebar.collapsed .brand {
@@ -924,6 +1065,7 @@ function toggleSidebar() {
 
   .sidebar.collapsed .brand-row {
     justify-content: flex-start;
+    padding: 0.25rem 0.25rem 0;
   }
 
   .sidebar.collapsed .brand-copy {
@@ -967,8 +1109,8 @@ function toggleSidebar() {
   }
 
   .sidebar.collapsed .account-menu-btn {
-    width: 2.3rem;
-    height: 2.3rem;
+    width: 2.25rem;
+    height: 2.25rem;
   }
 
   .account-panel {
@@ -979,6 +1121,7 @@ function toggleSidebar() {
     padding: var(--page-content-padding-mobile);
     height: auto;
     overflow: visible;
+    background: #f8f9fb;
   }
 }
 </style>
