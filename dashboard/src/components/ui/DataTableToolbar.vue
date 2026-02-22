@@ -63,13 +63,16 @@ function onKeydown(event: KeyboardEvent) {
         <ChevronDown :size="13" />
       </template>
     </MultiSelect>
-    <InputText
-      v-model="searchValue"
-      :placeholder="searchPlaceholder ?? 'Search...'"
-      :disabled="searchDisabled"
-      class="toolbar-search"
-      @keydown="onKeydown"
-    />
+    <div class="toolbar-search-group">
+      <slot name="beforeSearch" />
+      <InputText
+        v-model="searchValue"
+        :placeholder="searchPlaceholder ?? 'Search...'"
+        :disabled="searchDisabled"
+        class="toolbar-search"
+        @keydown="onKeydown"
+      />
+    </div>
   </div>
 </template>
 
@@ -77,9 +80,15 @@ function onKeydown(event: KeyboardEvent) {
 .datatable-toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 0.75rem;
   width: 100%;
+}
+
+.toolbar-search-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
 }
 
 .toolbar-search {

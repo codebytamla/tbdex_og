@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { computed, ref, watch, type Component } from 'vue'
+import { computed, ref, type Component } from 'vue'
 import {
   Ban,
   ChevronRight,
   CircleCheckBig,
   Eye,
+  Hospital,
   MapPin,
   MoreHorizontal,
 } from 'lucide-vue-next'
-import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -469,18 +469,29 @@ void loadSitesCatalog()
               :columns="columns"
               searchPlaceholder="Search referrals..."
               @search="onSearchEnter"
-            />
-            <MultiSelect
-              v-model="selectedSiteIds"
-              :options="siteFilterOptions"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="All Sites"
-              :loading="sitesLoading"
-              :maxSelectedLabels="1"
-              selectedItemsLabel="{0} sites"
-              class="toolbar-site-filter"
-            />
+            >
+              <template #beforeSearch>
+                <MultiSelect
+                  v-model="selectedSiteIds"
+                  :options="siteFilterOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  :loading="sitesLoading"
+                  :maxSelectedLabels="0"
+                  class="toolbar-site-filter"
+                  :class="{ 'toolbar-site-filter--active': selectedSiteIds.length > 0 }"
+                  :aria-label="selectedSiteIds.length > 0 ? `${selectedSiteIds.length} site filters active` : 'Filter by site'"
+                  :title="selectedSiteIds.length > 0 ? `${selectedSiteIds.length} site filters active` : 'Filter by site'"
+                >
+                  <template #dropdownicon>
+                    <span class="toolbar-site-filter-trigger">
+                      <Hospital :size="14" />
+                      <span class="toolbar-site-filter-label">sites</span>
+                    </span>
+                  </template>
+                </MultiSelect>
+              </template>
+            </DataTableToolbar>
           </div>
         </template>
 
@@ -721,22 +732,21 @@ void loadSitesCatalog()
 }
 
 :deep(.toolbar-site-filter.p-multiselect) {
+  width: auto;
   height: 2rem;
-  min-width: 10rem;
-  max-width: 14rem;
+  min-width: 5rem;
   border: 1px solid #e5e7eb;
   border-radius: var(--app-control-radius, 8px);
   background: #ffffff;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #374151;
-  padding: 0 0.62rem;
+  color: #64748b;
+  padding: 0;
   box-shadow: var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.04));
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
 :deep(.toolbar-site-filter.p-multiselect:hover) {
   border-color: #d1d5db;
+  background: #f8fafc;
 }
 
 :deep(.toolbar-site-filter.p-multiselect.p-focus),
@@ -745,15 +755,42 @@ void loadSitesCatalog()
   box-shadow: 0 0 0 3px rgb(100 116 139 / 0.12);
 }
 
+:deep(.toolbar-site-filter--active.p-multiselect) {
+  border-color: #3b82f6;
+  color: #1d4ed8;
+  background: #eff6ff;
+}
+
+:deep(.toolbar-site-filter .p-multiselect-label-container) {
+  display: none;
+}
+
 :deep(.toolbar-site-filter .p-multiselect-label) {
-  padding: 0;
-  font-size: 0.8rem;
+  display: none;
 }
 
 :deep(.toolbar-site-filter .p-multiselect-dropdown) {
+  width: 100%;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
   padding: 0;
-  width: auto;
-  color: #9ca3af;
+}
+
+.toolbar-site-filter-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.toolbar-site-filter-label {
+  letter-spacing: 0.01em;
 }
 
 /* ── Table overrides ───────────────────────────────────── */
