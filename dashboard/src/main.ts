@@ -10,7 +10,7 @@ import App from './App.vue'
 import router from './router'
 
 const app = createApp(App)
-const primaryPalette = palette('{teal}') as Record<string, string>
+const primaryPalette = palette('{slate}') as Record<string, string>
 const lightSurfacePalette = palette('{slate}') as Record<string, string>
 const darkSurfacePalette: Record<string, string> = {
   0: lightSurfacePalette['950'] || '#020617',

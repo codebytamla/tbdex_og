@@ -90,9 +90,9 @@ function onKeydown(event: KeyboardEvent) {
   background: #ffffff;
 }
 .toolbar-search:focus {
-  border-color: var(--p-primary-400, #2dd4bf);
+  border-color: var(--p-primary-400, #94a3b8);
   background: #ffffff;
-  box-shadow: 0 0 0 3px rgb(13 148 136 / 0.08);
+  box-shadow: 0 0 0 3px rgb(100 116 139 / 0.12);
 }
 
 :deep(.toolbar-columns.p-multiselect) {
@@ -113,8 +113,8 @@ function onKeydown(event: KeyboardEvent) {
 }
 :deep(.toolbar-columns.p-multiselect.p-focus),
 :deep(.toolbar-columns.p-multiselect:focus-within) {
-  border-color: var(--p-primary-400, #2dd4bf);
-  box-shadow: 0 0 0 3px rgb(13 148 136 / 0.08);
+  border-color: var(--p-primary-400, #94a3b8);
+  box-shadow: 0 0 0 3px rgb(100 116 139 / 0.12);
 }
 :deep(.toolbar-columns .p-multiselect-label-container) {
   display: flex;

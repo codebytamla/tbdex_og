@@ -53,7 +53,7 @@ function onClick(event: MouseEvent) {
 }
 
 .row-action-btn:focus-visible {
-  outline: 2px solid rgb(13 148 136 / 0.3);
+  outline: 2px solid rgb(100 116 139 / 0.3);
   outline-offset: 1px;
 }
 

@@ -1553,8 +1553,8 @@ void loadSitesCatalog({ silent: true })
 
 .table-search:focus {
   background: #ffffff;
-  border-color: var(--p-primary-400, #2dd4bf);
-  box-shadow: 0 0 0 3px rgb(13 148 136 / 0.08);
+  border-color: var(--p-primary-400, #94a3b8);
+  box-shadow: 0 0 0 3px rgb(100 116 139 / 0.12);
 }
 
 .cell-date {

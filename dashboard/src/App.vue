@@ -219,7 +219,7 @@ function toggleSidebar() {
 
 :global(.p-inputtext:focus) {
   border-color: var(--p-primary-400);
-  box-shadow: 0 0 0 3px rgb(13 148 136 / 0.1);
+  box-shadow: 0 0 0 3px rgb(100 116 139 / 0.12);
 }
 
 :global(.p-dialog) {
@@ -310,7 +310,7 @@ function toggleSidebar() {
 }
 
 :global(.p-datatable .p-datatable-tbody > tr.p-datatable-row-selected > td) {
-  background: rgb(13 148 136 / 0.04);
+  background: rgb(100 116 139 / 0.06);
 }
 
 :global(.p-datatable .p-datatable-thead .p-checkbox),
@@ -614,12 +614,11 @@ function toggleSidebar() {
 
 :global(.p-card .p-datatable) {
   border-radius: var(--radius-xl, 18px);
-  overflow: clip;
+  overflow: hidden;
 }
 
 :global(.p-card .p-datatable .p-datatable-table-container) {
   border-radius: inherit;
-  overflow: clip !important;
 }
 
 :global(.p-card .p-datatable .p-datatable-header) {

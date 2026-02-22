@@ -149,8 +149,8 @@ function openSettings() {
   border-radius: var(--radius-xl, 18px) !important;
   border: 1px solid #e2e8f0;
   background:
-    radial-gradient(ellipse at 0% 0%, rgb(13 148 136 / 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 100% 100%, rgb(45 212 191 / 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 0% 0%, rgb(100 116 139 / 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, rgb(148 163 184 / 0.05) 0%, transparent 50%),
     #ffffff;
   overflow: hidden;
 }
@@ -172,7 +172,7 @@ function openSettings() {
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-weight: 700;
-  color: #0d9488;
+  color: #475569;
 }
 
 .hero-copy h2 {
@@ -276,7 +276,7 @@ function openSettings() {
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  color: #0d9488;
+  color: #16a34a;
 }
 
 .reveal {
