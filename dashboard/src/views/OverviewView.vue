@@ -301,7 +301,7 @@ function openSettings() {
 }
 
 :deep(.p-card) {
-  border: 1px solid #e5e7eb;
+  border: 1px solid #d1d5db;
   box-shadow: var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.06));
 }
 

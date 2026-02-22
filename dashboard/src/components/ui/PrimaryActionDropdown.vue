@@ -109,15 +109,15 @@ function toggleMenu(event: MouseEvent) {
   align-items: center;
   height: 2.375rem;
   border-radius: var(--app-control-radius, 8px);
-  background: #0d9488;
+  background: #0f172a;
   padding: 0;
   overflow: hidden;
-  box-shadow: 0 1px 3px 0 rgb(13 148 136 / 0.3), 0 1px 2px -1px rgb(13 148 136 / 0.2);
+  box-shadow: 0 1px 3px 0 rgb(15 23 42 / 0.25), 0 1px 2px -1px rgb(15 23 42 / 0.15);
   transition: box-shadow 0.15s ease;
 }
 
 .primary-action-dropdown:hover {
-  box-shadow: 0 4px 12px -2px rgb(13 148 136 / 0.35), 0 2px 4px -2px rgb(13 148 136 / 0.2);
+  box-shadow: 0 4px 12px -2px rgb(15 23 42 / 0.3), 0 2px 4px -2px rgb(15 23 42 / 0.15);
 }
 
 .primary-btn-main {
