@@ -167,6 +167,8 @@ function toggleSidebar() {
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
   --shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04);
   --shadow-lg: 0 12px 24px -4px rgb(0 0 0 / 0.08), 0 4px 8px -4px rgb(0 0 0 / 0.04);
+  --brand-accent: #2dd4bf;
+  --brand-accent-strong: #14b8a6;
 
   --sidebar-bg: #0f172a;
   --sidebar-text: #94a3b8;
@@ -485,16 +487,18 @@ function toggleSidebar() {
   margin-left: 0.3rem;
 }
 
-:global(.p-datatable .p-datatable-sortable-column.p-datatable-column-sorted .p-datatable-sort-icon) {
-  color: var(--p-primary-600);
+:global(.p-datatable .p-datatable-sortable-column.p-datatable-column-sorted .p-datatable-sort-icon),
+:global(.p-datatable .p-datatable-thead > tr > th[data-p-sorted='true'] .p-datatable-sort-icon) {
+  color: var(--brand-accent);
 }
 
 :global(.p-datatable .p-datatable-sortable-column:hover .p-datatable-sort-icon) {
   color: var(--p-surface-600);
 }
 
-:global(.p-datatable .p-datatable-sortable-column.p-datatable-column-sorted:hover .p-datatable-sort-icon) {
-  color: var(--p-primary-700);
+:global(.p-datatable .p-datatable-sortable-column.p-datatable-column-sorted:hover .p-datatable-sort-icon),
+:global(.p-datatable .p-datatable-thead > tr > th[data-p-sorted='true']:hover .p-datatable-sort-icon) {
+  color: var(--brand-accent-strong);
 }
 
 /* ── DataTable column filter overlay ─────────────────── */
@@ -606,13 +610,18 @@ function toggleSidebar() {
 }
 
 :global(.p-datatable-column-filter-button[data-p-active="true"]) {
-  color: var(--p-green-600);
-  background: color-mix(in srgb, var(--p-green-500) 12%, transparent);
+  color: var(--brand-accent);
+  background: color-mix(in srgb, var(--brand-accent) 14%, transparent);
+}
+
+:global(.p-datatable-column-filter-button[data-p-active="true"] .p-button-icon),
+:global(.p-datatable-column-filter-button[data-p-active="true"] .p-icon) {
+  color: inherit;
 }
 
 :global(.p-datatable-column-filter-button[data-p-active="true"]:hover) {
-  color: var(--p-green-700);
-  background: color-mix(in srgb, var(--p-green-500) 18%, transparent);
+  color: var(--brand-accent-strong);
+  background: color-mix(in srgb, var(--brand-accent) 22%, transparent);
 }
 
 :global(.p-datatable .p-datatable-header-cell .p-datatable-popover-filter),
