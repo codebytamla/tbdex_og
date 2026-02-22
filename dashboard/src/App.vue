@@ -170,13 +170,13 @@ function toggleSidebar() {
   --brand-accent: var(--p-surface-400, #94a3b8);
   --brand-accent-strong: var(--p-surface-500, #64748b);
 
-  --sidebar-bg: var(--p-surface-950, #020617);
-  --sidebar-text: var(--p-surface-200, #e2e8f0);
-  --sidebar-text-hover: var(--p-surface-50, #f8fafc);
-  --sidebar-text-active: #ffffff;
-  --sidebar-hover-bg: color-mix(in srgb, var(--p-surface-300, #cbd5e1) 24%, transparent);
-  --sidebar-active-bg: color-mix(in srgb, var(--p-surface-400, #94a3b8) 34%, transparent);
-  --sidebar-border: color-mix(in srgb, var(--p-surface-200, #e2e8f0) 32%, transparent);
+  --sidebar-bg: var(--p-surface-0, #ffffff);
+  --sidebar-text: var(--p-surface-700, #334155);
+  --sidebar-text-hover: var(--p-surface-900, #0f172a);
+  --sidebar-text-active: var(--p-surface-900, #0f172a);
+  --sidebar-hover-bg: color-mix(in srgb, var(--p-surface-200, #e2e8f0) 62%, transparent);
+  --sidebar-active-bg: color-mix(in srgb, var(--p-surface-300, #cbd5e1) 58%, transparent);
+  --sidebar-border: color-mix(in srgb, var(--p-surface-300, #cbd5e1) 72%, transparent);
 }
 
 :global(body) {
@@ -717,7 +717,7 @@ function toggleSidebar() {
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-  background: rgb(255 255 255 / 0.1);
+  background: color-mix(in srgb, var(--p-surface-500, #64748b) 45%, transparent);
   border-radius: 4px;
 }
 
@@ -765,7 +765,7 @@ function toggleSidebar() {
 }
 
 .brand-wordmark-primary {
-  color: #ffffff;
+  color: var(--p-surface-900, #0f172a);
 }
 
 .brand-wordmark-accent {
@@ -793,7 +793,7 @@ function toggleSidebar() {
 }
 
 .sidebar-toggle-btn:focus-visible {
-  outline: 2px solid rgb(255 255 255 / 0.2);
+  outline: 2px solid color-mix(in srgb, var(--p-surface-500, #64748b) 40%, transparent);
   outline-offset: 2px;
 }
 
@@ -909,7 +909,7 @@ function toggleSidebar() {
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-icon),
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-icon) {
-  color: #ffffff;
+  color: var(--sidebar-text-active);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content:hover) {
@@ -942,7 +942,7 @@ function toggleSidebar() {
 
 .account-panel {
   margin-top: auto;
-  background: rgb(255 255 255 / 0.05);
+  background: var(--p-surface-50, #f8fafc);
   border: 1px solid var(--sidebar-border);
   border-radius: var(--radius-lg);
   padding: 0.5rem;
@@ -965,7 +965,7 @@ function toggleSidebar() {
 
 .account-avatar,
 .account-menu-avatar {
-  background: rgb(255 255 255 / 0.1);
+  background: var(--p-surface-100, #f1f5f9);
   color: var(--sidebar-text-active);
   border: 1px solid var(--sidebar-border);
   flex: 0 0 auto;
