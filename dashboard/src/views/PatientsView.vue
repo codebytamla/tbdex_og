@@ -1903,10 +1903,6 @@ void loadSitesCatalog({ silent: true })
 }
 
 :deep(.p-card) {
-  border: 1px solid #d1d5db;
-  border-radius: var(--radius-xl, 18px) !important;
-  box-shadow: var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.06));
-  background: #ffffff;
   overflow: hidden;
 }
 

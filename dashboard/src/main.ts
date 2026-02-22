@@ -69,6 +69,11 @@ const MonoPreset = definePreset(Aura, {
           },
         },
       },
+      css: `
+        .p-card {
+          border: 1px solid dt('surface.300');
+        }
+      `,
     },
     panelmenu: {
       root: {

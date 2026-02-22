@@ -64,9 +64,6 @@ const sites = computed(() => authStore.sites)
 
 <style scoped>
 :deep(.p-card) {
-  border: 1px solid #e5e7eb;
-  box-shadow: var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.06));
-  border-radius: var(--radius-xl, 18px) !important;
   overflow: hidden;
 }
 
