@@ -27,7 +27,28 @@ export interface ThemePaletteOption {
   value: ThemePaletteName
 }
 
+export type ThemePresetId =
+  | 'clinical-calm'
+  | 'premium-saas'
+  | 'warm-accessible'
+  | 'monochrome-edge'
+  | 'vibrant-violet'
+  | 'holistic-forest'
+  | 'midnight-slate-dark'
+  | 'sunrise-coral'
+  | 'royal-fintech'
+
+export interface ThemePresetOption {
+  id: ThemePresetId
+  name: string
+  description: string
+  primary: ThemePaletteName
+  secondary: ThemePaletteName
+}
+
 const THEME_STORAGE_KEY = 'borderform.theme.colors.v1'
+const THEME_PRESET_STORAGE_KEY = 'borderform.theme.preset.v1'
+const THEME_PRESET_ATTRIBUTE = 'data-dashboard-theme'
 const PALETTE_ALIASES: Record<string, ThemePaletteName> = {
   bluegray: 'slate',
   'blue-gray': 'slate',
@@ -60,8 +81,81 @@ export const DEFAULT_THEME_COLORS: ThemeColors = {
   secondary: 'slate',
 }
 
+export const DEFAULT_THEME_PRESET_ID: ThemePresetId = 'clinical-calm'
+
+export const THEME_PRESET_OPTIONS: ThemePresetOption[] = [
+  {
+    id: 'clinical-calm',
+    name: 'Clinical Calm',
+    description: 'Professional, trustworthy slate-blues.',
+    primary: 'blue',
+    secondary: 'slate',
+  },
+  {
+    id: 'premium-saas',
+    name: 'Premium SaaS',
+    description: 'High-contrast dark sidebar with indigo actions.',
+    primary: 'indigo',
+    secondary: 'zinc',
+  },
+  {
+    id: 'warm-accessible',
+    name: 'Warm & Accessible',
+    description: 'Human-centric warm grays and deep teal.',
+    primary: 'teal',
+    secondary: 'stone',
+  },
+  {
+    id: 'monochrome-edge',
+    name: 'Monochrome Edge',
+    description: 'Ultra-minimalist, stark black and white design.',
+    primary: 'zinc',
+    secondary: 'neutral',
+  },
+  {
+    id: 'vibrant-violet',
+    name: 'Vibrant Violet',
+    description: 'Modern tech aesthetic with soft violet accents.',
+    primary: 'violet',
+    secondary: 'slate',
+  },
+  {
+    id: 'holistic-forest',
+    name: 'Holistic Forest',
+    description: 'Calming sage and deep green natural tones.',
+    primary: 'emerald',
+    secondary: 'stone',
+  },
+  {
+    id: 'midnight-slate-dark',
+    name: 'Midnight Slate (Dark)',
+    description: 'True dark-mode leaning shell for low-light environments.',
+    primary: 'blue',
+    secondary: 'slate',
+  },
+  {
+    id: 'sunrise-coral',
+    name: 'Sunrise Coral',
+    description: 'Warm, energetic beige and coral accents.',
+    primary: 'orange',
+    secondary: 'amber',
+  },
+  {
+    id: 'royal-fintech',
+    name: 'Royal Fintech',
+    description: 'High-trust deep blue with striking cyan.',
+    primary: 'cyan',
+    secondary: 'slate',
+  },
+]
+
+const THEME_PRESET_ID_SET = new Set<ThemePresetId>(
+  THEME_PRESET_OPTIONS.map((themePreset) => themePreset.id),
+)
+
 const primaryColorRef = ref<ThemePaletteName>(DEFAULT_THEME_COLORS.primary)
 const secondaryColorRef = ref<ThemePaletteName>(DEFAULT_THEME_COLORS.secondary)
+const themePresetIdRef = ref<ThemePresetId | null>(DEFAULT_THEME_PRESET_ID)
 let initialized = false
 
 function normalizePaletteName(value: unknown, fallback: ThemePaletteName): ThemePaletteName {
@@ -75,24 +169,48 @@ function normalizePaletteName(value: unknown, fallback: ThemePaletteName): Theme
     : fallback
 }
 
+function normalizeThemePresetId(value: unknown, fallback: ThemePresetId | null): ThemePresetId | null {
+  if (typeof value !== 'string') return fallback
+  const normalized = value.trim().toLowerCase()
+  if (!normalized) return fallback
+
+  return THEME_PRESET_ID_SET.has(normalized as ThemePresetId)
+    ? (normalized as ThemePresetId)
+    : fallback
+}
+
+function resolveThemePreset(themePresetId: ThemePresetId | null): ThemePresetOption | null {
+  if (!themePresetId) return null
+  return THEME_PRESET_OPTIONS.find((themePreset) => themePreset.id === themePresetId) ?? null
+}
+
+function findThemePresetByColors(colors: ThemeColors): ThemePresetOption | null {
+  return (
+    THEME_PRESET_OPTIONS.find(
+      (themePreset) =>
+        themePreset.primary === colors.primary && themePreset.secondary === colors.secondary,
+    ) ?? null
+  )
+}
+
 export function resolveThemePalette(name: ThemePaletteName) {
   return palette(`{${name}}`) as Record<string, string>
 }
 
 export function buildDarkSurfacePalette(lightSurfacePalette: Record<string, string>): Record<string, string> {
   return {
-    0: lightSurfacePalette['950'] || '#020617',
-    50: lightSurfacePalette['900'] || '#0f172a',
-    100: lightSurfacePalette['800'] || '#1e293b',
-    200: lightSurfacePalette['700'] || '#334155',
-    300: lightSurfacePalette['600'] || '#475569',
-    400: lightSurfacePalette['500'] || '#64748b',
-    500: lightSurfacePalette['400'] || '#94a3b8',
-    600: lightSurfacePalette['300'] || '#cbd5e1',
-    700: lightSurfacePalette['200'] || '#e2e8f0',
-    800: lightSurfacePalette['100'] || '#f1f5f9',
-    900: lightSurfacePalette['50'] || '#f8fafc',
-    950: '#ffffff',
+    0: lightSurfacePalette['950']!,
+    50: lightSurfacePalette['900']!,
+    100: lightSurfacePalette['800']!,
+    200: lightSurfacePalette['700']!,
+    300: lightSurfacePalette['600']!,
+    400: lightSurfacePalette['500']!,
+    500: lightSurfacePalette['400']!,
+    600: lightSurfacePalette['300']!,
+    700: lightSurfacePalette['200']!,
+    800: lightSurfacePalette['100']!,
+    900: lightSurfacePalette['50']!,
+    950: lightSurfacePalette['0'] ?? lightSurfacePalette['50']!,
   }
 }
 
@@ -100,6 +218,19 @@ function persistThemeColors(colors: ThemeColors) {
   if (typeof window === 'undefined') return
   try {
     window.localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(colors))
+  } catch {
+    // Ignore write failures (private mode, disabled storage).
+  }
+}
+
+function persistThemePresetId(themePresetId: ThemePresetId | null) {
+  if (typeof window === 'undefined') return
+  try {
+    if (themePresetId) {
+      window.localStorage.setItem(THEME_PRESET_STORAGE_KEY, themePresetId)
+    } else {
+      window.localStorage.removeItem(THEME_PRESET_STORAGE_KEY)
+    }
   } catch {
     // Ignore write failures (private mode, disabled storage).
   }
@@ -122,6 +253,23 @@ function readStoredThemeColors(): ThemeColors | null {
   }
 }
 
+function readStoredThemePresetId(): ThemePresetId | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = window.localStorage.getItem(THEME_PRESET_STORAGE_KEY)
+    if (!raw) return null
+    return normalizeThemePresetId(raw, null)
+  } catch {
+    return null
+  }
+}
+
+function applyThemePresetAttribute(themePresetId: ThemePresetId | null) {
+  if (typeof document === 'undefined') return
+  const resolvedThemePresetId = themePresetId ?? DEFAULT_THEME_PRESET_ID
+  document.documentElement.setAttribute(THEME_PRESET_ATTRIBUTE, resolvedThemePresetId)
+}
+
 function applyPrimeThemeColors(colors: ThemeColors) {
   const primaryPalette = resolveThemePalette(colors.primary)
   const lightSurfacePalette = resolveThemePalette(colors.secondary)
@@ -129,7 +277,7 @@ function applyPrimeThemeColors(colors: ThemeColors) {
   updatePrimaryPalette(primaryPalette)
   updateSurfacePalette({
     light: {
-      0: '#ffffff',
+      0: lightSurfacePalette['0'] ?? lightSurfacePalette['50']!,
       ...lightSurfacePalette,
     },
     dark: buildDarkSurfacePalette(lightSurfacePalette),
@@ -147,8 +295,29 @@ export function initializeThemeColors() {
   if (initialized) return
   initialized = true
 
-  const stored = readStoredThemeColors()
-  applyThemeColors(stored ?? DEFAULT_THEME_COLORS, false)
+  const storedThemePresetId = readStoredThemePresetId()
+  const storedThemePreset = resolveThemePreset(storedThemePresetId)
+
+  if (storedThemePreset) {
+    themePresetIdRef.value = storedThemePreset.id
+    applyThemeColors(
+      {
+        primary: storedThemePreset.primary,
+        secondary: storedThemePreset.secondary,
+      },
+      false,
+    )
+    applyThemePresetAttribute(storedThemePreset.id)
+    return
+  }
+
+  const storedColors = readStoredThemeColors()
+  const resolvedColors = storedColors ?? DEFAULT_THEME_COLORS
+  applyThemeColors(resolvedColors, false)
+
+  const matchedThemePreset = findThemePresetByColors(resolvedColors)
+  themePresetIdRef.value = matchedThemePreset?.id ?? null
+  applyThemePresetAttribute(themePresetIdRef.value)
 }
 
 export function useThemeColors() {
@@ -161,6 +330,27 @@ export function useThemeColors() {
       ),
     }
     applyThemeColors(colors, true)
+    const matchedThemePreset = findThemePresetByColors(colors)
+    themePresetIdRef.value = matchedThemePreset?.id ?? null
+    persistThemePresetId(themePresetIdRef.value)
+    applyThemePresetAttribute(themePresetIdRef.value)
+  }
+
+  function setThemePreset(value: unknown) {
+    const themePresetId = normalizeThemePresetId(value, null)
+    const themePreset = resolveThemePreset(themePresetId)
+    if (!themePreset) return
+
+    themePresetIdRef.value = themePreset.id
+    applyThemeColors(
+      {
+        primary: themePreset.primary,
+        secondary: themePreset.secondary,
+      },
+      true,
+    )
+    persistThemePresetId(themePreset.id)
+    applyThemePresetAttribute(themePreset.id)
   }
 
   function setPrimaryColor(value: unknown) {
@@ -172,18 +362,39 @@ export function useThemeColors() {
   }
 
   function resetThemeColors() {
-    applyThemeColors(DEFAULT_THEME_COLORS, true)
+    const defaultThemePreset = resolveThemePreset(DEFAULT_THEME_PRESET_ID)
+    if (!defaultThemePreset) {
+      applyThemeColors(DEFAULT_THEME_COLORS, true)
+      themePresetIdRef.value = null
+      persistThemePresetId(null)
+      applyThemePresetAttribute(null)
+      return
+    }
+
+    themePresetIdRef.value = defaultThemePreset.id
+    applyThemeColors(
+      {
+        primary: defaultThemePreset.primary,
+        secondary: defaultThemePreset.secondary,
+      },
+      true,
+    )
+    persistThemePresetId(defaultThemePreset.id)
+    applyThemePresetAttribute(defaultThemePreset.id)
   }
 
   return {
     paletteOptions: THEME_PALETTE_OPTIONS,
+    themePresets: THEME_PRESET_OPTIONS,
     primaryColor: computed(() => primaryColorRef.value),
     secondaryColor: computed(() => secondaryColorRef.value),
+    activeThemePresetId: computed(() => themePresetIdRef.value),
     themeColors: computed<ThemeColors>(() => ({
       primary: primaryColorRef.value,
       secondary: secondaryColorRef.value,
     })),
     setThemeColors,
+    setThemePreset,
     setPrimaryColor,
     setSecondaryColor,
     resetThemeColors,

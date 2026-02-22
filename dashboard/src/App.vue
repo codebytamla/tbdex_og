@@ -2,7 +2,7 @@
 import type { MenuItem } from 'primevue/menuitem'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { MoreVertical, PanelLeftClose, PanelLeftOpen } from 'lucide-vue-next'
+import { MoreVertical, Palette, PanelLeftClose, PanelLeftOpen, X } from 'lucide-vue-next'
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import Menu from 'primevue/menu'
@@ -11,11 +11,13 @@ import ConfirmDialog from 'primevue/confirmdialog'
 import Toast from 'primevue/toast'
 import { useAuthStore } from '@/stores/auth'
 import { useNavItems } from '@/composables/useNavItems'
+import { useThemeColors, type ThemePresetId } from '@/composables/useThemeColors'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const { visibleNavItems } = useNavItems()
+const themeColors = useThemeColors()
 const sidebarCollapseStorageKey = 'borderform.ui.sidebarCollapsed'
 const sidebarCollapsed = ref(false)
 authStore.hydrate()
@@ -52,9 +54,17 @@ const accountActions = computed<MenuItem[]>(() => [
   },
 ])
 const accountMenu = ref()
+const isThemeExplorerOpen = ref(true)
+const themeExplorerLabel = 'Theme explorer'
+const themePresets = computed(() => themeColors.themePresets)
+const activeThemePresetId = computed(() => themeColors.activeThemePresetId.value)
 
 function toggleAccountMenu(event: Event) {
   accountMenu.value?.toggle(event)
+}
+
+function setThemePreset(themePresetId: ThemePresetId) {
+  themeColors.setThemePreset(themePresetId)
 }
 
 function isNavMenuItemActive(item: MenuItem) {
@@ -138,6 +148,54 @@ function toggleSidebar() {
     <main class="content">
       <RouterView />
     </main>
+
+    <div class="theme-explorer" :aria-label="themeExplorerLabel">
+      <section v-if="isThemeExplorerOpen" class="theme-explorer-panel">
+        <header class="theme-explorer-header">
+          <div>
+            <p class="theme-explorer-title">Theme Explorer</p>
+            <p class="theme-explorer-subtitle">Select a modern aesthetic</p>
+          </div>
+          <button
+            type="button"
+            class="theme-explorer-close"
+            aria-label="Close theme explorer"
+            title="Close theme explorer"
+            @click="isThemeExplorerOpen = false"
+          >
+            <X :size="16" :stroke-width="2.1" />
+          </button>
+        </header>
+
+        <div class="theme-explorer-list">
+          <button
+            v-for="themePreset in themePresets"
+            :key="themePreset.id"
+            type="button"
+            class="theme-explorer-option"
+            :class="{ 'theme-explorer-option-active': activeThemePresetId === themePreset.id }"
+            @click="setThemePreset(themePreset.id)"
+          >
+            <span class="theme-explorer-option-name">{{ themePreset.name }}</span>
+            <span class="theme-explorer-option-description">{{ themePreset.description }}</span>
+          </button>
+        </div>
+      </section>
+
+      <button
+        v-else
+        type="button"
+        class="theme-explorer-trigger"
+        aria-label="Open theme explorer"
+        title="Open theme explorer"
+        @click="isThemeExplorerOpen = true"
+      >
+        <span class="theme-explorer-trigger-icon">
+          <Palette :size="16" :stroke-width="2.2" />
+        </span>
+        <span>Themes ({{ themePresets.length }})</span>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -167,16 +225,95 @@ function toggleSidebar() {
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
   --shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04);
   --shadow-lg: 0 12px 24px -4px rgb(0 0 0 / 0.08), 0 4px 8px -4px rgb(0 0 0 / 0.04);
-  --brand-accent: var(--p-surface-400, #94a3b8);
-  --brand-accent-strong: var(--p-surface-500, #64748b);
+  --brand-accent: var(--p-primary-400);
+  --brand-accent-strong: var(--p-primary-500);
+  --brand-wordmark-primary: var(--p-surface-900);
 
-  --sidebar-bg: rgba(220, 226, 235, 0.65);
-  --sidebar-text: var(--p-surface-700, #334155);
-  --sidebar-text-hover: var(--p-surface-900, #0f172a);
-  --sidebar-text-active: var(--p-surface-900, #0f172a);
-  --sidebar-hover-bg: color-mix(in srgb, var(--p-surface-200, #e2e8f0) 62%, transparent);
-  --sidebar-active-bg: color-mix(in srgb, var(--p-surface-300, #cbd5e1) 58%, transparent);
-  --sidebar-border: rgba(180, 195, 215, 0.25);
+  --sidebar-bg: color-mix(in srgb, var(--p-surface-100) 64%, transparent);
+  --sidebar-text: var(--p-surface-500);
+  --sidebar-text-hover: var(--p-surface-900);
+  --sidebar-text-active: var(--p-surface-900);
+  --sidebar-hover-bg: color-mix(in srgb, var(--p-surface-300) 46%, transparent);
+  --sidebar-active-bg: color-mix(in srgb, var(--p-surface-300) 64%, var(--p-surface-100));
+  --sidebar-active-icon: var(--p-primary-600);
+  --sidebar-border: color-mix(in srgb, var(--p-surface-500) 32%, transparent);
+  --sidebar-glass-edge: color-mix(in srgb, var(--p-surface-0) 72%, transparent);
+  --sidebar-depth-shadow: color-mix(in srgb, var(--p-surface-950) 10%, transparent);
+
+  --app-body-bg: var(--p-surface-50);
+  --app-body-text: var(--p-surface-900);
+  --content-bg: var(--p-surface-50);
+
+  --account-panel-bg: color-mix(in srgb, var(--p-surface-0) 54%, transparent);
+  --account-panel-border: color-mix(in srgb, var(--p-surface-500) 36%, transparent);
+
+  --theme-explorer-panel-bg: var(--p-surface-0);
+  --theme-explorer-panel-border: color-mix(in srgb, var(--p-surface-500) 32%, transparent);
+  --theme-explorer-panel-shadow: var(--shadow-lg);
+  --theme-explorer-title: var(--p-surface-900);
+  --theme-explorer-subtitle: var(--p-surface-600);
+  --theme-explorer-close: var(--p-surface-500);
+  --theme-explorer-close-hover: var(--p-surface-800);
+  --theme-explorer-close-hover-bg: color-mix(in srgb, var(--p-surface-300) 40%, transparent);
+  --theme-explorer-option-bg-hover: color-mix(in srgb, var(--p-surface-300) 24%, transparent);
+  --theme-explorer-option-title: var(--p-surface-800);
+  --theme-explorer-option-description: var(--p-surface-600);
+  --theme-explorer-option-active-bg: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+  --theme-explorer-option-active-border: color-mix(in srgb, var(--p-primary-color) 34%, transparent);
+  --theme-explorer-option-active-title: var(--p-primary-700);
+  --theme-explorer-option-active-description: color-mix(in srgb, var(--p-primary-700) 85%, var(--p-surface-700));
+  --theme-explorer-trigger-bg: var(--p-surface-0);
+  --theme-explorer-trigger-border: color-mix(in srgb, var(--p-surface-500) 32%, transparent);
+  --theme-explorer-trigger-text: var(--p-surface-700);
+  --theme-explorer-trigger-text-hover: var(--p-primary-700);
+  --theme-explorer-trigger-icon-bg: color-mix(in srgb, var(--p-surface-300) 42%, transparent);
+  --theme-explorer-trigger-icon-hover-bg: color-mix(in srgb, var(--p-primary-color) 20%, transparent);
+  --theme-explorer-trigger-shadow: var(--shadow-md);
+  --theme-explorer-trigger-shadow-hover: var(--shadow-lg);
+}
+
+:global(:root[data-dashboard-theme='midnight-slate-dark']) {
+  --app-body-bg: var(--p-surface-950);
+  --app-body-text: var(--p-surface-100);
+  --content-bg: var(--p-surface-950);
+  --brand-wordmark-primary: var(--p-surface-0);
+  --brand-accent: var(--p-primary-300);
+  --brand-accent-strong: var(--p-primary-200);
+
+  --sidebar-bg: var(--p-surface-900);
+  --sidebar-text: var(--p-surface-400);
+  --sidebar-text-hover: var(--p-surface-0);
+  --sidebar-text-active: var(--p-surface-100);
+  --sidebar-hover-bg: color-mix(in srgb, var(--p-surface-700) 56%, transparent);
+  --sidebar-active-bg: color-mix(in srgb, var(--p-surface-700) 68%, var(--p-surface-600));
+  --sidebar-active-icon: var(--p-primary-200);
+  --sidebar-border: color-mix(in srgb, var(--p-surface-400) 25%, transparent);
+  --sidebar-glass-edge: color-mix(in srgb, var(--p-surface-0) 15%, transparent);
+  --sidebar-depth-shadow: color-mix(in srgb, var(--p-surface-0) 8%, transparent);
+
+  --account-panel-bg: color-mix(in srgb, var(--p-surface-0) 6%, transparent);
+  --account-panel-border: color-mix(in srgb, var(--p-surface-400) 24%, transparent);
+
+  --theme-explorer-panel-bg: var(--p-surface-900);
+  --theme-explorer-panel-border: color-mix(in srgb, var(--p-surface-400) 24%, transparent);
+  --theme-explorer-title: var(--p-surface-100);
+  --theme-explorer-subtitle: var(--p-surface-400);
+  --theme-explorer-close: var(--p-surface-400);
+  --theme-explorer-close-hover: var(--p-surface-100);
+  --theme-explorer-close-hover-bg: color-mix(in srgb, var(--p-surface-500) 24%, transparent);
+  --theme-explorer-option-bg-hover: color-mix(in srgb, var(--p-surface-600) 38%, transparent);
+  --theme-explorer-option-title: var(--p-surface-200);
+  --theme-explorer-option-description: var(--p-surface-400);
+  --theme-explorer-option-active-bg: color-mix(in srgb, var(--p-primary-color) 22%, transparent);
+  --theme-explorer-option-active-border: color-mix(in srgb, var(--p-primary-color) 44%, transparent);
+  --theme-explorer-option-active-title: var(--p-primary-200);
+  --theme-explorer-option-active-description: var(--p-primary-100);
+  --theme-explorer-trigger-bg: var(--p-surface-900);
+  --theme-explorer-trigger-border: color-mix(in srgb, var(--p-surface-400) 24%, transparent);
+  --theme-explorer-trigger-text: var(--p-surface-300);
+  --theme-explorer-trigger-text-hover: var(--p-primary-200);
+  --theme-explorer-trigger-icon-bg: color-mix(in srgb, var(--p-surface-500) 22%, transparent);
+  --theme-explorer-trigger-icon-hover-bg: color-mix(in srgb, var(--p-primary-color) 24%, transparent);
 }
 
 :global(body) {
@@ -184,8 +321,8 @@ function toggleSidebar() {
   font-family: var(--app-font-family);
   font-size: var(--app-font-size-base);
   line-height: var(--app-line-height-base);
-  background: var(--p-surface-50, #f8fafc);
-  color: #1a1d23;
+  background: var(--app-body-bg);
+  color: var(--app-body-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -703,8 +840,8 @@ function toggleSidebar() {
   background: var(--sidebar-bg);
   backdrop-filter: blur(32px) saturate(180%) brightness(0.97);
   -webkit-backdrop-filter: blur(32px) saturate(180%) brightness(0.97);
-  border-right: 1px solid rgba(180, 195, 215, 0.4);
-  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.7), 4px 0 32px rgba(0, 0, 0, 0.07);
+  border-right: 1px solid var(--sidebar-border);
+  box-shadow: inset -1px 0 0 var(--sidebar-glass-edge), 4px 0 32px var(--sidebar-depth-shadow);
   padding: 1.5rem 1rem 1rem;
   display: flex;
   flex-direction: column;
@@ -720,7 +857,7 @@ function toggleSidebar() {
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--p-surface-500, #64748b) 45%, transparent);
+  background: color-mix(in srgb, var(--p-surface-500) 45%, transparent);
   border-radius: 4px;
 }
 
@@ -768,7 +905,7 @@ function toggleSidebar() {
 }
 
 .brand-wordmark-primary {
-  color: var(--p-surface-900, #0f172a);
+  color: var(--brand-wordmark-primary);
 }
 
 .brand-wordmark-accent {
@@ -796,7 +933,7 @@ function toggleSidebar() {
 }
 
 .sidebar-toggle-btn:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--p-surface-500, #64748b) 40%, transparent);
+  outline: 2px solid color-mix(in srgb, var(--p-surface-500) 40%, transparent);
   outline-offset: 2px;
 }
 
@@ -864,6 +1001,11 @@ function toggleSidebar() {
   color: var(--sidebar-text-hover);
 }
 
+.nav :deep(.nav-panelmenu .p-panelmenu-panel > .p-panelmenu-header .p-panelmenu-header-link:hover .p-panelmenu-header-icon),
+.nav :deep(.nav-panelmenu .p-panelmenu-item > .p-panelmenu-item-content .p-panelmenu-item-link:hover .p-panelmenu-item-icon) {
+  color: var(--sidebar-active-icon);
+}
+
 .nav :deep(.nav-panelmenu .p-panelmenu-panel > .p-panelmenu-header .p-panelmenu-header-content) {
   background: transparent;
   border-radius: var(--radius-md);
@@ -912,7 +1054,7 @@ function toggleSidebar() {
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-icon),
 .nav :deep(.nav-panelmenu .p-panelmenu-item.nav-menu-item-active > .p-panelmenu-item-content .p-panelmenu-item-icon) {
-  color: var(--sidebar-text-active);
+  color: var(--sidebar-active-icon);
 }
 
 .nav :deep(.nav-panelmenu .p-panelmenu-panel.nav-menu-item-active > .p-panelmenu-header .p-panelmenu-header-content:hover) {
@@ -939,14 +1081,183 @@ function toggleSidebar() {
   min-width: 0;
   height: 100vh;
   overflow-y: auto;
-  background: var(--p-surface-50, #f8fafc);
+  background: var(--content-bg);
 }
 
+.theme-explorer {
+  position: fixed;
+  right: clamp(0.85rem, 2vw, 1.5rem);
+  bottom: clamp(0.85rem, 2vw, 1.5rem);
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.theme-explorer-panel {
+  width: min(18rem, calc(100vw - 1.7rem));
+  max-height: min(80vh, 31rem);
+  border-radius: 1rem;
+  border: 1px solid var(--theme-explorer-panel-border);
+  box-shadow: var(--theme-explorer-panel-shadow);
+  background: var(--theme-explorer-panel-bg);
+  padding: 0.5rem;
+  display: grid;
+  gap: 0.28rem;
+  transform-origin: bottom right;
+  animation: theme-explorer-in 180ms ease-out;
+}
+
+.theme-explorer-header {
+  padding: 0.35rem 0.35rem 0.45rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.theme-explorer-title {
+  margin: 0;
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--theme-explorer-title);
+}
+
+.theme-explorer-subtitle {
+  margin: 0.25rem 0 0;
+  font-size: 0.64rem;
+  line-height: 1.3;
+  color: var(--theme-explorer-subtitle);
+}
+
+.theme-explorer-close {
+  width: 1.9rem;
+  height: 1.9rem;
+  border: none;
+  border-radius: 0.65rem;
+  background: transparent;
+  color: var(--theme-explorer-close);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.theme-explorer-close:hover {
+  color: var(--theme-explorer-close-hover);
+  background: var(--theme-explorer-close-hover-bg);
+}
+
+.theme-explorer-list {
+  max-height: min(65vh, 25rem);
+  overflow-y: auto;
+  display: grid;
+  gap: 0.28rem;
+  padding: 0 0.2rem 0.2rem;
+}
+
+.theme-explorer-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.theme-explorer-list::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--p-surface-500) 38%, transparent);
+  border-radius: 999px;
+}
+
+.theme-explorer-option {
+  border-radius: 0.8rem;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 0.6rem 0.68rem;
+  text-align: left;
+  display: grid;
+  gap: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.theme-explorer-option:hover {
+  background: var(--theme-explorer-option-bg-hover);
+}
+
+.theme-explorer-option-name {
+  font-size: 0.79rem;
+  font-weight: 700;
+  color: var(--theme-explorer-option-title);
+  letter-spacing: -0.003em;
+}
+
+.theme-explorer-option-description {
+  font-size: 0.66rem;
+  line-height: 1.35;
+  color: var(--theme-explorer-option-description);
+}
+
+.theme-explorer-option-active {
+  background: var(--theme-explorer-option-active-bg);
+  border-color: var(--theme-explorer-option-active-border);
+}
+
+.theme-explorer-option-active .theme-explorer-option-name {
+  color: var(--theme-explorer-option-active-title);
+}
+
+.theme-explorer-option-active .theme-explorer-option-description {
+  color: var(--theme-explorer-option-active-description);
+}
+
+.theme-explorer-trigger {
+  border: 1px solid var(--theme-explorer-trigger-border);
+  border-radius: var(--radius-full);
+  box-shadow: var(--theme-explorer-trigger-shadow);
+  background: var(--theme-explorer-trigger-bg);
+  color: var(--theme-explorer-trigger-text);
+  min-height: 2.85rem;
+  padding: 0.35rem 0.9rem 0.35rem 0.55rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.theme-explorer-trigger:hover {
+  color: var(--theme-explorer-trigger-text-hover);
+  box-shadow: var(--theme-explorer-trigger-shadow-hover);
+}
+
+.theme-explorer-trigger:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--p-primary-color) 34%, transparent);
+  outline-offset: 2px;
+}
+
+.theme-explorer-trigger-icon {
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: var(--radius-full);
+  background: var(--theme-explorer-trigger-icon-bg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease;
+}
+
+.theme-explorer-trigger:hover .theme-explorer-trigger-icon {
+  background: var(--theme-explorer-trigger-icon-hover-bg);
+}
 
 .account-panel {
   margin-top: auto;
-  background: rgba(255, 255, 255, 0.45);
-  border: 1px solid rgba(180, 195, 215, 0.55);
+  background: var(--account-panel-bg);
+  border: 1px solid var(--account-panel-border);
   border-radius: var(--radius-lg);
   padding: 0.5rem;
   display: flex;
@@ -968,7 +1279,7 @@ function toggleSidebar() {
 
 .account-avatar,
 .account-menu-avatar {
-  background: var(--p-surface-100, #f1f5f9);
+  background: var(--p-surface-100);
   color: var(--sidebar-text-active);
   border: 1px solid var(--sidebar-border);
   flex: 0 0 auto;
@@ -1092,7 +1403,7 @@ function toggleSidebar() {
 
   .sidebar {
     border-right: none;
-    border-bottom: 1px solid rgba(180, 195, 215, 0.4);
+    border-bottom: 1px solid var(--sidebar-border);
     overflow: visible;
   }
 
@@ -1169,7 +1480,45 @@ function toggleSidebar() {
     padding: var(--page-content-padding-mobile);
     height: auto;
     overflow: visible;
-    background: #f8f9fb;
+    background: var(--content-bg);
+  }
+
+  .theme-explorer {
+    right: 0.75rem;
+    bottom: 0.75rem;
+  }
+
+  .theme-explorer-panel {
+    max-height: min(66vh, 23rem);
+  }
+
+  .theme-explorer-trigger span:last-child {
+    display: none;
+  }
+
+  .theme-explorer-trigger {
+    width: 2.85rem;
+    height: 2.85rem;
+    min-height: 2.85rem;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .theme-explorer-trigger-icon {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+  }
+}
+
+@keyframes theme-explorer-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 </style>
