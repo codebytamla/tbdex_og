@@ -20,6 +20,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useCatalogStore } from '@/stores/catalog'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
+import PrimaryActionDropdown from '@/components/ui/PrimaryActionDropdown.vue'
 import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
 
 /* ── Types ─────────────────────────────────────────────── */
@@ -411,7 +412,20 @@ void loadSitesCatalog()
   <PageSectionHeader
     title="Referrals"
     description="Track and manage patient referrals across sites"
-  />
+  >
+    <template #actions>
+      <PrimaryActionDropdown
+        label="New Referral"
+        title="New Referral options"
+        ariaLabel="New Referral options"
+        importLabel="Import referrals"
+        exportLabel="Export referrals"
+        refreshLabel="Refresh referrals"
+        :importDisabled="true"
+        :exportDisabled="true"
+      />
+    </template>
+  </PageSectionHeader>
 
   <!-- Status filter tabs -->
   <div class="status-tabs">
