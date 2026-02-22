@@ -20,12 +20,6 @@ import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
 import PrimaryActionDropdown from '@/components/ui/PrimaryActionDropdown.vue'
 import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
-import {
-  TABLE_DEFAULT_ROWS,
-  TABLE_PAGE_REPORT_TEMPLATE,
-  TABLE_PAGINATOR_TEMPLATE,
-  TABLE_ROWS_PER_PAGE_OPTIONS,
-} from '@/components/ui/tablePagination'
 
 type Site = {
   id: string
@@ -381,9 +375,9 @@ void loadSites()
   <PageSectionHeader title="Sites" description="Create and manage active service sites">
     <template #actions>
       <PrimaryActionDropdown
-        label="Create site"
+        label="New Site"
         :disabled="!canManageSites"
-        title="Create new site options"
+        title="New Site options"
         importLabel="Import sites"
         exportLabel="Export sites"
         refreshLabel="Refresh sites"
@@ -416,11 +410,6 @@ void loadSites()
         filterDisplay="menu"
         :globalFilterFields="['name', 'code', 'siteType']"
         removableSort
-        paginator
-        :rows="TABLE_DEFAULT_ROWS"
-        :rowsPerPageOptions="[...TABLE_ROWS_PER_PAGE_OPTIONS]"
-        :paginatorTemplate="TABLE_PAGINATOR_TEMPLATE"
-        :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
         stripedRows
         rowHover
       >

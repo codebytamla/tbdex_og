@@ -28,11 +28,6 @@ import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
 import PrimaryActionDropdown from '@/components/ui/PrimaryActionDropdown.vue'
 import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
-import {
-  TABLE_PAGE_REPORT_TEMPLATE,
-  TABLE_PAGINATOR_TEMPLATE,
-  TABLE_ROWS_PER_PAGE_OPTIONS,
-} from '@/components/ui/tablePagination'
 
 type PatientStatus = 'provisional' | 'active' | 'inactive' | 'deceased'
 
@@ -1213,10 +1208,10 @@ void loadSitesCatalog({ silent: true })
   >
     <template #actions>
       <PrimaryActionDropdown
-        label="Register patient"
+        label="New Patient"
         :disabled="!canCreatePatients"
-        title="Register new patient"
-        ariaLabel="Register new patient options"
+        title="New Patient options"
+        ariaLabel="New Patient options"
         importLabel="Import patients"
         exportLabel="Export patients"
         refreshLabel="Refresh patients"
@@ -1253,15 +1248,7 @@ void loadSitesCatalog({ silent: true })
         :loading="patientsLoading"
         filterDisplay="menu"
         removableSort
-        paginator
-        :rows="limit"
-        :first="paginatorFirst"
-        :totalRecords="paginatorTotalRecords"
-        :paginatorTemplate="TABLE_PAGINATOR_TEMPLATE"
-        :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
-        :rowsPerPageOptions="[...TABLE_ROWS_PER_PAGE_OPTIONS]"
         scrollable
-        @page="onPageChange"
         @filter="onFilter"
         stripedRows
         rowHover

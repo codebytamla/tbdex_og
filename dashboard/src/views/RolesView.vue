@@ -20,12 +20,6 @@ import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
 import PrimaryActionDropdown from '@/components/ui/PrimaryActionDropdown.vue'
 import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
-import {
-  TABLE_DEFAULT_ROWS,
-  TABLE_PAGE_REPORT_TEMPLATE,
-  TABLE_PAGINATOR_TEMPLATE,
-  TABLE_ROWS_PER_PAGE_OPTIONS,
-} from '@/components/ui/tablePagination'
 
 type DialogMode = 'create' | 'edit' | 'view'
 
@@ -416,9 +410,9 @@ void loadRoles()
   <PageSectionHeader title="Roles" description="Manage role definitions and permission assignments">
     <template #actions>
       <PrimaryActionDropdown
-        label="Create role"
+        label="New Role"
         :disabled="!canManageRoles"
-        title="Create new role options"
+        title="New Role options"
         importLabel="Import roles"
         exportLabel="Export roles"
         refreshLabel="Refresh roles"
@@ -451,11 +445,6 @@ void loadRoles()
         filterDisplay="menu"
         :globalFilterFields="['name', 'description']"
         removableSort
-        paginator
-        :rows="TABLE_DEFAULT_ROWS"
-        :rowsPerPageOptions="[...TABLE_ROWS_PER_PAGE_OPTIONS]"
-        :paginatorTemplate="TABLE_PAGINATOR_TEMPLATE"
-        :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
         stripedRows
         rowHover
       >

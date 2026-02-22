@@ -12,11 +12,6 @@ import type { MenuItem } from 'primevue/menuitem'
 import PrimaryActionDropdown from '@/components/ui/PrimaryActionDropdown.vue'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
-import {
-  TABLE_PAGE_REPORT_TEMPLATE,
-  TABLE_PAGINATOR_TEMPLATE,
-  TABLE_ROWS_PER_PAGE_OPTIONS,
-} from '@/components/ui/tablePagination'
 
 type ReferralPriority = 'URGENT' | 'ROUTINE'
 type ReferralStatus = 'In Progress' | 'Arrived' | 'Canceled'
@@ -127,7 +122,7 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
     <template #actions>
       <PrimaryActionDropdown
         label="New Referral"
-        title="Create new referral options"
+        title="New Referral options"
         importLabel="Import referrals"
         exportLabel="Export to CSV"
         refreshLabel="Refresh data"
@@ -147,11 +142,6 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
         dataKey="id"
         filterDisplay="menu"
         removableSort
-        paginator
-        :rows="20"
-        :rowsPerPageOptions="[...TABLE_ROWS_PER_PAGE_OPTIONS]"
-        :paginatorTemplate="TABLE_PAGINATOR_TEMPLATE"
-        :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
         tableStyle="min-width: 44rem"
         stripedRows
         rowHover
@@ -175,11 +165,6 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
               </div>
             </div>
             <div class="toolbar-row toolbar-row-controls">
-              <InputText
-                v-model="filters.global.value"
-                placeholder="Search patient, provider, or ID..."
-                class="toolbar-search"
-              />
               <MultiSelect
                 v-model="selectedColumns"
                 :options="columns"
@@ -197,6 +182,11 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
                   <ChevronDown :size="13" />
                 </template>
               </MultiSelect>
+              <InputText
+                v-model="filters.global.value"
+                placeholder="Search patient, provider, or ID..."
+                class="toolbar-search"
+              />
             </div>
           </div>
         </template>
@@ -340,11 +330,11 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
 }
 
 .toolbar-search {
-  width: 20rem;
-  height: var(--app-control-height, 2.25rem);
+  width: 16.5rem;
+  height: 2rem;
   border-radius: var(--app-control-radius, 8px);
-  padding: 0 0.875rem;
-  font-size: var(--app-control-font-size, 0.855rem);
+  padding: 0 0.72rem;
+  font-size: 0.8rem;
   border: 1px solid #e5e7eb;
   background: #f9fafb;
   transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
@@ -361,14 +351,14 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
 
 /* Make the MultiSelect look like a compact button */
 :deep(.toolbar-columns.p-multiselect) {
-  height: var(--app-control-height, 2.25rem);
+  height: 2rem;
   border: 1px solid #e5e7eb;
   border-radius: var(--app-control-radius, 8px);
   background: #ffffff;
-  font-size: var(--app-control-font-size, 0.855rem);
+  font-size: 0.8rem;
   font-weight: 600;
   color: #374151;
-  padding: 0 0.75rem;
+  padding: 0 0.62rem;
   gap: 0.375rem;
   box-shadow: var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.04));
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
@@ -398,7 +388,7 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
 .columns-trigger-content {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: 0.3rem;
   white-space: nowrap;
   color: #374151;
   line-height: 1;

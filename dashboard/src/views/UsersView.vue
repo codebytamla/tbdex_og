@@ -32,11 +32,6 @@ import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 import RowActionButton from '@/components/ui/RowActionButton.vue'
 import PrimaryActionDropdown from '@/components/ui/PrimaryActionDropdown.vue'
 import DataTableToolbar from '@/components/ui/DataTableToolbar.vue'
-import {
-  TABLE_PAGE_REPORT_TEMPLATE,
-  TABLE_PAGINATOR_TEMPLATE,
-  TABLE_ROWS_PER_PAGE_OPTIONS,
-} from '@/components/ui/tablePagination'
 
 type AdminUser = {
   id: string
@@ -1179,9 +1174,9 @@ void loadSitesCatalog({ silent: true })
   <PageSectionHeader title="Users" description="Manage users, profile data, roles, sites, and password resets">
     <template #actions>
       <PrimaryActionDropdown
-        label="Invite user"
+        label="New User"
         :disabled="!canManageUsers"
-        title="Invite new user"
+        title="New User options"
         importLabel="Import users"
         exportLabel="Export users"
         refreshLabel="Refresh users"
@@ -1242,14 +1237,6 @@ void loadSitesCatalog({ silent: true })
         :loading="usersLoading"
         filterDisplay="menu"
         removableSort
-        paginator
-        :rows="limit"
-        :first="paginatorFirst"
-        :totalRecords="paginatorTotalRecords"
-        :paginatorTemplate="TABLE_PAGINATOR_TEMPLATE"
-        :currentPageReportTemplate="TABLE_PAGE_REPORT_TEMPLATE"
-        :rowsPerPageOptions="[...TABLE_ROWS_PER_PAGE_OPTIONS]"
-        @page="onPageChange"
         @filter="onFilter"
         stripedRows
         rowHover
