@@ -170,13 +170,13 @@ function toggleSidebar() {
   --brand-accent: var(--p-surface-400, #94a3b8);
   --brand-accent-strong: var(--p-surface-500, #64748b);
 
-  --sidebar-bg: var(--p-surface-0, #ffffff);
+  --sidebar-bg: rgba(220, 226, 235, 0.65);
   --sidebar-text: var(--p-surface-700, #334155);
   --sidebar-text-hover: var(--p-surface-900, #0f172a);
   --sidebar-text-active: var(--p-surface-900, #0f172a);
   --sidebar-hover-bg: color-mix(in srgb, var(--p-surface-200, #e2e8f0) 62%, transparent);
   --sidebar-active-bg: color-mix(in srgb, var(--p-surface-300, #cbd5e1) 58%, transparent);
-  --sidebar-border: color-mix(in srgb, var(--p-surface-300, #cbd5e1) 72%, transparent);
+  --sidebar-border: rgba(180, 195, 215, 0.25);
 }
 
 :global(body) {
@@ -701,7 +701,10 @@ function toggleSidebar() {
 
 .sidebar {
   background: var(--sidebar-bg);
-  border-right: 1px solid var(--sidebar-border);
+  backdrop-filter: blur(32px) saturate(180%) brightness(0.97);
+  -webkit-backdrop-filter: blur(32px) saturate(180%) brightness(0.97);
+  border-right: 1px solid rgba(180, 195, 215, 0.4);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.7), 4px 0 32px rgba(0, 0, 0, 0.07);
   padding: 1.5rem 1rem 1rem;
   display: flex;
   flex-direction: column;
@@ -942,8 +945,8 @@ function toggleSidebar() {
 
 .account-panel {
   margin-top: auto;
-  background: var(--p-surface-50, #f8fafc);
-  border: 1px solid var(--sidebar-border);
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(180, 195, 215, 0.55);
   border-radius: var(--radius-lg);
   padding: 0.5rem;
   display: flex;
@@ -1089,7 +1092,7 @@ function toggleSidebar() {
 
   .sidebar {
     border-right: none;
-    border-bottom: 1px solid var(--sidebar-border);
+    border-bottom: 1px solid rgba(180, 195, 215, 0.4);
     overflow: visible;
   }
 
