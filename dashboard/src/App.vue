@@ -19,10 +19,13 @@ const authStore = useAuthStore()
 const { visibleNavItems } = useNavItems()
 const themeColors = useThemeColors()
 const sidebarCollapseStorageKey = 'borderform.ui.sidebarCollapsed'
+const sidebarColorModeStorageKey = 'borderform.ui.sidebarDark'
 const sidebarCollapsed = ref(false)
+const sidebarDarkMode = ref(false)
 authStore.hydrate()
 onMounted(() => {
   sidebarCollapsed.value = localStorage.getItem(sidebarCollapseStorageKey) === '1'
+  sidebarDarkMode.value = localStorage.getItem(sidebarColorModeStorageKey) === '1'
 })
 
 const isAuthRoute = computed(() => route.path.startsWith('/auth') || route.path === '/reset-password')
@@ -75,6 +78,11 @@ function toggleSidebar() {
   sidebarCollapsed.value = !sidebarCollapsed.value
   localStorage.setItem(sidebarCollapseStorageKey, sidebarCollapsed.value ? '1' : '0')
 }
+
+function toggleSidebarColorMode() {
+  sidebarDarkMode.value = !sidebarDarkMode.value
+  localStorage.setItem(sidebarColorModeStorageKey, sidebarDarkMode.value ? '1' : '0')
+}
 </script>
 
 <template>
@@ -84,7 +92,7 @@ function toggleSidebar() {
   <RouterView v-if="isAuthRoute" />
 
   <div v-else class="layout-shell" :class="{ 'layout-shell-collapsed': sidebarCollapsed }">
-    <aside class="sidebar" :class="{ collapsed: sidebarCollapsed }">
+    <aside class="sidebar" :class="{ collapsed: sidebarCollapsed, 'sidebar-navbar-dark': sidebarDarkMode }">
       <div class="brand-row">
         <div class="brand">
           <div class="brand-copy">
@@ -166,6 +174,20 @@ function toggleSidebar() {
             <X :size="16" :stroke-width="2.1" />
           </button>
         </header>
+
+        <button
+          type="button"
+          class="theme-explorer-navbar-toggle"
+          :class="{ 'theme-explorer-navbar-toggle-active': sidebarDarkMode }"
+          :aria-pressed="sidebarDarkMode"
+          @click="toggleSidebarColorMode"
+        >
+          <span class="theme-explorer-navbar-copy">
+            <span class="theme-explorer-navbar-title">Dark navbar</span>
+            <span class="theme-explorer-navbar-subtitle">Only affects sidebar colors</span>
+          </span>
+          <span class="theme-explorer-navbar-state">{{ sidebarDarkMode ? 'On' : 'Off' }}</span>
+        </button>
 
         <div class="theme-explorer-list">
           <button
@@ -276,23 +298,6 @@ function toggleSidebar() {
   --app-body-bg: var(--p-surface-950);
   --app-body-text: var(--p-surface-100);
   --content-bg: var(--p-surface-950);
-  --brand-wordmark-primary: var(--p-surface-0);
-  --brand-accent: var(--p-primary-300);
-  --brand-accent-strong: var(--p-primary-200);
-
-  --sidebar-bg: var(--p-surface-900);
-  --sidebar-text: var(--p-surface-400);
-  --sidebar-text-hover: var(--p-surface-0);
-  --sidebar-text-active: var(--p-surface-100);
-  --sidebar-hover-bg: color-mix(in srgb, var(--p-surface-700) 56%, transparent);
-  --sidebar-active-bg: color-mix(in srgb, var(--p-surface-700) 68%, var(--p-surface-600));
-  --sidebar-active-icon: var(--p-primary-200);
-  --sidebar-border: color-mix(in srgb, var(--p-surface-400) 25%, transparent);
-  --sidebar-glass-edge: color-mix(in srgb, var(--p-surface-0) 15%, transparent);
-  --sidebar-depth-shadow: color-mix(in srgb, var(--p-surface-0) 8%, transparent);
-
-  --account-panel-bg: color-mix(in srgb, var(--p-surface-0) 6%, transparent);
-  --account-panel-border: color-mix(in srgb, var(--p-surface-400) 24%, transparent);
 
   --theme-explorer-panel-bg: var(--p-surface-900);
   --theme-explorer-panel-border: color-mix(in srgb, var(--p-surface-400) 24%, transparent);
@@ -837,6 +842,24 @@ function toggleSidebar() {
 }
 
 .sidebar {
+  --sidebar-bg: color-mix(in srgb, var(--p-surface-100) 64%, transparent);
+  --sidebar-text: var(--p-surface-500);
+  --sidebar-text-hover: var(--p-surface-900);
+  --sidebar-text-active: var(--p-surface-900);
+  --sidebar-hover-bg: color-mix(in srgb, var(--p-surface-300) 46%, transparent);
+  --sidebar-active-bg: color-mix(in srgb, var(--p-surface-300) 64%, var(--p-surface-100));
+  --sidebar-active-icon: var(--p-primary-600);
+  --sidebar-border: color-mix(in srgb, var(--p-surface-500) 32%, transparent);
+  --sidebar-glass-edge: color-mix(in srgb, var(--p-surface-0) 72%, transparent);
+  --sidebar-depth-shadow: color-mix(in srgb, var(--p-surface-950) 10%, transparent);
+  --account-panel-bg: color-mix(in srgb, var(--p-surface-0) 54%, transparent);
+  --account-panel-border: color-mix(in srgb, var(--p-surface-500) 36%, transparent);
+  --profile-avatar-bg: var(--p-surface-900);
+  --profile-avatar-text: var(--p-surface-0);
+  --profile-avatar-border: color-mix(in srgb, var(--p-surface-950) 30%, transparent);
+  --brand-wordmark-primary: var(--p-surface-900);
+  --brand-accent: var(--p-primary-400);
+
   background: var(--sidebar-bg);
   backdrop-filter: blur(32px) saturate(180%) brightness(0.97);
   -webkit-backdrop-filter: blur(32px) saturate(180%) brightness(0.97);
@@ -850,6 +873,26 @@ function toggleSidebar() {
   overflow-y: auto;
   overflow-x: hidden;
   transition: padding 200ms cubic-bezier(0.4, 0, 0.2, 1), gap 200ms ease;
+}
+
+.sidebar.sidebar-navbar-dark {
+  --sidebar-bg: var(--p-surface-900);
+  --sidebar-text: var(--p-surface-400);
+  --sidebar-text-hover: var(--p-surface-0);
+  --sidebar-text-active: var(--p-surface-100);
+  --sidebar-hover-bg: color-mix(in srgb, var(--p-surface-700) 56%, transparent);
+  --sidebar-active-bg: color-mix(in srgb, var(--p-surface-700) 68%, var(--p-surface-600));
+  --sidebar-active-icon: var(--p-primary-200);
+  --sidebar-border: color-mix(in srgb, var(--p-surface-400) 25%, transparent);
+  --sidebar-glass-edge: color-mix(in srgb, var(--p-surface-0) 15%, transparent);
+  --sidebar-depth-shadow: color-mix(in srgb, var(--p-surface-0) 8%, transparent);
+  --account-panel-bg: color-mix(in srgb, var(--p-surface-0) 6%, transparent);
+  --account-panel-border: color-mix(in srgb, var(--p-surface-400) 24%, transparent);
+  --profile-avatar-bg: var(--p-surface-0);
+  --profile-avatar-text: var(--p-surface-900);
+  --profile-avatar-border: color-mix(in srgb, var(--p-surface-0) 45%, var(--p-surface-500));
+  --brand-wordmark-primary: var(--p-surface-0);
+  --brand-accent: var(--p-primary-300);
 }
 
 .sidebar::-webkit-scrollbar {
@@ -1152,6 +1195,69 @@ function toggleSidebar() {
   background: var(--theme-explorer-close-hover-bg);
 }
 
+.theme-explorer-navbar-toggle {
+  margin: 0 0.35rem 0.42rem;
+  border: 1px solid var(--theme-explorer-trigger-border);
+  background: color-mix(in srgb, var(--theme-explorer-trigger-bg) 90%, transparent);
+  border-radius: 0.85rem;
+  padding: 0.46rem 0.58rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.theme-explorer-navbar-toggle:hover {
+  border-color: color-mix(in srgb, var(--p-primary-color) 30%, var(--theme-explorer-trigger-border));
+  background: color-mix(in srgb, var(--theme-explorer-option-bg-hover) 72%, transparent);
+}
+
+.theme-explorer-navbar-copy {
+  min-width: 0;
+  display: grid;
+  gap: 0.1rem;
+  text-align: left;
+}
+
+.theme-explorer-navbar-title {
+  font-size: 0.73rem;
+  font-weight: 700;
+  color: var(--theme-explorer-option-title);
+  line-height: 1.2;
+}
+
+.theme-explorer-navbar-subtitle {
+  font-size: 0.63rem;
+  color: var(--theme-explorer-option-description);
+  line-height: 1.25;
+}
+
+.theme-explorer-navbar-state {
+  flex: 0 0 auto;
+  min-width: 2.15rem;
+  text-align: center;
+  font-size: 0.69rem;
+  font-weight: 700;
+  color: var(--theme-explorer-trigger-text);
+  border: 1px solid color-mix(in srgb, var(--p-surface-500) 30%, transparent);
+  border-radius: 999px;
+  padding: 0.2rem 0.48rem;
+  background: color-mix(in srgb, var(--p-surface-200) 36%, transparent);
+}
+
+.theme-explorer-navbar-toggle-active {
+  border-color: color-mix(in srgb, var(--p-primary-color) 40%, transparent);
+  background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+}
+
+.theme-explorer-navbar-toggle-active .theme-explorer-navbar-state {
+  color: var(--p-primary-700);
+  border-color: color-mix(in srgb, var(--p-primary-color) 42%, transparent);
+  background: color-mix(in srgb, var(--p-primary-color) 18%, transparent);
+}
+
 .theme-explorer-list {
   max-height: min(65vh, 25rem);
   overflow-y: auto;
@@ -1279,9 +1385,9 @@ function toggleSidebar() {
 
 .account-avatar,
 .account-menu-avatar {
-  background: var(--p-surface-100);
-  color: var(--sidebar-text-active);
-  border: 1px solid var(--sidebar-border);
+  background: var(--profile-avatar-bg);
+  color: var(--profile-avatar-text);
+  border: 1px solid var(--profile-avatar-border);
   flex: 0 0 auto;
 }
 
