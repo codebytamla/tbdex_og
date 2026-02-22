@@ -23,10 +23,6 @@ const sidebarColorModeStorageKey = 'borderform.ui.sidebarDark'
 const sidebarCollapsed = ref(false)
 const sidebarDarkMode = ref(false)
 authStore.hydrate()
-onMounted(() => {
-  sidebarCollapsed.value = localStorage.getItem(sidebarCollapseStorageKey) === '1'
-  sidebarDarkMode.value = localStorage.getItem(sidebarColorModeStorageKey) === '1'
-})
 
 const isAuthRoute = computed(() => route.path.startsWith('/auth') || route.path === '/reset-password')
 const sidebarToggleLabel = computed(() =>
@@ -61,6 +57,13 @@ const isThemeExplorerOpen = ref(true)
 const themeExplorerLabel = 'Theme explorer'
 const themePresets = computed(() => themeColors.themePresets)
 const activeThemePresetId = computed(() => themeColors.activeThemePresetId.value)
+const isMidnightSlatePreset = computed(() => activeThemePresetId.value === 'midnight-slate-dark')
+const isNavbarDark = computed(() => isMidnightSlatePreset.value || sidebarDarkMode.value)
+
+onMounted(() => {
+  sidebarCollapsed.value = localStorage.getItem(sidebarCollapseStorageKey) === '1'
+  sidebarDarkMode.value = localStorage.getItem(sidebarColorModeStorageKey) === '1'
+})
 
 function toggleAccountMenu(event: Event) {
   accountMenu.value?.toggle(event)
@@ -80,6 +83,7 @@ function toggleSidebar() {
 }
 
 function toggleSidebarColorMode() {
+  if (isMidnightSlatePreset.value) return
   sidebarDarkMode.value = !sidebarDarkMode.value
   localStorage.setItem(sidebarColorModeStorageKey, sidebarDarkMode.value ? '1' : '0')
 }
@@ -92,7 +96,7 @@ function toggleSidebarColorMode() {
   <RouterView v-if="isAuthRoute" />
 
   <div v-else class="layout-shell" :class="{ 'layout-shell-collapsed': sidebarCollapsed }">
-    <aside class="sidebar" :class="{ collapsed: sidebarCollapsed, 'sidebar-navbar-dark': sidebarDarkMode }">
+    <aside class="sidebar" :class="{ collapsed: sidebarCollapsed, 'sidebar-navbar-dark': isNavbarDark }">
       <div class="brand-row">
         <div class="brand">
           <div class="brand-copy">
@@ -178,15 +182,21 @@ function toggleSidebarColorMode() {
         <button
           type="button"
           class="theme-explorer-navbar-toggle"
-          :class="{ 'theme-explorer-navbar-toggle-active': sidebarDarkMode }"
-          :aria-pressed="sidebarDarkMode"
+          :class="{
+            'theme-explorer-navbar-toggle-active': isNavbarDark,
+            'theme-explorer-navbar-toggle-locked': isMidnightSlatePreset,
+          }"
+          :aria-pressed="isNavbarDark"
+          :disabled="isMidnightSlatePreset"
           @click="toggleSidebarColorMode"
         >
           <span class="theme-explorer-navbar-copy">
             <span class="theme-explorer-navbar-title">Dark navbar</span>
-            <span class="theme-explorer-navbar-subtitle">Only affects sidebar colors</span>
+            <span class="theme-explorer-navbar-subtitle">
+              {{ isMidnightSlatePreset ? 'Locked for Midnight Slate' : 'Only affects sidebar colors' }}
+            </span>
           </span>
-          <span class="theme-explorer-navbar-state">{{ sidebarDarkMode ? 'On' : 'Off' }}</span>
+          <span class="theme-explorer-navbar-state">{{ isMidnightSlatePreset ? 'Locked' : sidebarDarkMode ? 'On' : 'Off' }}</span>
         </button>
 
         <div class="theme-explorer-list">
@@ -1212,6 +1222,16 @@ function toggleSidebarColorMode() {
 .theme-explorer-navbar-toggle:hover {
   border-color: color-mix(in srgb, var(--p-primary-color) 30%, var(--theme-explorer-trigger-border));
   background: color-mix(in srgb, var(--theme-explorer-option-bg-hover) 72%, transparent);
+}
+
+.theme-explorer-navbar-toggle:disabled {
+  opacity: 0.9;
+  cursor: not-allowed;
+}
+
+.theme-explorer-navbar-toggle-locked:hover {
+  border-color: var(--theme-explorer-trigger-border);
+  background: color-mix(in srgb, var(--theme-explorer-trigger-bg) 90%, transparent);
 }
 
 .theme-explorer-navbar-copy {
