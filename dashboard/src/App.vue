@@ -316,8 +316,8 @@ function toggleSidebar() {
 :global(.p-datatable .p-paginator .p-paginator-page.p-paginator-page-selected),
 :global(.p-datatable .p-paginator .p-paginator-page[aria-current='page']) {
   border: none;
-  background: color-mix(in srgb, var(--p-primary-color) 12%, var(--p-surface-0));
-  color: var(--p-primary-700);
+  background: var(--p-surface-100);
+  color: var(--p-surface-950);
   font-weight: 600;
   box-shadow: none;
 }
@@ -512,7 +512,6 @@ function toggleSidebar() {
 :global(.p-datatable .p-datatable-header) {
   background: transparent;
   border: none;
-  padding: 0.6rem 0.75rem 0.75rem;
 }
 
 @media (max-width: 760px) {

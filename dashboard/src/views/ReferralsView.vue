@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { FilterMatchMode } from '@primevue/core/api'
-import { ChevronDown, MoreHorizontal } from 'lucide-vue-next'
+import { ChevronDown, Columns2, MoreHorizontal } from 'lucide-vue-next'
 import Card from 'primevue/card'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
@@ -21,6 +21,7 @@ import {
 
 type ReferralPriority = 'URGENT' | 'ROUTINE'
 type ReferralStatus = 'Pending' | 'Accepted' | 'Completed'
+type ReferralStatusTab = 'all' | 'pending' | 'accepted' | 'completed'
 
 type Referral = {
   id: string
@@ -62,6 +63,14 @@ const referrals = ref<Referral[]>([
   },
 ])
 
+const statusTabs: Array<{ key: ReferralStatusTab; label: string }> = [
+  { key: 'all', label: 'All' },
+  { key: 'pending', label: 'Pending' },
+  { key: 'accepted', label: 'Accepted' },
+  { key: 'completed', label: 'Completed' },
+]
+const activeStatusTab = ref<ReferralStatusTab>('all')
+
 const columns = ref([
   { field: 'id', header: 'Ref ID' },
   { field: 'patient', header: 'Patient' },
@@ -78,6 +87,15 @@ const filters = ref({
 })
 
 const selectedReferrals = ref<Referral[]>([])
+const filteredReferrals = computed(() => {
+  if (activeStatusTab.value === 'all') return referrals.value
+  return referrals.value.filter((entry) => entry.status.toLowerCase() === activeStatusTab.value)
+})
+
+watch(filteredReferrals, (visibleRows) => {
+  const visibleIds = new Set(visibleRows.map((entry) => entry.id))
+  selectedReferrals.value = selectedReferrals.value.filter((entry) => visibleIds.has(entry.id))
+})
 
 const rowActionMenu = ref()
 const selectedMenuReferral = ref<Referral | null>(null)
@@ -120,7 +138,7 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
       <DataTable
         v-model:selection="selectedReferrals"
         v-model:filters="filters"
-        :value="referrals"
+        :value="filteredReferrals"
         dataKey="id"
         filterDisplay="menu"
         removableSort
@@ -135,24 +153,45 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
       >
         <template #header>
           <div class="table-toolbar">
+            <div class="toolbar-left">
+              <MultiSelect
+                v-model="selectedColumns"
+                :options="columns"
+                optionLabel="header"
+                placeholder="Columns"
+                class="toolbar-columns"
+              >
+                <template #value>
+                  <span class="columns-trigger-content">
+                    <Columns2 :size="15" class="columns-trigger-icon" aria-hidden="true" />
+                    <span>Columns</span>
+                  </span>
+                </template>
+                <template #dropdownicon>
+                  <ChevronDown :size="13" />
+                </template>
+              </MultiSelect>
+
+              <div class="status-tabs" role="tablist" aria-label="Filter referrals by status">
+                <button
+                  v-for="tab in statusTabs"
+                  :key="tab.key"
+                  type="button"
+                  role="tab"
+                  class="status-tab"
+                  :class="{ 'status-tab-active': activeStatusTab === tab.key }"
+                  :aria-selected="activeStatusTab === tab.key"
+                  @click="activeStatusTab = tab.key"
+                >
+                  {{ tab.label }}
+                </button>
+              </div>
+            </div>
             <InputText
               v-model="filters.global.value"
               placeholder="Search patient, provider, or ID..."
               class="toolbar-search"
             />
-            <MultiSelect
-              v-model="selectedColumns"
-              :options="columns"
-              optionLabel="header"
-              :maxSelectedLabels="0"
-              selectedItemsLabel="Columns"
-              placeholder="Columns"
-              class="toolbar-columns"
-            >
-              <template #dropdownicon>
-                <ChevronDown :size="13" />
-              </template>
-            </MultiSelect>
           </div>
         </template>
 
@@ -267,13 +306,7 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
   padding: 0;
 }
 
-/* Match the generous py-4 row height from the design */
-:deep(.p-datatable-tbody > tr > td) {
-  padding: 1rem;
-}
-
 :deep(.p-datatable-header-cell) {
-  padding: 0.8rem 1rem;
   background: var(--p-surface-50);
   color: var(--p-surface-700);
 }
@@ -286,48 +319,140 @@ function openRowActionMenu(event: MouseEvent, referral: Referral) {
   gap: 0.75rem;
   padding: 0.1rem 0;
 }
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
 
 .toolbar-search {
   width: 20rem;
+  height: var(--app-control-height, 2.4rem);
+  border-radius: var(--app-control-radius, 0.46rem);
+  padding: 0 0.78rem;
   font-size: var(--app-control-font-size, 0.9rem);
 }
 
 /* Make the MultiSelect look like a compact button */
-.toolbar-columns :deep(.p-multiselect) {
+:deep(.toolbar-columns.p-multiselect) {
   height: var(--app-control-height, 2.4rem);
-  border-color: var(--p-surface-200);
+  border: 1px solid var(--p-surface-300);
+  border-radius: var(--app-control-radius, 0.46rem);
+  background: var(--p-surface-0);
+  font-size: var(--app-control-font-size, 0.9rem);
+  font-weight: 600;
+  color: var(--p-surface-900);
+  padding: 0 0.78rem;
+  gap: 0.45rem;
+  box-shadow: 0 1px 1px rgb(15 23 42 / 0.04);
+}
+:deep(.toolbar-columns.p-multiselect:hover) {
+  border-color: var(--p-surface-400);
   background: var(--p-surface-50);
-  font-size: var(--app-control-font-size, 0.9rem);
-  font-weight: 600;
-  color: var(--p-surface-700);
-  padding: 0 0.65rem;
-  gap: 0.4rem;
 }
-.toolbar-columns :deep(.p-multiselect-label) {
+:deep(.toolbar-columns.p-multiselect.p-focus),
+:deep(.toolbar-columns.p-multiselect:focus-within) {
+  border-color: color-mix(in srgb, var(--p-surface-400) 70%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--p-surface-300) 28%, transparent);
+}
+:deep(.toolbar-columns .p-multiselect-label-container) {
+  display: flex;
+  align-items: center;
+}
+:deep(.toolbar-columns .p-multiselect-label) {
   padding: 0;
-  font-size: var(--app-control-font-size, 0.9rem);
-  font-weight: 600;
+  display: flex;
+  align-items: center;
 }
-.toolbar-columns :deep(.p-multiselect-dropdown) {
+:deep(.toolbar-columns .p-multiselect-dropdown) {
   padding: 0;
   width: auto;
-  color: var(--p-surface-500);
+  color: var(--p-surface-600);
+}
+.columns-trigger-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+  color: var(--p-surface-900);
+  line-height: 1;
+}
+.columns-trigger-icon {
+  color: var(--p-surface-600);
+  font-size: 0.82rem;
+}
+
+.status-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.18rem;
+  padding: 0.16rem;
+  border: 1px solid var(--p-surface-300);
+  border-radius: var(--app-control-radius, 0.46rem);
+  background: var(--p-surface-50);
+}
+.status-tab {
+  border: none;
+  background: transparent;
+  color: var(--p-surface-600);
+  height: calc(var(--app-control-height, 2.4rem) - 0.32rem);
+  border-radius: calc(var(--app-control-radius, 0.46rem) - 0.08rem);
+  padding: 0 0.65rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.status-tab:hover {
+  background: color-mix(in srgb, var(--p-surface-900) 8%, transparent);
+  color: var(--p-surface-800);
+}
+.status-tab:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--p-primary-color) 16%, transparent);
+}
+.status-tab-active {
+  background: var(--p-surface-0);
+  color: var(--p-surface-950);
+  box-shadow: 0 1px 1px rgb(15 23 42 / 0.06);
 }
 
 /* ── Ref ID link ── */
 .ref-id-link {
+  display: inline-flex;
+  align-items: center;
   background: none;
   border: none;
-  padding: 0;
+  padding: 0.08rem 0.12rem;
+  margin: -0.08rem -0.12rem;
   cursor: pointer;
-  font-weight: 700;
+  border-radius: var(--app-control-radius, 0.46rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
   font-size: inherit;
   font-family: inherit;
   color: var(--p-primary-600);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.14em;
+  text-decoration-thickness: 1.2px;
+  transition:
+    color 0.15s ease,
+    text-decoration-color 0.15s ease,
+    background-color 0.15s ease;
 }
 .ref-id-link:hover {
   color: var(--p-primary-700);
-  text-decoration: underline;
+  text-decoration-color: currentColor;
+}
+.ref-id-link:focus-visible {
+  outline: none;
+  color: var(--p-primary-700);
+  text-decoration-color: currentColor;
+  background: color-mix(in srgb, var(--p-primary-color) 10%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--p-primary-color) 20%, transparent);
 }
 
 /* ── Patient name ── */
