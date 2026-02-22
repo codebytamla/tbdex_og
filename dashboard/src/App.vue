@@ -610,12 +610,35 @@ function toggleSidebar() {
   margin-inline-start: 0.28rem;
 }
 
+/* ── DataTable rounded-corner inheritance inside Cards ── */
+
+:global(.p-card .p-datatable) {
+  border-radius: var(--radius-xl, 18px);
+  overflow: clip;
+}
+
+:global(.p-card .p-datatable .p-datatable-table-container) {
+  border-radius: inherit;
+  overflow: clip !important;
+}
+
+:global(.p-card .p-datatable .p-datatable-header) {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+:global(.p-card .p-datatable .p-datatable-paginator-bottom) {
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+}
+
 /* ── DataTable header slot ───────────────────────────── */
 
 :global(.p-datatable .p-datatable-header) {
   background: #ffffff;
   border: none;
   padding: 1rem;
+  border-radius: inherit;
 }
 
 @media (max-width: 760px) {
