@@ -2,7 +2,7 @@
 import type { MenuItem } from 'primevue/menuitem'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { PanelLeft, MoreVertical } from 'lucide-vue-next'
+import { MoreVertical, PanelLeftClose, PanelLeftOpen } from 'lucide-vue-next'
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import Menu from 'primevue/menu'
@@ -27,6 +27,7 @@ const isAuthRoute = computed(() => route.path.startsWith('/auth') || route.path 
 const sidebarToggleLabel = computed(() =>
   sidebarCollapsed.value ? 'Expand navigation sidebar' : 'Collapse navigation sidebar',
 )
+const sidebarToggleIcon = computed(() => (sidebarCollapsed.value ? PanelLeftOpen : PanelLeftClose))
 const accountName = computed(() => authStore.accountName)
 const accountRole = computed(() => {
   const primary = authStore.accountRole?.trim()
@@ -91,7 +92,7 @@ function toggleSidebar() {
           :aria-pressed="sidebarCollapsed"
           @click="toggleSidebar"
         >
-          <PanelLeft :size="16" :stroke-width="2.35" />
+          <component :is="sidebarToggleIcon" :size="16" :stroke-width="2.35" />
         </button>
       </div>
 
@@ -382,15 +383,16 @@ function toggleSidebar() {
 }
 
 :global(.p-datatable .p-paginator .p-paginator-page) {
-  min-width: 2.25rem;
-  height: 2.25rem;
-  border-radius: var(--radius-sm);
+  min-width: 2rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
   border: none;
   background: transparent;
   color: #6b7280;
   box-shadow: none;
   transition: background-color 0.15s ease, color 0.15s ease;
-  font-size: 0.855rem;
+  font-size: 0.82rem;
   font-weight: 500;
 }
 
@@ -418,14 +420,21 @@ function toggleSidebar() {
 :global(.p-datatable .p-paginator .p-paginator-page.p-paginator-page-selected),
 :global(.p-datatable .p-paginator .p-paginator-page[aria-current='page']) {
   border: none;
-  background: #0f172a;
-  color: #ffffff;
+  background: var(--p-surface-100, #f1f5f9);
+  color: var(--p-surface-900, #0f172a);
   font-weight: 600;
   box-shadow: none;
 }
 
 :global(.p-datatable .p-paginator .p-disabled) {
   opacity: 0.28;
+}
+
+:global(.p-datatable .p-paginator .p-paginator-current) {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  white-space: nowrap;
+  margin-left: 0.25rem;
 }
 
 :global(.p-datatable .p-paginator .p-paginator-content > :first-child) {

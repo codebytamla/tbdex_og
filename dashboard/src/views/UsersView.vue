@@ -1233,6 +1233,14 @@ void loadSitesCatalog({ silent: true })
         :value="users"
         dataKey="id"
         lazy
+        paginator
+        :rows="limit"
+        :first="paginatorFirst"
+        :totalRecords="paginatorTotalRecords"
+        @page="onPageChange"
+        :rowsPerPageOptions="[10, 20, 50]"
+        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown CurrentPageReport"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
         tableStyle="min-width: 44rem"
         :loading="usersLoading"
         filterDisplay="menu"

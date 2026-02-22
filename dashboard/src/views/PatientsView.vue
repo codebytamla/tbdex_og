@@ -1243,6 +1243,14 @@ void loadSitesCatalog({ silent: true })
         :value="patients"
         dataKey="id"
         lazy
+        paginator
+        :rows="limit"
+        :first="paginatorFirst"
+        :totalRecords="paginatorTotalRecords"
+        @page="onPageChange"
+        :rowsPerPageOptions="[10, 20, 50]"
+        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown CurrentPageReport"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
         class="patients-table"
         tableStyle="min-width: 87rem"
         :loading="patientsLoading"

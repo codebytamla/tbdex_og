@@ -405,6 +405,11 @@ void loadSites()
         v-model:filters="filters"
         :value="sites"
         dataKey="id"
+        paginator
+        :rows="10"
+        :rowsPerPageOptions="[10, 20, 50]"
+        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown CurrentPageReport"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
         tableStyle="min-width: 44rem"
         :loading="loading"
         filterDisplay="menu"
