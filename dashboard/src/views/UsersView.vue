@@ -1239,7 +1239,7 @@ void loadSitesCatalog({ silent: true })
         :totalRecords="paginatorTotalRecords"
         @page="onPageChange"
         :rowsPerPageOptions="[10, 20, 50]"
-        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown CurrentPageReport"
+        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
         tableStyle="min-width: 44rem"
         :loading="usersLoading"

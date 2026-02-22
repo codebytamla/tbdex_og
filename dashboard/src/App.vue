@@ -434,11 +434,12 @@ function toggleSidebar() {
   font-size: 0.78rem;
   color: #9ca3af;
   white-space: nowrap;
-  margin-left: 0.25rem;
+  margin-left: 0;
+  margin-right: auto;
 }
 
 :global(.p-datatable .p-paginator .p-paginator-content > :first-child) {
-  margin-left: auto;
+  margin-left: 0;
 }
 
 :global(.p-datatable .p-paginator .p-paginator-rpp-dropdown) {
@@ -664,6 +665,10 @@ function toggleSidebar() {
     min-width: 2.1rem;
     height: 2.1rem;
     font-size: 0.88rem;
+  }
+
+  :global(.p-datatable .p-paginator .p-paginator-current) {
+    margin-right: 0;
   }
 
   :global(.p-datatable .p-paginator .p-paginator-rpp-dropdown) {
