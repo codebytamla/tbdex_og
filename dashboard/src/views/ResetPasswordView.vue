@@ -214,14 +214,14 @@ async function goToLogin() {
 :deep(.actions .p-button:last-child) {
   height: 2.625rem;
   font-weight: 700;
-  background: #0f172a;
-  border-color: #0f172a;
+  background: var(--p-primary-600);
+  border-color: var(--p-primary-600);
   border-radius: var(--radius-md, 10px);
 }
 
 :deep(.actions .p-button:last-child:hover:not(:disabled)) {
-  background: #1e293b;
-  border-color: #1e293b;
+  background: var(--p-primary-700);
+  border-color: var(--p-primary-700);
 }
 
 .success-wrap {

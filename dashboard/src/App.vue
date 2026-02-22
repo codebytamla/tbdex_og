@@ -167,16 +167,16 @@ function toggleSidebar() {
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
   --shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04);
   --shadow-lg: 0 12px 24px -4px rgb(0 0 0 / 0.08), 0 4px 8px -4px rgb(0 0 0 / 0.04);
-  --brand-accent: #2dd4bf;
-  --brand-accent-strong: #14b8a6;
+  --brand-accent: var(--p-surface-400, #94a3b8);
+  --brand-accent-strong: var(--p-surface-500, #64748b);
 
-  --sidebar-bg: #0f172a;
-  --sidebar-text: #94a3b8;
-  --sidebar-text-hover: #e2e8f0;
+  --sidebar-bg: var(--p-surface-950, #020617);
+  --sidebar-text: var(--p-surface-200, #e2e8f0);
+  --sidebar-text-hover: var(--p-surface-50, #f8fafc);
   --sidebar-text-active: #ffffff;
-  --sidebar-hover-bg: rgb(255 255 255 / 0.06);
-  --sidebar-active-bg: rgb(255 255 255 / 0.1);
-  --sidebar-border: rgb(255 255 255 / 0.07);
+  --sidebar-hover-bg: color-mix(in srgb, var(--p-surface-300, #cbd5e1) 24%, transparent);
+  --sidebar-active-bg: color-mix(in srgb, var(--p-surface-400, #94a3b8) 34%, transparent);
+  --sidebar-border: color-mix(in srgb, var(--p-surface-200, #e2e8f0) 32%, transparent);
 }
 
 :global(body) {
@@ -184,7 +184,7 @@ function toggleSidebar() {
   font-family: var(--app-font-family);
   font-size: var(--app-font-size-base);
   line-height: var(--app-line-height-base);
-  background: #f8f9fb;
+  background: var(--p-surface-50, #f8fafc);
   color: #1a1d23;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -222,7 +222,7 @@ function toggleSidebar() {
 
 :global(.p-inputtext:focus) {
   border-color: var(--p-primary-400);
-  box-shadow: 0 0 0 3px rgb(100 116 139 / 0.12);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--p-primary-color, #64748b) 24%, transparent);
 }
 
 :global(.p-dialog) {
@@ -769,7 +769,7 @@ function toggleSidebar() {
 }
 
 .brand-wordmark-accent {
-  color: #2dd4bf;
+  color: var(--brand-accent);
 }
 
 .sidebar-toggle-btn {
@@ -936,7 +936,7 @@ function toggleSidebar() {
   min-width: 0;
   height: 100vh;
   overflow-y: auto;
-  background: #f8f9fb;
+  background: var(--p-surface-50, #f8fafc);
 }
 
 

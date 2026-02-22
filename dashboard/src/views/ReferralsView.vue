@@ -659,14 +659,14 @@ void loadSitesCatalog()
 }
 
 .status-tab-active {
-  background: #0f172a;
+  background: var(--p-primary-600);
   color: #ffffff;
-  border-color: #0f172a;
+  border-color: var(--p-primary-600);
 }
 
 .status-tab-active:hover {
-  background: #1e293b;
-  border-color: #1e293b;
+  background: var(--p-primary-700);
+  border-color: var(--p-primary-700);
   color: #ffffff;
 }
 
@@ -756,9 +756,9 @@ void loadSitesCatalog()
 }
 
 :deep(.toolbar-site-filter--active.p-multiselect) {
-  border-color: #3b82f6;
-  color: #1d4ed8;
-  background: #eff6ff;
+  border-color: var(--p-primary-500, #64748b);
+  color: var(--p-primary-700, #334155);
+  background: var(--p-primary-50, #f8fafc);
 }
 
 :deep(.toolbar-site-filter .p-multiselect-label-container) {
@@ -912,13 +912,13 @@ void loadSitesCatalog()
 }
 
 .status-in-transit {
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid rgb(29 78 216 / 0.1);
+  background: var(--p-primary-50, #f8fafc);
+  color: var(--p-primary-700, #334155);
+  border: 1px solid color-mix(in srgb, var(--p-primary-700, #334155) 10%, transparent);
 }
 .status-in-transit .status-dot {
-  background: #3b82f6;
-  box-shadow: 0 0 0 2px rgb(59 130 246 / 0.15);
+  background: var(--p-primary-500, #64748b);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--p-primary-500, #64748b) 15%, transparent);
 }
 
 .status-arrived {

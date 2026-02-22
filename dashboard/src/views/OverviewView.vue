@@ -132,17 +132,17 @@ function openSettings() {
 }
 
 .top-cta-primary {
-  background: #0f172a;
-  border-color: #0f172a;
+  background: var(--p-primary-600);
+  border-color: var(--p-primary-600);
   color: #ffffff;
-  box-shadow: 0 1px 3px 0 rgb(15 23 42 / 0.2);
+  box-shadow: 0 1px 3px 0 color-mix(in srgb, var(--p-primary-700, #334155) 34%, transparent);
 }
 
 .top-cta-primary:hover:not(:disabled) {
-  background: #1e293b;
-  border-color: #1e293b;
+  background: var(--p-primary-700);
+  border-color: var(--p-primary-700);
   color: #ffffff;
-  box-shadow: 0 4px 12px -2px rgb(15 23 42 / 0.25);
+  box-shadow: 0 4px 12px -2px color-mix(in srgb, var(--p-primary-800, #1e293b) 42%, transparent);
 }
 
 .hero-card {

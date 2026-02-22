@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Card from 'primevue/card'
+import Button from 'primevue/button'
+import Select from 'primevue/select'
 import { useAuthStore } from '@/stores/auth'
+import { useThemeColors } from '@/composables/useThemeColors'
 import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 
 const authStore = useAuthStore()
 authStore.hydrate()
+const themeColors = useThemeColors()
 
 const accountName = computed(() => authStore.accountName)
 const accountRole = computed(() => authStore.accountRole)
@@ -13,6 +17,15 @@ const accountEmail = computed(() => authStore.profile?.email || 'Not provided')
 const roles = computed(() => authStore.roles)
 const permissions = computed(() => authStore.permissions)
 const sites = computed(() => authStore.sites)
+const paletteOptions = computed(() => themeColors.paletteOptions)
+const selectedPrimaryColor = computed({
+  get: () => themeColors.primaryColor.value,
+  set: (value: string) => themeColors.setPrimaryColor(value),
+})
+const selectedSecondaryColor = computed({
+  get: () => themeColors.secondaryColor.value,
+  set: (value: string) => themeColors.setSecondaryColor(value),
+})
 </script>
 
 <template>
@@ -32,6 +45,38 @@ const sites = computed(() => authStore.sites)
         <article class="account-item">
           <h3>Email</h3>
           <p>{{ accountEmail }}</p>
+        </article>
+      </section>
+
+      <section class="theme-grid">
+        <article class="claim-item theme-item">
+          <h3>Theme colors</h3>
+          <p class="theme-copy">Customize primary and secondary palettes across the app.</p>
+          <div class="theme-controls">
+            <label class="theme-field">
+              <span>Primary color</span>
+              <Select
+                v-model="selectedPrimaryColor"
+                :options="paletteOptions"
+                optionLabel="label"
+                optionValue="value"
+                class="theme-select"
+              />
+            </label>
+            <label class="theme-field">
+              <span>Secondary color</span>
+              <Select
+                v-model="selectedSecondaryColor"
+                :options="paletteOptions"
+                optionLabel="label"
+                optionValue="value"
+                class="theme-select"
+              />
+            </label>
+          </div>
+          <div class="theme-actions">
+            <Button label="Reset colors" text @click="themeColors.resetThemeColors" />
+          </div>
         </article>
       </section>
 
@@ -114,6 +159,48 @@ const sites = computed(() => authStore.sites)
   gap: 0.75rem;
 }
 
+.theme-grid {
+  margin-top: 1rem;
+}
+
+.theme-item {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.theme-copy {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.82rem;
+}
+
+.theme-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.theme-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.theme-field span {
+  font-size: 0.78rem;
+  color: #6b7280;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+.theme-select {
+  width: 100%;
+}
+
+.theme-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .claim-item {
   border: 1px solid #e5e7eb;
   border-radius: var(--radius-lg, 14px);
@@ -156,6 +243,10 @@ const sites = computed(() => authStore.sites)
 
 @media (max-width: 900px) {
   .account-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .theme-controls {
     grid-template-columns: 1fr;
   }
 }

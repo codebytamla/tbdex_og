@@ -109,15 +109,19 @@ function toggleMenu(event: MouseEvent) {
   align-items: center;
   height: 2.375rem;
   border-radius: var(--app-control-radius, 8px);
-  background: #0f172a;
+  background: var(--p-primary-600);
   padding: 0;
   overflow: hidden;
-  box-shadow: 0 1px 3px 0 rgb(15 23 42 / 0.25), 0 1px 2px -1px rgb(15 23 42 / 0.15);
+  box-shadow:
+    0 1px 3px 0 color-mix(in srgb, var(--p-primary-700, #334155) 38%, transparent),
+    0 1px 2px -1px color-mix(in srgb, var(--p-primary-700, #334155) 25%, transparent);
   transition: box-shadow 0.15s ease;
 }
 
 .primary-action-dropdown:hover {
-  box-shadow: 0 4px 12px -2px rgb(15 23 42 / 0.3), 0 2px 4px -2px rgb(15 23 42 / 0.15);
+  box-shadow:
+    0 4px 12px -2px color-mix(in srgb, var(--p-primary-800, #1e293b) 46%, transparent),
+    0 2px 4px -2px color-mix(in srgb, var(--p-primary-800, #1e293b) 28%, transparent);
 }
 
 .primary-btn-main {
@@ -136,12 +140,12 @@ function toggleMenu(event: MouseEvent) {
   letter-spacing: -0.005em;
   white-space: nowrap;
   border-radius: 0;
-  border-right: 1px solid rgb(255 255 255 / 0.2);
+  border-right: 1px solid color-mix(in srgb, var(--p-primary-100, #f1f5f9) 60%, transparent);
   transition: background 0.15s ease;
 }
 
 .primary-btn-main:hover:not(:disabled) {
-  background: rgb(255 255 255 / 0.12);
+  background: color-mix(in srgb, var(--p-primary-200, #e2e8f0) 28%, transparent);
   color: #ffffff;
 }
 
@@ -166,7 +170,7 @@ function toggleMenu(event: MouseEvent) {
 }
 
 .primary-btn-split:hover:not(:disabled) {
-  background: rgb(255 255 255 / 0.12);
+  background: color-mix(in srgb, var(--p-primary-200, #e2e8f0) 28%, transparent);
   color: #ffffff;
 }
 </style>

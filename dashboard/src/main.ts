@@ -4,28 +4,21 @@ import PrimeVue from 'primevue/config'
 import ConfirmationService from 'primevue/confirmationservice'
 import ToastService from 'primevue/toastservice'
 import Aura from '@primeuix/themes/aura'
-import { definePreset, palette } from '@primeuix/themes'
+import { definePreset } from '@primeuix/themes'
 
 import App from './App.vue'
 import router from './router'
+import {
+  DEFAULT_THEME_COLORS,
+  buildDarkSurfacePalette,
+  initializeThemeColors,
+  resolveThemePalette,
+} from './composables/useThemeColors'
 
 const app = createApp(App)
-const primaryPalette = palette('{slate}') as Record<string, string>
-const lightSurfacePalette = palette('{slate}') as Record<string, string>
-const darkSurfacePalette: Record<string, string> = {
-  0: lightSurfacePalette['950'] || '#020617',
-  50: lightSurfacePalette['900'] || '#0f172a',
-  100: lightSurfacePalette['800'] || '#1e293b',
-  200: lightSurfacePalette['700'] || '#334155',
-  300: lightSurfacePalette['600'] || '#475569',
-  400: lightSurfacePalette['500'] || '#64748b',
-  500: lightSurfacePalette['400'] || '#94a3b8',
-  600: lightSurfacePalette['300'] || '#cbd5e1',
-  700: lightSurfacePalette['200'] || '#e2e8f0',
-  800: lightSurfacePalette['100'] || '#f1f5f9',
-  900: lightSurfacePalette['50'] || '#f8fafc',
-  950: '#ffffff',
-}
+const primaryPalette = resolveThemePalette(DEFAULT_THEME_COLORS.primary)
+const lightSurfacePalette = resolveThemePalette(DEFAULT_THEME_COLORS.secondary)
+const darkSurfacePalette = buildDarkSurfacePalette(lightSurfacePalette)
 
 const MonoPreset = definePreset(Aura, {
   semantic: {
@@ -104,7 +97,7 @@ const MonoPreset = definePreset(Aura, {
         borderRadius: '10px',
         icon: {
           color: '{surface.400}',
-          focusColor: '#2dd4bf',
+          focusColor: '{primary.300}',
         },
       },
       submenu: {
@@ -160,5 +153,6 @@ app.use(ConfirmationService)
 app.use(ToastService)
 app.use(createPinia())
 app.use(router)
+initializeThemeColors()
 
 app.mount('#app')
