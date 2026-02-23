@@ -152,11 +152,11 @@ class HomeScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
+                                     Text(
                                       'Tap to sync data',
                                       style: TextStyle(
                                         color: isDark
-                                            ? const Color(0xFFFDE68A)
+                                            ? const Color(0xFFD4B97A)
                                             : const Color(0xFF92400E),
                                         fontWeight: FontWeight.w600,
                                         fontSize: 13,
@@ -167,8 +167,8 @@ class HomeScreen extends StatelessWidget {
                                       'Last synced 2 hours ago',
                                       style: TextStyle(
                                         color: isDark
-                                            ? const Color(0xFFFDE68A).withValues(
-                                                alpha: 0.65)
+                                            ? const Color(0xFFD4B97A).withValues(
+                                                alpha: 0.55)
                                             : const Color(0xFF92400E)
                                                 .withValues(alpha: 0.65),
                                         fontWeight: FontWeight.w400,
@@ -181,7 +181,7 @@ class HomeScreen extends StatelessWidget {
                               Icon(
                                 Icons.chevron_right_rounded,
                                 color: isDark
-                                    ? const Color(0xFFF59E0B)
+                                    ? const Color(0xFFC4A060)
                                     : const Color(0xFFD97706),
                                 size: 20,
                               ),
@@ -207,8 +207,9 @@ class HomeScreen extends StatelessWidget {
                             value: '$assessmentCount',
                             icon: Icons.description_outlined,
                             iconColor: const Color(0xFFE05C5C),
+                            iconColorDark: const Color(0xFFA07070),
                             iconBg: const Color(0xFFFEECEC),
-                            iconBgDark: const Color(0xFF7F1D1D).withValues(alpha: 0.4),
+                            iconBgDark: const Color(0xFF5C2A2A).withValues(alpha: 0.3),
                             isDark: isDark,
                           ),
                         ),
@@ -219,9 +220,10 @@ class HomeScreen extends StatelessWidget {
                             value: '$referralCount',
                             icon: Icons.person_add_outlined,
                             iconColor: const Color(0xFF3AAFA9),
+                            iconColorDark: const Color(0xFF5E9E9A),
                             iconBg: const Color(0xFFE6F7F7),
                             iconBgDark:
-                                const Color(0xFF134E4A).withValues(alpha: 0.5),
+                                const Color(0xFF1A3A38).withValues(alpha: 0.4),
                             isDark: isDark,
                           ),
                         ),
@@ -249,7 +251,7 @@ class HomeScreen extends StatelessWidget {
                               'See All',
                               style: TextStyle(
                                 color: isDark
-                                    ? AppColorsDark.primary
+                                    ? AppColorsDark.textSecondary
                                     : AppColors.primary,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
@@ -329,7 +331,7 @@ class _HeroPatientCard extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: iconBg,
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -388,12 +390,20 @@ class _BarChartDecoration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const bars = [
-      _Bar(height: 28, color: Color(0xFFE05C5C)),
-      _Bar(height: 20, color: Color(0xFF3AAFA9)),
-      _Bar(height: 38, color: Color(0xFFD97706)),
-      _Bar(height: 24, color: Color(0xFF3AAFA9)),
-    ];
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bars = isDark
+        ? const [
+            _Bar(height: 28, color: Color(0xFFBFA8A8)),
+            _Bar(height: 20, color: Color(0xFF9BBCBA)),
+            _Bar(height: 38, color: Color(0xFFC4A97D)),
+            _Bar(height: 24, color: Color(0xFF9BBCBA)),
+          ]
+        : const [
+            _Bar(height: 28, color: Color(0xFFE05C5C)),
+            _Bar(height: 20, color: Color(0xFF3AAFA9)),
+            _Bar(height: 38, color: Color(0xFFD97706)),
+            _Bar(height: 24, color: Color(0xFF3AAFA9)),
+          ];
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -405,7 +415,7 @@ class _BarChartDecoration extends StatelessWidget {
                 width: 10,
                 height: b.height,
                 decoration: BoxDecoration(
-                  color: b.color.withValues(alpha: 0.85),
+                  color: b.color.withValues(alpha: isDark ? 0.7 : 0.85),
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -430,6 +440,7 @@ class _MiniStatCard extends StatelessWidget {
   final String value;
   final IconData icon;
   final Color iconColor;
+  final Color iconColorDark;
   final Color iconBg;
   final Color iconBgDark;
   final bool isDark;
@@ -439,6 +450,7 @@ class _MiniStatCard extends StatelessWidget {
     required this.value,
     required this.icon,
     required this.iconColor,
+    required this.iconColorDark,
     required this.iconBg,
     required this.iconBgDark,
     required this.isDark,
@@ -446,6 +458,7 @@ class _MiniStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveColor = isDark ? iconColorDark : iconColor;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -472,7 +485,7 @@ class _MiniStatCard extends StatelessWidget {
               color: isDark ? iconBgDark : iconBg,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: iconColor, size: 18),
+            child: Icon(icon, color: effectiveColor, size: 18),
           ),
           const SizedBox(height: 16),
           Text(
@@ -480,7 +493,7 @@ class _MiniStatCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.w700,
-              color: iconColor,
+              color: effectiveColor,
               height: 1,
             ),
           ),
