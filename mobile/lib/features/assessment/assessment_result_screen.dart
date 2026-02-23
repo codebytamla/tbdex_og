@@ -211,7 +211,7 @@ class AssessmentResultScreen extends StatelessWidget {
                           '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
                     ),
                     const Divider(height: 16),
-                    _SummaryRow(label: 'CHW', value: 'Sarah Kimani'),
+                    _SummaryRow(label: 'CHW', value: 'Assigned today'),
                     const Divider(height: 16),
                     _SummaryRow(
                       label: 'Risk score',

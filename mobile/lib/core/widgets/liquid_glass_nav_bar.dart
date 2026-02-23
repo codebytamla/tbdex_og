@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 
-const _kNavBarHeight = 64.0;
-const _kNavBarRadius = 0.0;
-const _kNavItemHighlightInset = 6.0;
-const _kNavItemHighlightRadius = 0.0;
+/// Height of the nav bar pill.
+const _kNavBarHeight = 62.0;
+
+/// Vertical padding inside the nav bar pill that creates space for the
+/// inner selected-item highlight pill.
+const _kNavBarPadding = 6.0;
 
 class LiquidGlassNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -26,52 +28,57 @@ class LiquidGlassNavBar extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
+    // The pill background: very dark in dark mode, near-black translucent in light mode.
+    final pillBg = isDark
+        ? const Color(0xFF1C1C1E).withValues(alpha: 0.92)
+        : const Color(0xFF1C1C1E).withValues(alpha: 0.82);
+
     return Positioned(
       left: 24,
+      // Leave ~84 px on the right for the standalone FAB circle.
       right: 88,
-      bottom: bottomPadding + 10,
+      bottom: bottomPadding + 12,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(_kNavBarRadius),
+        borderRadius: BorderRadius.circular(999),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
+          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
             height: _kNavBarHeight,
             decoration: BoxDecoration(
-              color: (isDark ? AppColorsDark.surface : AppColors.surface)
-                  .withValues(alpha: 0.9),
-              borderRadius: BorderRadius.circular(_kNavBarRadius),
+              color: pillBg,
+              borderRadius: BorderRadius.circular(999),
               border: Border.all(
-                color: isDark ? AppColorsDark.border : AppColors.border,
-                width: 1,
+                color: Colors.white.withValues(alpha: isDark ? 0.08 : 0.12),
+                width: 0.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: isDark
-                      ? Colors.black.withValues(alpha: 0.45)
-                      : const Color(0xFFCBD5E1).withValues(alpha: 0.45),
-                  blurRadius: 18,
-                  offset: const Offset(0, 6),
+                  color: Colors.black.withValues(alpha: 0.35),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
                 ),
                 BoxShadow(
-                  color: isDark
-                      ? Colors.black.withValues(alpha: 0.2)
-                      : Colors.black.withValues(alpha: 0.04),
+                  color: Colors.black.withValues(alpha: 0.15),
                   blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(items.length, (index) {
-                final isSelected = index == selectedIndex;
-                return _NavBarItem(
-                  item: items[index],
-                  isSelected: isSelected,
-                  isDark: isDark,
-                  onTap: () => onDestinationSelected(index),
-                );
-              }),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: _kNavBarPadding),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(items.length, (index) {
+                  return Expanded(
+                    child: _NavBarItem(
+                      item: items[index],
+                      isSelected: index == selectedIndex,
+                      isDark: isDark,
+                      onTap: () => onDestinationSelected(index),
+                    ),
+                  );
+                }),
+              ),
             ),
           ),
         ),
@@ -108,46 +115,58 @@ class _NavBarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primaryColor = isDark ? AppColorsDark.primary : AppColors.primary;
-    final inactiveColor = isDark
-        ? AppColorsDark.textTertiary
-        : AppColors.textTertiary;
+
+    // Icon & label colour: primary when selected, muted white when not.
+    final iconColor = isSelected ? primaryColor : Colors.white.withValues(alpha: 0.55);
+    final labelColor = isSelected ? primaryColor : Colors.white.withValues(alpha: 0.55);
+
+    // The inner selected pill is a slightly lighter dark surface.
+    final selectedBg = Colors.white.withValues(alpha: 0.10);
+
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: 72,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: _kNavBarPadding),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
+          duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
-          height: _kNavBarHeight - (_kNavItemHighlightInset * 2),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(_kNavItemHighlightRadius),
+            color: isSelected ? selectedBg : Colors.transparent,
+            borderRadius: BorderRadius.circular(999),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: Icon(
-                  isSelected ? item.selectedIcon : item.icon,
-                  key: ValueKey(isSelected),
-                  size: 22,
-                  color: isSelected ? primaryColor : inactiveColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 180),
+                  child: Icon(
+                    isSelected ? item.selectedIcon : item.icon,
+                    key: ValueKey(isSelected),
+                    size: 22,
+                    color: iconColor,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 2),
-              AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 200),
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? primaryColor : inactiveColor,
+                const SizedBox(height: 2),
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 180),
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight:
+                        isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color: labelColor,
+                    letterSpacing: -0.1,
+                  ),
+                  child: Text(
+                    item.label,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-                child: Text(item.label),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

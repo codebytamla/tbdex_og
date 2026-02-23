@@ -20,12 +20,13 @@ class HomeScreen extends StatelessWidget {
     final referralCount = 3;
     final totalPatients = MockData.patients.length;
     final bottomInset = MediaQuery.of(context).padding.bottom;
-    final listBottomSpacing = bottomInset + 128;
+    final listBottomSpacing = bottomInset + 84;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: isDark ? AppColorsDark.background : AppColors.background,
       body: SafeArea(
+        bottom: false,
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
@@ -42,16 +43,16 @@ class HomeScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Good morning,',
-                                style:
-                                    Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                              ),
+                              // Text(
+                              //   'Today',
+                              //   style:
+                              //       Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              //             fontWeight: FontWeight.w500,
+                              //           ),
+                              // ),
                               const SizedBox(height: 2),
                               Text(
-                                'Sarah Kimani',
+                                'Task Overview',
                                 style: Theme.of(context)
                                     .textTheme
                                     .headlineMedium
@@ -93,7 +94,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                           alignment: Alignment.center,
                           child: const Text(
-                            'SK',
+                            'TD',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
@@ -230,15 +231,15 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
 
-                    const SizedBox(height: 26),
+                    const SizedBox(height: 36),
 
-                    // ── Today's Tasks header ─────────────────────────────────
+                    // ── Recent Assessments header ────────────────────────────
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          "Today's Tasks",
+                          'Recents',
                           style:
                               Theme.of(context).textTheme.headlineSmall?.copyWith(
                                     fontWeight: FontWeight.w700,

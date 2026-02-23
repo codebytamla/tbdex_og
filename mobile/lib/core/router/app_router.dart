@@ -128,19 +128,19 @@ class AppShell extends StatelessWidget {
               ),
             ],
           ),
-          // Floating FAB beside the square nav bar
+          // Floating FAB circle beside the pill nav bar
           Positioned(
             right: 20,
-            bottom: bottomPadding + 10,
+            bottom: bottomPadding + 12,
             child: GestureDetector(
               onTap: () => _showPatientPicker(context),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                width: 64,
-                height: 64,
+                width: 62,
+                height: 62,
                 decoration: BoxDecoration(
                   color: isDark ? AppColorsDark.primary : AppColors.primary,
-                  borderRadius: BorderRadius.circular(0),
+                  borderRadius: BorderRadius.circular(999),
                   boxShadow: [
                     BoxShadow(
                       color:
@@ -149,19 +149,12 @@ class AppShell extends StatelessWidget {
                       blurRadius: 18,
                       offset: const Offset(0, 7),
                     ),
-                    BoxShadow(
-                      color: Colors.black.withValues(
-                        alpha: isDark ? 0.35 : 0.12,
-                      ),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
                   ],
                 ),
                 child: const Icon(
                   Icons.add_rounded,
                   color: Colors.white,
-                  size: 30,
+                  size: 28,
                 ),
               ),
             ),

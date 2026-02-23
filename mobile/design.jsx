@@ -34,8 +34,8 @@ export default function App() {
           {/* Header */}
           <header className="px-6 pt-12 pb-4 flex justify-between items-start">
             <div>
-              <p className="text-slate-500 dark:text-neutral-400 text-sm mb-1 transition-colors duration-300">Good morning,</p>
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-neutral-100 tracking-tight transition-colors duration-300">Sarah Kimani</h1>
+              <p className="text-slate-500 dark:text-neutral-400 text-sm mb-1 transition-colors duration-300">Today</p>
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-neutral-100 tracking-tight transition-colors duration-300">Task Overview</h1>
             </div>
             <div className="flex items-center gap-4">
               <button 
@@ -45,7 +45,7 @@ export default function App() {
                 {isDarkMode ? <Sun size={22} className="fill-current" /> : <Moon size={22} className="fill-current" />}
               </button>
               <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-200 flex items-center justify-center font-semibold text-sm border border-blue-200 dark:border-blue-800/60 transition-colors duration-300">
-                SK
+                TD
               </div>
             </div>
           </header>
@@ -81,9 +81,9 @@ export default function App() {
               </div>
             </div>
 
-            {/* Task List */}
-        <div>
-          <h2 className="text-lg font-bold text-slate-900 dark:text-neutral-100 mb-4 transition-colors duration-300">Today's Tasks</h2>
+            {/* Recent Assessments */}
+        <div className="mt-4">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-neutral-100 mb-4 transition-colors duration-300">Recent Assessments</h2>
           <div className="flex flex-col gap-3">
             {tasks.map((task) => (
               <div key={task.id} className="bg-white dark:bg-[#1E1F20] border border-gray-100 dark:border-neutral-800 rounded-2xl p-4 flex items-center justify-between shadow-sm transition-colors duration-300">
