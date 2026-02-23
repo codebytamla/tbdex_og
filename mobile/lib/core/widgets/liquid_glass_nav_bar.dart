@@ -12,7 +12,7 @@ const _kNavBarHorizontalPadding = 6.0;
 
 /// Vertical padding inside the nav bar pill — controls how tall the
 /// inner selected-item highlight pill is. Smaller = taller active pill.
-const _kNavBarVerticalPadding = 3.0;
+const _kNavBarVerticalPadding = 7.0;
 
 class LiquidGlassNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -30,58 +30,96 @@ class LiquidGlassNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final pillBg = isDark
-        ? const Color(0xFF1C1C1E).withValues(alpha: 0.92)
-        : const Color(0xFFFFFFFF).withValues(alpha: 0.82);
+    // Glass gradient — lighter at top (catches light), darker at bottom.
+    final pillGradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: isDark
+          ? [
+              const Color(0xFF3C3C3E).withValues(alpha: 0.45),
+              const Color(0xFF1C1C1E).withValues(alpha: 0.55),
+            ]
+          : [
+              Colors.white.withValues(alpha: 0.55),
+              Colors.white.withValues(alpha: 0.38),
+            ],
+    );
 
     return Positioned(
       left: 24,
-      // Leave ~84 px on the right for the standalone FAB circle.
       right: 88,
       bottom: 20,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(999),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+          filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
           child: Container(
             height: _kNavBarHeight,
             decoration: BoxDecoration(
-              color: pillBg,
+              gradient: pillGradient,
               borderRadius: BorderRadius.circular(999),
               border: Border.all(
                 color: isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : Colors.black.withValues(alpha: 0.08),
-                width: 0.5,
+                    ? Colors.white.withValues(alpha: 0.12)
+                    : Colors.white.withValues(alpha: 0.70),
+                width: 0.8,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.35),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
+                  color: Colors.black.withValues(alpha: 0.30),
+                  blurRadius: 30,
+                  offset: const Offset(0, 10),
                 ),
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.15),
+                  color: Colors.black.withValues(alpha: 0.10),
                   blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: _kNavBarHorizontalPadding),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(items.length, (index) {
-                  return Expanded(
-                    child: _NavBarItem(
-                      item: items[index],
-                      isSelected: index == selectedIndex,
-                      isDark: isDark,
-                      onTap: () => onDestinationSelected(index),
+            child: Stack(
+              children: [
+                // Specular highlight — simulates light refracting off the
+                // top surface of the glass pill.
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  height: 22,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(999),
+                      ),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.white.withValues(alpha: isDark ? 0.10 : 0.55),
+                          Colors.white.withValues(alpha: 0),
+                        ],
+                      ),
                     ),
-                  );
-                }),
-              ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: _kNavBarHorizontalPadding),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: List.generate(items.length, (index) {
+                      return Expanded(
+                        child: _NavBarItem(
+                          item: items[index],
+                          isSelected: index == selectedIndex,
+                          isDark: isDark,
+                          onTap: () => onDestinationSelected(index),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

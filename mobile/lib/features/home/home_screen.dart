@@ -52,13 +52,14 @@ class HomeScreen extends StatelessWidget {
                               // ),
                               const SizedBox(height: 2),
                               Text(
-                                'Task Overview',
+                                'Overview',
                                 style: Theme.of(context)
                                     .textTheme
-                                    .headlineMedium
+                                    .displaySmall
                                     ?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: -0.5,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: -1.2,
+                                      height: 1.0,
                                     ),
                               ),
                             ],
@@ -116,7 +117,7 @@ class HomeScreen extends StatelessWidget {
                         child: Ink(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
-                            vertical: 11,
+                            vertical: 7,
                           ),
                           decoration: BoxDecoration(
                             color: isDark
@@ -132,8 +133,8 @@ class HomeScreen extends StatelessWidget {
                           child: Row(
                             children: [
                               Container(
-                                width: 34,
-                                height: 34,
+                                width: 28,
+                                height: 28,
                                 decoration: BoxDecoration(
                                   color: isDark
                                       ? const Color(0xFFD97706).withValues(alpha: 0.18)
