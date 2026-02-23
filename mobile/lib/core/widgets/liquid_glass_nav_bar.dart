@@ -30,10 +30,9 @@ class LiquidGlassNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // The pill background: very dark in dark mode, near-black translucent in light mode.
     final pillBg = isDark
         ? const Color(0xFF1C1C1E).withValues(alpha: 0.92)
-        : const Color(0xFF1C1C1E).withValues(alpha: 0.82);
+        : const Color(0xFFFFFFFF).withValues(alpha: 0.82);
 
     return Positioned(
       left: 24,
@@ -50,7 +49,9 @@ class LiquidGlassNavBar extends StatelessWidget {
               color: pillBg,
               borderRadius: BorderRadius.circular(999),
               border: Border.all(
-                color: Colors.white.withValues(alpha: isDark ? 0.08 : 0.12),
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.08),
                 width: 0.5,
               ),
               boxShadow: [
@@ -118,12 +119,15 @@ class _NavBarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final primaryColor = isDark ? AppColorsDark.primary : AppColors.primary;
 
-    // Icon & label colour: primary when selected, muted white when not.
-    final iconColor = isSelected ? primaryColor : Colors.white.withValues(alpha: 0.55);
-    final labelColor = isSelected ? primaryColor : Colors.white.withValues(alpha: 0.55);
+    final inactiveColor = isDark
+        ? Colors.white.withValues(alpha: 0.75)
+        : Colors.black.withValues(alpha: 0.28);
+    final iconColor = isSelected ? primaryColor : inactiveColor;
+    final labelColor = isSelected ? primaryColor : inactiveColor;
 
-    // The inner selected pill is a slightly lighter dark surface.
-    final selectedBg = Colors.white.withValues(alpha: 0.10);
+    final selectedBg = isDark
+        ? Colors.white.withValues(alpha: 0.10)
+        : Colors.black.withValues(alpha: 0.06);
 
     return GestureDetector(
       onTap: onTap,
