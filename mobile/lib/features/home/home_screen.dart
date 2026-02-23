@@ -19,6 +19,12 @@ class HomeScreen extends StatelessWidget {
     final bottomInset = MediaQuery.of(context).padding.bottom;
     final listBottomSpacing = bottomInset + 128;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    Color darkStatBackground(Color accent, double alpha) => Color.alphaBlend(
+      accent.withValues(alpha: alpha),
+      AppColorsDark.surface,
+    );
+    Color darkStatBorder(Color accent, double alpha) =>
+        Color.alphaBlend(accent.withValues(alpha: alpha), AppColorsDark.border);
 
     return Scaffold(
       backgroundColor: isDark ? AppColorsDark.background : AppColors.background,
@@ -190,12 +196,10 @@ class HomeScreen extends StatelessWidget {
                           label: 'Pending\nAssessments',
                           color: AppColors.primary,
                           bgColor: isDark
-                              ? AppColorsDark.primaryLight.withValues(
-                                  alpha: 0.25,
-                                )
+                              ? darkStatBackground(AppColors.primary, 0.14)
                               : const Color(0xFFEFF6FF),
                           borderColor: isDark
-                              ? AppColors.primary.withValues(alpha: 0.35)
+                              ? darkStatBorder(AppColors.primary, 0.3)
                               : const Color(0xFFDBEAFE),
                         ),
                         const SizedBox(width: 10),
@@ -204,12 +208,10 @@ class HomeScreen extends StatelessWidget {
                           label: 'Referrals\nToday',
                           color: AppColors.danger,
                           bgColor: isDark
-                              ? AppColorsDark.dangerLight.withValues(
-                                  alpha: 0.25,
-                                )
+                              ? darkStatBackground(AppColors.danger, 0.13)
                               : const Color(0xFFFFF1F2),
                           borderColor: isDark
-                              ? AppColors.danger.withValues(alpha: 0.3)
+                              ? darkStatBorder(AppColors.danger, 0.28)
                               : const Color(0xFFFFE4E6),
                         ),
                         const SizedBox(width: 10),
@@ -218,12 +220,10 @@ class HomeScreen extends StatelessWidget {
                           label: 'Total\nPatients',
                           color: AppColors.success,
                           bgColor: isDark
-                              ? AppColorsDark.successLight.withValues(
-                                  alpha: 0.22,
-                                )
+                              ? darkStatBackground(AppColors.success, 0.12)
                               : const Color(0xFFECFDF5),
                           borderColor: isDark
-                              ? AppColors.success.withValues(alpha: 0.35)
+                              ? darkStatBorder(AppColors.success, 0.28)
                               : const Color(0xFFD1FAE5),
                         ),
                       ],
