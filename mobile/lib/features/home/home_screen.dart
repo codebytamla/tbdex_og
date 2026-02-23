@@ -12,8 +12,12 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tasks = MockData.todaysTasks;
+    const previewTaskCount = 4;
+    final previewTasks = tasks.take(previewTaskCount).toList();
+    final hasMoreTasks = tasks.length > previewTaskCount;
     final pendingCount = tasks.where((t) => t.status == 'pending').length;
-
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+    final listBottomSpacing = bottomInset + 128;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -227,10 +231,35 @@ class HomeScreen extends StatelessWidget {
 
                     const SizedBox(height: 24),
 
-                    Text(
-                      "Today's Tasks",
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.w700),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          "Today's Tasks",
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.w700),
+                        ),
+                        if (hasMoreTasks)
+                          TextButton(
+                            onPressed: () => context.go('/activity'),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: const Size(52, 30),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              foregroundColor: isDark
+                                  ? AppColorsDark.primary
+                                  : AppColors.primary,
+                            ),
+                            child: const Text(
+                              'See All',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                     const SizedBox(height: 14),
                   ],
@@ -241,10 +270,10 @@ class HomeScreen extends StatelessWidget {
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               sliver: SliverList.separated(
-                itemCount: tasks.length,
+                itemCount: previewTasks.length,
                 separatorBuilder: (_, _) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
-                  final task = tasks[index];
+                  final task = previewTasks[index];
                   return _TaskCard(
                     task: task,
                     onTap: () => context.push('/patients/${task.patientId}'),
@@ -253,7 +282,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 100)),
+            SliverToBoxAdapter(child: SizedBox(height: listBottomSpacing)),
           ],
         ),
       ),
