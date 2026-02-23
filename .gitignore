@@ -6,8 +6,8 @@
 .env.*
 !.env.example
 
-# Local test workspace
-test/
+# Local test workspace (root only)
+/test/
 
 # Dependencies
 node_modules/
@@ -26,3 +26,6 @@ coverage/
 # Editor
 .vscode/
 .idea/
+
+# Local planning artifacts
+implementation_plan.md.resolved
