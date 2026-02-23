@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -158,18 +159,18 @@ class AppShell extends StatelessWidget {
             },
             items: const [
               LiquidGlassNavItem(
-                icon: Icons.home_outlined,
-                selectedIcon: Icons.home_rounded,
+                icon: CupertinoIcons.house_fill,
+                selectedIcon: CupertinoIcons.house_fill,
                 label: 'Home',
               ),
               LiquidGlassNavItem(
-                icon: Icons.people_outline_rounded,
-                selectedIcon: Icons.people_rounded,
+                icon: CupertinoIcons.bandage_fill,
+                selectedIcon: CupertinoIcons.bandage_fill,
                 label: 'Patients',
               ),
               LiquidGlassNavItem(
-                icon: Icons.assessment_outlined,
-                selectedIcon: Icons.assessment_rounded,
+                icon: CupertinoIcons.clock_fill,
+                selectedIcon: CupertinoIcons.clock_fill,
                 label: 'Activity',
               ),
             ],
