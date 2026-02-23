@@ -112,8 +112,12 @@ class AppShell extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Theme.of(context).scaffoldBackgroundColor,
-                      Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.85),
-                      Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0),
+                      Theme.of(
+                        context,
+                      ).scaffoldBackgroundColor.withValues(alpha: 0.85),
+                      Theme.of(
+                        context,
+                      ).scaffoldBackgroundColor.withValues(alpha: 0),
                     ],
                     stops: const [0.0, 0.45, 1.0],
                   ),
@@ -135,8 +139,12 @@ class AppShell extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0),
-                      Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.85),
+                      Theme.of(
+                        context,
+                      ).scaffoldBackgroundColor.withValues(alpha: 0),
+                      Theme.of(
+                        context,
+                      ).scaffoldBackgroundColor.withValues(alpha: 0.85),
                       Theme.of(context).scaffoldBackgroundColor,
                     ],
                     stops: const [0.0, 0.55, 1.0],
@@ -188,6 +196,11 @@ class AppShell extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isDark ? AppColorsDark.primary : AppColors.primary,
                   borderRadius: BorderRadius.circular(999),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.24),
+                    width: 0.4,
+                    strokeAlign: BorderSide.strokeAlignOutside,
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color:
@@ -199,7 +212,7 @@ class AppShell extends StatelessWidget {
                   ],
                 ),
                 child: const Icon(
-                  Icons.add_rounded,
+                  CupertinoIcons.square_pencil,
                   color: Colors.white,
                   size: 28,
                 ),
