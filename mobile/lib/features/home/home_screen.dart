@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../core/data/mock_data.dart';
+import '../../../main.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -12,8 +13,10 @@ class HomeScreen extends StatelessWidget {
     final tasks = MockData.todaysTasks;
     final pendingCount = tasks.where((t) => t.status == 'pending').length;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: isDark ? AppColorsDark.background : AppColors.background,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -45,9 +48,33 @@ class HomeScreen extends StatelessWidget {
                             ],
                           ),
                         ),
+                        ValueListenableBuilder<ThemeMode>(
+                          valueListenable: themeNotifier,
+                          builder: (_, mode, __) => IconButton(
+                            onPressed: () {
+                              themeNotifier.value = mode == ThemeMode.light
+                                  ? ThemeMode.dark
+                                  : ThemeMode.light;
+                            },
+                            icon: Icon(
+                              mode == ThemeMode.light
+                                  ? Icons.dark_mode_rounded
+                                  : Icons.light_mode_rounded,
+                              color: isDark
+                                  ? AppColorsDark.textSecondary
+                                  : AppColors.textSecondary,
+                            ),
+                            tooltip: mode == ThemeMode.light
+                                ? 'Switch to dark mode'
+                                : 'Switch to light mode',
+                          ),
+                        ),
+                        const SizedBox(width: 4),
                         CircleAvatar(
                           radius: 22,
-                          backgroundColor: AppColors.primaryLight,
+                          backgroundColor: isDark
+                              ? AppColorsDark.primaryLight
+                              : AppColors.primaryLight,
                           child: Text(
                             'SK',
                             style: TextStyle(
@@ -114,21 +141,27 @@ class HomeScreen extends StatelessWidget {
                           value: '$pendingCount',
                           label: 'Pending\nAssessments',
                           color: AppColors.primary,
-                          bgColor: AppColors.primaryLight,
+                          bgColor: isDark
+                              ? AppColorsDark.primaryLight
+                              : AppColors.primaryLight,
                         ),
                         const SizedBox(width: 10),
                         _StatCard(
                           value: '3',
                           label: 'Referrals\nToday',
                           color: AppColors.danger,
-                          bgColor: AppColors.dangerLight,
+                          bgColor: isDark
+                              ? AppColorsDark.dangerLight
+                              : AppColors.dangerLight,
                         ),
                         const SizedBox(width: 10),
                         _StatCard(
                           value: '${MockData.patients.length}',
                           label: 'Total\nPatients',
                           color: AppColors.success,
-                          bgColor: AppColors.successLight,
+                          bgColor: isDark
+                              ? AppColorsDark.successLight
+                              : AppColors.successLight,
                         ),
                       ],
                     ),
@@ -179,15 +212,16 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _showPatientPicker(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) => Container(
         height: MediaQuery.of(ctx).size.height * 0.7,
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: isDark ? AppColorsDark.surface : AppColors.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           children: [
@@ -196,7 +230,7 @@ class HomeScreen extends StatelessWidget {
               width: 36,
               height: 4,
               decoration: BoxDecoration(
-                color: AppColors.border,
+                color: isDark ? AppColorsDark.border : AppColors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),

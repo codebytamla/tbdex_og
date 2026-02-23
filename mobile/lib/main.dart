@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
 
+final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
+
 void main() {
   runApp(const TbdexApp());
 }
@@ -12,11 +14,16 @@ class TbdexApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'TBDex',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.theme,
-      routerConfig: appRouter,
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: themeNotifier,
+      builder: (_, mode, __) => MaterialApp.router(
+        title: 'TBDex',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.theme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: mode,
+        routerConfig: appRouter,
+      ),
     );
   }
 }

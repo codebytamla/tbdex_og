@@ -90,7 +90,7 @@ class _PatientsScreenState extends State<PatientsScreen> {
 
           const Divider(),
 
-          // Results count
+          // Results count + Add Patient
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 4),
             child: Row(
@@ -98,6 +98,31 @@ class _PatientsScreenState extends State<PatientsScreen> {
                 Text(
                   '${patients.length} patients',
                   style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    // TODO: Add patient form
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.person_add_rounded,
+                        size: 16,
+                        color: AppColors.primary,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        'Add Patient',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -138,13 +163,6 @@ class _PatientsScreenState extends State<PatientsScreen> {
                   ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // TODO: Add patient form
-        },
-        icon: const Icon(Icons.person_add_rounded),
-        label: const Text('Add Patient'),
       ),
     );
   }
