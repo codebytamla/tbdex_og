@@ -189,7 +189,7 @@ class HomeScreen extends StatelessWidget {
                               ? AppColorsDark.primaryLight.withValues(
                                   alpha: 0.25,
                                 )
-                              : AppColors.primaryLight,
+                              : const Color(0xFFEFF6FF),
                           borderColor: isDark
                               ? AppColors.primary.withValues(alpha: 0.35)
                               : const Color(0xFFDBEAFE),
@@ -203,10 +203,10 @@ class HomeScreen extends StatelessWidget {
                               ? AppColorsDark.dangerLight.withValues(
                                   alpha: 0.25,
                                 )
-                              : AppColors.dangerLight,
+                              : const Color(0xFFFFF1F2),
                           borderColor: isDark
                               ? AppColors.danger.withValues(alpha: 0.3)
-                              : const Color(0xFFFFD1DC),
+                              : const Color(0xFFFFE4E6),
                         ),
                         const SizedBox(width: 10),
                         _StatCard(
@@ -217,10 +217,10 @@ class HomeScreen extends StatelessWidget {
                               ? AppColorsDark.successLight.withValues(
                                   alpha: 0.22,
                                 )
-                              : AppColors.successLight,
+                              : const Color(0xFFECFDF5),
                           borderColor: isDark
                               ? AppColors.success.withValues(alpha: 0.35)
-                              : const Color(0xFFA7F3D0),
+                              : const Color(0xFFD1FAE5),
                         ),
                       ],
                     ),
