@@ -2,15 +2,27 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 
+/// Shared geometry for bottom chrome (nav bar + FAB) so their spacing stays
+/// consistent when we tune sizes.
+const kBottomChromeBottomInset = 20.0;
+const kBottomChromeFabSize = 56.0;
+const kBottomChromeFabRightInset = 20.0;
+const kBottomChromeNavFabGap = 6.0;
+const kBottomChromeNavRightInset =
+    kBottomChromeFabRightInset + kBottomChromeFabSize + kBottomChromeNavFabGap;
+
 /// Height of the nav bar pill.
-const _kNavBarHeight = 62.0;
+const _kNavBarHeight = 56.0;
 
 /// Horizontal padding on the items row inside the nav bar pill.
-const _kNavBarHorizontalPadding = 6.0;
+const _kNavBarHorizontalPadding = 5.0;
 
 /// Vertical padding inside the nav bar pill — controls how tall the
 /// inner selected-item highlight pill is. Smaller = taller active pill.
-const _kNavBarVerticalPadding = 7.0;
+const _kNavBarVerticalPadding = 6.0;
+
+const _kNavBarItemIconSize = 20.0;
+const _kNavBarLabelSize = 9.0;
 
 class LiquidGlassNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -30,8 +42,8 @@ class LiquidGlassNavBar extends StatelessWidget {
 
     return Positioned(
       left: 24,
-      right: 88,
-      bottom: 20,
+      right: kBottomChromeNavRightInset,
+      bottom: kBottomChromeBottomInset,
       child: Container(
         height: _kNavBarHeight,
         decoration: BoxDecoration(
@@ -111,7 +123,7 @@ class _NavBarItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(999),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -121,7 +133,7 @@ class _NavBarItem extends StatelessWidget {
                   child: Icon(
                     isSelected ? item.selectedIcon : item.icon,
                     key: ValueKey(isSelected),
-                    size: 22,
+                    size: _kNavBarItemIconSize,
                     color: iconColor,
                   ),
                 ),
@@ -129,7 +141,7 @@ class _NavBarItem extends StatelessWidget {
                 AnimatedDefaultTextStyle(
                   duration: const Duration(milliseconds: 180),
                   style: TextStyle(
-                    fontSize: 10,
+                    fontSize: _kNavBarLabelSize,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     color: labelColor,
                     letterSpacing: -0.1,

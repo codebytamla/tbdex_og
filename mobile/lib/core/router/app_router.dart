@@ -185,14 +185,14 @@ class AppShell extends StatelessWidget {
           ),
           // Floating FAB circle beside the pill nav bar
           Positioned(
-            right: 20,
-            bottom: 20,
+            right: kBottomChromeFabRightInset,
+            bottom: kBottomChromeBottomInset,
             child: GestureDetector(
               onTap: () => _showPatientPicker(context),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                width: 62,
-                height: 62,
+                width: kBottomChromeFabSize,
+                height: kBottomChromeFabSize,
                 decoration: BoxDecoration(
                   color: isDark ? AppColorsDark.primary : AppColors.primary,
                   borderRadius: BorderRadius.circular(999),
@@ -206,15 +206,15 @@ class AppShell extends StatelessWidget {
                       color:
                           (isDark ? AppColorsDark.primary : AppColors.primary)
                               .withValues(alpha: 0.35),
-                      blurRadius: 18,
-                      offset: const Offset(0, 7),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
                     ),
                   ],
                 ),
                 child: const Icon(
                   CupertinoIcons.square_pencil,
                   color: Colors.white,
-                  size: 28,
+                  size: 24,
                 ),
               ),
             ),
