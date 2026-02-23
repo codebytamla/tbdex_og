@@ -19,6 +19,10 @@ class HomeScreen extends StatelessWidget {
     final bottomInset = MediaQuery.of(context).padding.bottom;
     final listBottomSpacing = bottomInset + 128;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    Color lightStatBackground(Color accent, double alpha) =>
+        Color.alphaBlend(accent.withValues(alpha: alpha), AppColors.surface);
+    Color lightStatBorder(Color accent, double alpha) =>
+        Color.alphaBlend(accent.withValues(alpha: alpha), AppColors.border);
     Color darkStatBackground(Color accent, double alpha) => Color.alphaBlend(
       accent.withValues(alpha: alpha),
       AppColorsDark.surface,
@@ -197,10 +201,10 @@ class HomeScreen extends StatelessWidget {
                           color: AppColors.primary,
                           bgColor: isDark
                               ? darkStatBackground(AppColors.primary, 0.14)
-                              : const Color(0xFFEFF6FF),
+                              : lightStatBackground(AppColors.primary, 0.1),
                           borderColor: isDark
                               ? darkStatBorder(AppColors.primary, 0.3)
-                              : const Color(0xFFDBEAFE),
+                              : lightStatBorder(AppColors.primary, 0.22),
                         ),
                         const SizedBox(width: 10),
                         _StatCard(
@@ -209,10 +213,10 @@ class HomeScreen extends StatelessWidget {
                           color: AppColors.danger,
                           bgColor: isDark
                               ? darkStatBackground(AppColors.danger, 0.13)
-                              : const Color(0xFFFFF1F2),
+                              : lightStatBackground(AppColors.danger, 0.09),
                           borderColor: isDark
                               ? darkStatBorder(AppColors.danger, 0.28)
-                              : const Color(0xFFFFE4E6),
+                              : lightStatBorder(AppColors.danger, 0.2),
                         ),
                         const SizedBox(width: 10),
                         _StatCard(
@@ -221,10 +225,10 @@ class HomeScreen extends StatelessWidget {
                           color: AppColors.success,
                           bgColor: isDark
                               ? darkStatBackground(AppColors.success, 0.12)
-                              : const Color(0xFFECFDF5),
+                              : lightStatBackground(AppColors.success, 0.08),
                           borderColor: isDark
                               ? darkStatBorder(AppColors.success, 0.28)
-                              : const Color(0xFFD1FAE5),
+                              : lightStatBorder(AppColors.success, 0.2),
                         ),
                       ],
                     ),
