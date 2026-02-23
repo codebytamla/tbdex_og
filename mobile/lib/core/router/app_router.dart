@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:ui';
 
 import '../../features/home/home_screen.dart';
 import '../../features/patients/patients_screen.dart';
@@ -27,21 +26,18 @@ final GoRouter appRouter = GoRouter(
       routes: [
         GoRoute(
           path: '/home',
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: HomeScreen(),
-          ),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: HomeScreen()),
         ),
         GoRoute(
           path: '/patients',
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: PatientsScreen(),
-          ),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: PatientsScreen()),
         ),
         GoRoute(
           path: '/activity',
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: ActivityScreen(),
-          ),
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: ActivityScreen()),
         ),
       ],
     ),
@@ -135,50 +131,37 @@ class AppShell extends StatelessWidget {
           // Floating FAB beside the capsule nav bar
           Positioned(
             right: 20,
-            bottom: bottomPadding + 12,
+            bottom: bottomPadding + 10,
             child: GestureDetector(
               onTap: () => _showPatientPicker(context),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(999),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
-                  child: Container(
-                    width: 64,
-                    height: 64,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          AppColors.primary.withValues(alpha: 0.85),
-                          AppColors.primary.withValues(alpha: 0.95),
-                        ],
-                      ),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: isDark ? 0.12 : 0.3),
-                        width: 0.5,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.35),
-                          blurRadius: 16,
-                          offset: const Offset(0, 6),
-                          spreadRadius: -2,
-                        ),
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: isDark ? AppColorsDark.primary : AppColors.primary,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color:
+                          (isDark ? AppColorsDark.primary : AppColors.primary)
+                              .withValues(alpha: 0.35),
+                      blurRadius: 18,
+                      offset: const Offset(0, 7),
                     ),
-                    child: const Icon(
-                      Icons.add_rounded,
-                      color: Colors.white,
-                      size: 28,
+                    BoxShadow(
+                      color: Colors.black.withValues(
+                        alpha: isDark ? 0.35 : 0.12,
+                      ),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
-                  ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.add_rounded,
+                  color: Colors.white,
+                  size: 30,
                 ),
               ),
             ),
@@ -239,7 +222,9 @@ class AppShell extends StatelessWidget {
                   final patient = MockData.patients[index];
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: AppColors.primaryLight,
+                      backgroundColor: isDark
+                          ? AppColorsDark.primaryLight.withValues(alpha: 0.35)
+                          : AppColors.primaryLight,
                       child: Text(
                         patient.initials,
                         style: const TextStyle(

@@ -24,7 +24,7 @@ class LiquidGlassNavBar extends StatelessWidget {
     return Positioned(
       left: 24,
       right: 88,
-      bottom: bottomPadding + 12,
+      bottom: bottomPadding + 10,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(999),
         child: BackdropFilter(
@@ -32,41 +32,26 @@ class LiquidGlassNavBar extends StatelessWidget {
           child: Container(
             height: 64,
             decoration: BoxDecoration(
-              // Liquid glass layered fill
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: isDark
-                    ? [
-                        const Color(0xFF0F172A).withValues(alpha: 0.55),
-                        const Color(0xFF1E293B).withValues(alpha: 0.45),
-                      ]
-                    : [
-                        Colors.white.withValues(alpha: 0.78),
-                        Colors.white.withValues(alpha: 0.62),
-                      ],
-              ),
+              color: (isDark ? AppColorsDark.surface : AppColors.surface)
+                  .withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(999),
               border: Border.all(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : Colors.white.withValues(alpha: 0.55),
-                width: 0.5,
+                color: isDark ? AppColorsDark.border : AppColors.border,
+                width: 1,
               ),
               boxShadow: [
                 BoxShadow(
                   color: isDark
-                      ? Colors.black.withValues(alpha: 0.4)
-                      : Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
-                  spreadRadius: -4,
+                      ? Colors.black.withValues(alpha: 0.45)
+                      : const Color(0xFFCBD5E1).withValues(alpha: 0.45),
+                  blurRadius: 18,
+                  offset: const Offset(0, 6),
                 ),
                 BoxShadow(
                   color: isDark
                       ? Colors.black.withValues(alpha: 0.2)
-                      : Colors.black.withValues(alpha: 0.03),
-                  blurRadius: 8,
+                      : Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -117,10 +102,13 @@ class _NavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor =
-        isDark ? AppColorsDark.primary : AppColors.primary;
-    final inactiveColor =
-        isDark ? AppColorsDark.textTertiary : AppColors.textTertiary;
+    final primaryColor = isDark ? AppColorsDark.primary : AppColors.primary;
+    final inactiveColor = isDark
+        ? AppColorsDark.textTertiary
+        : AppColors.textTertiary;
+    final activeBackground = isDark
+        ? AppColorsDark.primaryLight.withValues(alpha: 0.3)
+        : AppColors.primaryLight;
 
     return GestureDetector(
       onTap: onTap,
@@ -130,11 +118,9 @@ class _NavBarItem extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected
-                ? primaryColor.withValues(alpha: 0.12)
-                : Colors.transparent,
+            color: isSelected ? activeBackground : Colors.transparent,
             borderRadius: BorderRadius.circular(999),
           ),
           child: Column(
@@ -154,7 +140,7 @@ class _NavBarItem extends StatelessWidget {
                 duration: const Duration(milliseconds: 200),
                 style: TextStyle(
                   fontSize: 10,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: isSelected ? primaryColor : inactiveColor,
                 ),
                 child: Text(item.label),
