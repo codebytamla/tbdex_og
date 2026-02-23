@@ -15,20 +15,13 @@ class HomeScreen extends StatelessWidget {
     const previewTaskCount = 4;
     final previewTasks = tasks.take(previewTaskCount).toList();
     final hasMoreTasks = tasks.length > previewTaskCount;
-    final pendingCount = tasks.where((t) => t.status == 'pending').length;
+    final assessmentCount =
+        tasks.where((t) => t.status == 'pending' || t.status == 'in_progress').length;
+    final referralCount = 3;
+    final totalPatients = MockData.patients.length;
     final bottomInset = MediaQuery.of(context).padding.bottom;
     final listBottomSpacing = bottomInset + 128;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    Color lightStatBackground(Color accent, double alpha) =>
-        Color.alphaBlend(accent.withValues(alpha: alpha), AppColors.surface);
-    Color lightStatBorder(Color accent, double alpha) =>
-        Color.alphaBlend(accent.withValues(alpha: alpha), AppColors.border);
-    Color darkStatBackground(Color accent, double alpha) => Color.alphaBlend(
-      accent.withValues(alpha: alpha),
-      AppColorsDark.surface,
-    );
-    Color darkStatBorder(Color accent, double alpha) =>
-        Color.alphaBlend(accent.withValues(alpha: alpha), AppColorsDark.border);
 
     return Scaffold(
       backgroundColor: isDark ? AppColorsDark.background : AppColors.background,
@@ -37,12 +30,13 @@ class HomeScreen extends StatelessWidget {
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                padding: const EdgeInsets.fromLTRB(22, 16, 22, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // ── Header ──────────────────────────────────────────────
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
                           child: Column(
@@ -50,8 +44,10 @@ class HomeScreen extends StatelessWidget {
                             children: [
                               Text(
                                 'Good morning,',
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(fontWeight: FontWeight.w500),
+                                style:
+                                    Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                        ),
                               ),
                               const SizedBox(height: 2),
                               Text(
@@ -61,7 +57,7 @@ class HomeScreen extends StatelessWidget {
                                     .headlineMedium
                                     ?.copyWith(
                                       fontWeight: FontWeight.w700,
-                                      letterSpacing: -0.3,
+                                      letterSpacing: -0.5,
                                     ),
                               ),
                             ],
@@ -77,39 +73,29 @@ class HomeScreen extends StatelessWidget {
                             },
                             icon: Icon(
                               mode == ThemeMode.light
-                                  ? Icons.dark_mode
-                                  : Icons.light_mode,
+                                  ? Icons.dark_mode_outlined
+                                  : Icons.light_mode_outlined,
+                              size: 22,
                               color: isDark
                                   ? AppColorsDark.textSecondary
                                   : AppColors.textSecondary,
                             ),
-                            tooltip: mode == ThemeMode.light
-                                ? 'Switch to dark mode'
-                                : 'Switch to light mode',
                           ),
                         ),
                         const SizedBox(width: 2),
+                        // Amber avatar
                         Container(
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: isDark
-                                ? AppColorsDark.primaryLight.withValues(
-                                    alpha: 0.35,
-                                  )
-                                : AppColors.primaryLight,
+                            color: const Color(0xFFD97706),
                             borderRadius: BorderRadius.circular(999),
-                            border: Border.all(
-                              color: isDark
-                                  ? AppColors.primary.withValues(alpha: 0.5)
-                                  : const Color(0xFFBFDBFE),
-                            ),
                           ),
                           alignment: Alignment.center,
                           child: const Text(
                             'SK',
                             style: TextStyle(
-                              color: AppColors.primary,
+                              color: Colors.white,
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
                             ),
@@ -118,64 +104,78 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 18),
 
+                    // ── Sync Banner ─────────────────────────────────────────
                     Material(
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () => context.push('/sync'),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(14),
                         child: Ink(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
-                            vertical: 12,
+                            vertical: 11,
                           ),
                           decoration: BoxDecoration(
                             color: isDark
-                                ? AppColorsDark.warningLight.withValues(
-                                    alpha: 0.28,
-                                  )
-                                : const Color(0xFFFFFBEB),
-                            borderRadius: BorderRadius.circular(12),
+                                ? AppColorsDark.warningLight.withValues(alpha: 0.22)
+                                : const Color(0xFFFFF8EE),
+                            borderRadius: BorderRadius.circular(14),
                             border: Border.all(
                               color: isDark
-                                  ? const Color(
-                                      0xFF92400E,
-                                    ).withValues(alpha: 0.5)
-                                  : const Color(0xFFFDE68A),
+                                  ? const Color(0xFF92400E).withValues(alpha: 0.45)
+                                  : const Color(0xFFFFE4B5),
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: isDark
-                                    ? Colors.black.withValues(alpha: 0.2)
-                                    : const Color(
-                                        0xFFF59E0B,
-                                      ).withValues(alpha: 0.06),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
                           ),
                           child: Row(
                             children: [
-                              Icon(
-                                Icons.sync_rounded,
-                                color: isDark
-                                    ? const Color(0xFFFBBF24)
-                                    : const Color(0xFF92400E),
-                                size: 18,
+                              Container(
+                                width: 34,
+                                height: 34,
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? const Color(0xFFD97706).withValues(alpha: 0.18)
+                                      : const Color(0xFFFFF3CD),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(
+                                  Icons.sync_rounded,
+                                  color: isDark
+                                      ? const Color(0xFFFBBF24)
+                                      : const Color(0xFFD97706),
+                                  size: 18,
+                                ),
                               ),
-                              const SizedBox(width: 10),
+                              const SizedBox(width: 12),
                               Expanded(
-                                child: Text(
-                                  'Last synced: 2 hours ago',
-                                  style: TextStyle(
-                                    color: isDark
-                                        ? const Color(0xFFFDE68A)
-                                        : const Color(0xFF92400E),
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 13,
-                                  ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Tap to sync data',
+                                      style: TextStyle(
+                                        color: isDark
+                                            ? const Color(0xFFFDE68A)
+                                            : const Color(0xFF92400E),
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 1),
+                                    Text(
+                                      'Last synced 2 hours ago',
+                                      style: TextStyle(
+                                        color: isDark
+                                            ? const Color(0xFFFDE68A).withValues(
+                                                alpha: 0.65)
+                                            : const Color(0xFF92400E)
+                                                .withValues(alpha: 0.65),
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 11.5,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                               Icon(
@@ -191,73 +191,66 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 14),
 
+                    // ── Hero: Total Patients ─────────────────────────────────
+                    _HeroPatientCard(totalPatients: totalPatients),
+
+                    const SizedBox(height: 12),
+
+                    // ── Stats Row ────────────────────────────────────────────
                     Row(
                       children: [
-                        _StatCard(
-                          value: '$pendingCount',
-                          label: 'Pending\nAssessments',
-                          color: AppColors.primary,
-                          bgColor: isDark
-                              ? darkStatBackground(AppColors.primary, 0.14)
-                              : lightStatBackground(AppColors.primary, 0.1),
-                          borderColor: isDark
-                              ? darkStatBorder(AppColors.primary, 0.3)
-                              : lightStatBorder(AppColors.primary, 0.22),
+                        Expanded(
+                          child: _MiniStatCard(
+                            label: 'ASSESSMENTS',
+                            value: '$assessmentCount',
+                            icon: Icons.description_outlined,
+                            iconColor: const Color(0xFFE05C5C),
+                            iconBg: const Color(0xFFFEECEC),
+                            iconBgDark: const Color(0xFF7F1D1D).withValues(alpha: 0.4),
+                            isDark: isDark,
+                          ),
                         ),
-                        const SizedBox(width: 10),
-                        _StatCard(
-                          value: '3',
-                          label: 'Referrals\nToday',
-                          color: AppColors.danger,
-                          bgColor: isDark
-                              ? darkStatBackground(AppColors.danger, 0.13)
-                              : lightStatBackground(AppColors.danger, 0.09),
-                          borderColor: isDark
-                              ? darkStatBorder(AppColors.danger, 0.28)
-                              : lightStatBorder(AppColors.danger, 0.2),
-                        ),
-                        const SizedBox(width: 10),
-                        _StatCard(
-                          value: '${MockData.patients.length}',
-                          label: 'Total\nPatients',
-                          color: AppColors.success,
-                          bgColor: isDark
-                              ? darkStatBackground(AppColors.success, 0.12)
-                              : lightStatBackground(AppColors.success, 0.08),
-                          borderColor: isDark
-                              ? darkStatBorder(AppColors.success, 0.28)
-                              : lightStatBorder(AppColors.success, 0.2),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _MiniStatCard(
+                            label: 'REFERRALS',
+                            value: '$referralCount',
+                            icon: Icons.person_add_outlined,
+                            iconColor: const Color(0xFF3AAFA9),
+                            iconBg: const Color(0xFFE6F7F7),
+                            iconBgDark:
+                                const Color(0xFF134E4A).withValues(alpha: 0.5),
+                            isDark: isDark,
+                          ),
                         ),
                       ],
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 26),
 
+                    // ── Today's Tasks header ─────────────────────────────────
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           "Today's Tasks",
-                          style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(fontWeight: FontWeight.w700),
+                          style:
+                              Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                  ),
                         ),
                         if (hasMoreTasks)
-                          TextButton(
-                            onPressed: () => context.go('/activity'),
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: const Size(52, 30),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              foregroundColor: isDark
-                                  ? AppColorsDark.primary
-                                  : AppColors.primary,
-                            ),
-                            child: const Text(
+                          GestureDetector(
+                            onTap: () => context.go('/activity'),
+                            child: Text(
                               'See All',
                               style: TextStyle(
+                                color: isDark
+                                    ? AppColorsDark.primary
+                                    : AppColors.primary,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
                               ),
@@ -265,20 +258,21 @@ class HomeScreen extends StatelessWidget {
                           ),
                       ],
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 12),
                   ],
                 ),
               ),
             ),
 
+            // ── Task list ────────────────────────────────────────────────────
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 22),
               sliver: SliverList.separated(
                 itemCount: previewTasks.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 12),
+                separatorBuilder: (_, _) => const SizedBox(height: 10),
                 itemBuilder: (context, index) {
                   final task = previewTasks[index];
-                  return _TaskCard(
+                  return _TaskRow(
                     task: task,
                     onTap: () => context.push('/patients/${task.patientId}'),
                   );
@@ -294,75 +288,228 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _StatCard extends StatelessWidget {
-  final String value;
-  final String label;
-  final Color color;
-  final Color bgColor;
-  final Color borderColor;
-
-  const _StatCard({
-    required this.value,
-    required this.label,
-    required this.color,
-    required this.bgColor,
-    required this.borderColor,
-  });
+// ─────────────────────────────────────────────────────────────────────────────
+// Hero Patient Card
+// ─────────────────────────────────────────────────────────────────────────────
+class _HeroPatientCard extends StatelessWidget {
+  final int totalPatients;
+  const _HeroPatientCard({required this.totalPatients});
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? AppColorsDark.surface : AppColors.surface;
+    final borderColor = isDark ? AppColorsDark.border : AppColors.border;
+    final textPrimary = isDark ? AppColorsDark.textPrimary : AppColors.textPrimary;
+    final textSecondary = isDark ? AppColorsDark.textSecondary : AppColors.textSecondary;
+    final iconBg = isDark
+        ? AppColorsDark.primaryLight.withValues(alpha: 0.35)
+        : AppColors.primaryLight;
 
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: borderColor),
-          boxShadow: [
-            BoxShadow(
-              color: isDark
-                  ? Colors.black.withValues(alpha: 0.25)
-                  : Colors.black.withValues(alpha: 0.04),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: borderColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Person-group icon in a subtle box
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: iconBg,
+              borderRadius: BorderRadius.circular(12),
             ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: color,
+            child: Icon(
+              Icons.group_outlined,
+              color: AppColors.primary,
+              size: 22,
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              // Number + label
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$totalPatients',
+                      style: TextStyle(
+                        color: textPrimary,
+                        fontSize: 42,
+                        fontWeight: FontWeight.w700,
+                        height: 1,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'TOTAL PATIENTS',
+                      style: TextStyle(
+                        color: textSecondary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: color.withValues(alpha: 0.8),
-                height: 1.3,
-              ),
-            ),
-          ],
-        ),
+
+              // Mini bar chart decoration
+              const _BarChartDecoration(),
+            ],
+          ),
+        ],
       ),
     );
   }
 }
 
-class _TaskCard extends StatelessWidget {
+// Small decorative bar chart
+class _BarChartDecoration extends StatelessWidget {
+  const _BarChartDecoration();
+
+  @override
+  Widget build(BuildContext context) {
+    const bars = [
+      _Bar(height: 28, color: Color(0xFFE05C5C)),
+      _Bar(height: 20, color: Color(0xFF3AAFA9)),
+      _Bar(height: 38, color: Color(0xFFD97706)),
+      _Bar(height: 24, color: Color(0xFF3AAFA9)),
+    ];
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: bars
+          .map(
+            (b) => Padding(
+              padding: const EdgeInsets.only(left: 5),
+              child: Container(
+                width: 10,
+                height: b.height,
+                decoration: BoxDecoration(
+                  color: b.color.withValues(alpha: 0.85),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+}
+
+class _Bar {
+  final double height;
+  final Color color;
+  const _Bar({required this.height, required this.color});
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mini Stat Card (Assessments / Referrals)
+// ─────────────────────────────────────────────────────────────────────────────
+class _MiniStatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color iconColor;
+  final Color iconBg;
+  final Color iconBgDark;
+  final bool isDark;
+
+  const _MiniStatCard({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.iconColor,
+    required this.iconBg,
+    required this.iconBgDark,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? AppColorsDark.surface : AppColors.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: isDark ? AppColorsDark.border : AppColors.border,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: isDark ? iconBgDark : iconBg,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: iconColor, size: 18),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.w700,
+              color: iconColor,
+              height: 1,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w600,
+              color: isDark
+                  ? AppColorsDark.textSecondary
+                  : AppColors.textSecondary,
+              letterSpacing: 0.9,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Task Row
+// ─────────────────────────────────────────────────────────────────────────────
+class _TaskRow extends StatelessWidget {
   final TaskItem task;
   final VoidCallback onTap;
 
-  const _TaskCard({required this.task, required this.onTap});
+  const _TaskRow({required this.task, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -371,23 +518,21 @@ class _TaskCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         onTap: onTap,
         child: Ink(
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
             color: isDark ? AppColorsDark.surface : AppColors.surface,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isDark ? AppColorsDark.border : AppColors.border,
             ),
             boxShadow: [
               BoxShadow(
-                color: isDark
-                    ? Colors.black.withValues(alpha: 0.16)
-                    : Colors.black.withValues(alpha: 0.04),
-                blurRadius: 10,
-                offset: const Offset(0, 3),
+                color: Colors.black.withValues(alpha: isDark ? 0.14 : 0.03),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
             ],
           ),
@@ -400,20 +545,32 @@ class _TaskCard extends StatelessWidget {
                     Text(
                       task.patientName,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                            fontWeight: FontWeight.w600,
+                          ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Text(
                       '${task.village} • ${task.time}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
+                            fontWeight: FontWeight.w500,
+                            color: isDark
+                                ? AppColorsDark.textSecondary
+                                : AppColors.textSecondary,
+                          ),
                     ),
                   ],
                 ),
               ),
+              const SizedBox(width: 10),
               _StatusChip(status: task.status),
+              const SizedBox(width: 6),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 18,
+                color: isDark
+                    ? AppColorsDark.textTertiary
+                    : AppColors.textTertiary,
+              ),
             ],
           ),
         ),
@@ -422,9 +579,11 @@ class _TaskCard extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Status Chip
+// ─────────────────────────────────────────────────────────────────────────────
 class _StatusChip extends StatelessWidget {
   final String status;
-
   const _StatusChip({required this.status});
 
   @override
@@ -432,20 +591,19 @@ class _StatusChip extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final style = _StatusStyle.resolve(status, isDark);
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 220),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: style.background,
-        border: Border.all(color: style.border),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         style.label,
         style: TextStyle(
           color: style.foreground,
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: FontWeight.w600,
+          letterSpacing: 0.3,
         ),
       ),
     );
@@ -455,13 +613,11 @@ class _StatusChip extends StatelessWidget {
 class _StatusStyle {
   final Color foreground;
   final Color background;
-  final Color border;
   final String label;
 
   const _StatusStyle({
     required this.foreground,
     required this.background,
-    required this.border,
     required this.label,
   });
 
@@ -475,10 +631,7 @@ class _StatusStyle {
           background: isDark
               ? AppColorsDark.warningLight.withValues(alpha: 0.35)
               : AppColors.warningLight,
-          border: isDark
-              ? AppColors.warning.withValues(alpha: 0.45)
-              : const Color(0xFFFDE68A),
-          label: 'Pending',
+          label: 'PENDING',
         );
       case 'in_progress':
         return _StatusStyle(
@@ -488,10 +641,7 @@ class _StatusStyle {
           background: isDark
               ? AppColorsDark.primaryLight.withValues(alpha: 0.38)
               : AppColors.primaryLight,
-          border: isDark
-              ? AppColors.primary.withValues(alpha: 0.45)
-              : const Color(0xFFBFDBFE),
-          label: 'In Progress',
+          label: 'IN PROGRESS',
         );
       case 'done':
         return _StatusStyle(
@@ -501,10 +651,7 @@ class _StatusStyle {
           background: isDark
               ? AppColorsDark.successLight.withValues(alpha: 0.35)
               : AppColors.successLight,
-          border: isDark
-              ? AppColors.success.withValues(alpha: 0.4)
-              : const Color(0xFFA7F3D0),
-          label: 'Done',
+          label: 'DONE',
         );
       default:
         return _StatusStyle(
@@ -512,8 +659,7 @@ class _StatusStyle {
               ? AppColorsDark.textSecondary
               : AppColors.textSecondary,
           background: isDark ? AppColorsDark.surfaceDim : AppColors.surfaceDim,
-          border: isDark ? AppColorsDark.border : AppColors.border,
-          label: status,
+          label: status.toUpperCase(),
         );
     }
   }
