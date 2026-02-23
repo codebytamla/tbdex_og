@@ -19,7 +19,7 @@ const _kNavBarHorizontalPadding = 5.0;
 
 /// Vertical padding inside the nav bar pill — controls how tall the
 /// inner selected-item highlight pill is. Smaller = taller active pill.
-const _kNavBarVerticalPadding = 6.0;
+const _kNavBarVerticalPadding = 1.0;
 
 const _kNavBarItemIconSize = 20.0;
 const _kNavBarLabelSize = 9.0;
@@ -116,8 +116,8 @@ class _NavBarItem extends StatelessWidget {
     final labelColor = isSelected ? primaryColor : inactiveColor;
 
     final selectedBg = isDark
-        ? Colors.white.withValues(alpha: 0.10)
-        : Colors.black.withValues(alpha: 0.06);
+        ? Colors.white.withValues(alpha: 0.16)
+        : Colors.black.withValues(alpha: 0.10);
 
     return GestureDetector(
       onTap: onTap,

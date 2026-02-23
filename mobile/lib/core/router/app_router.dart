@@ -172,13 +172,13 @@ class AppShell extends StatelessWidget {
                 label: 'Home',
               ),
               LiquidGlassNavItem(
-                icon: CupertinoIcons.bandage_fill,
-                selectedIcon: CupertinoIcons.bandage_fill,
+                icon: CupertinoIcons.person_2_fill,
+                selectedIcon: CupertinoIcons.person_2_fill,
                 label: 'Patients',
               ),
               LiquidGlassNavItem(
-                icon: CupertinoIcons.clock_fill,
-                selectedIcon: CupertinoIcons.clock_fill,
+                icon: CupertinoIcons.square_list,
+                selectedIcon: CupertinoIcons.square_list,
                 label: 'Activity',
               ),
             ],
