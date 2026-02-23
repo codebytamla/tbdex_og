@@ -38,7 +38,10 @@ class LiquidGlassNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const navBarColor = Color(0xFF222326);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final navBarColor = isDark
+        ? const Color(0xFF222326)
+        : const Color(0xFFF6F7F8);
 
     return Positioned(
       left: 24,
@@ -50,7 +53,9 @@ class LiquidGlassNavBar extends StatelessWidget {
           color: navBarColor,
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.14),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.14)
+                : Colors.black.withValues(alpha: 0.08),
             width: 0.4,
           ),
         ),
@@ -104,11 +109,15 @@ class _NavBarItem extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = isDark ? AppColorsDark.primary : AppColors.primary;
 
-    final inactiveColor = Colors.white.withValues(alpha: 0.78);
+    final inactiveColor = isDark
+        ? Colors.white.withValues(alpha: 0.78)
+        : Colors.black.withValues(alpha: 0.44);
     final iconColor = isSelected ? primaryColor : inactiveColor;
     final labelColor = isSelected ? primaryColor : inactiveColor;
 
-    final selectedBg = Colors.white.withValues(alpha: 0.10);
+    final selectedBg = isDark
+        ? Colors.white.withValues(alpha: 0.10)
+        : Colors.black.withValues(alpha: 0.06);
 
     return GestureDetector(
       onTap: onTap,
