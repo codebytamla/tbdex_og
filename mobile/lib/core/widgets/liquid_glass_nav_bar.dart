@@ -7,9 +7,12 @@ import '../theme/app_theme.dart';
 /// Height of the nav bar pill.
 const _kNavBarHeight = 62.0;
 
-/// Vertical padding inside the nav bar pill that creates space for the
-/// inner selected-item highlight pill.
-const _kNavBarPadding = 6.0;
+/// Horizontal padding on the items row inside the nav bar pill.
+const _kNavBarHorizontalPadding = 6.0;
+
+/// Vertical padding inside the nav bar pill — controls how tall the
+/// inner selected-item highlight pill is. Smaller = taller active pill.
+const _kNavBarVerticalPadding = 3.0;
 
 class LiquidGlassNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -26,7 +29,6 @@ class LiquidGlassNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     // The pill background: very dark in dark mode, near-black translucent in light mode.
     final pillBg = isDark
@@ -37,7 +39,7 @@ class LiquidGlassNavBar extends StatelessWidget {
       left: 24,
       // Leave ~84 px on the right for the standalone FAB circle.
       right: 88,
-      bottom: bottomPadding + 12,
+      bottom: 20,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(999),
         child: BackdropFilter(
@@ -65,7 +67,7 @@ class LiquidGlassNavBar extends StatelessWidget {
               ],
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: _kNavBarPadding),
+              padding: const EdgeInsets.symmetric(horizontal: _kNavBarHorizontalPadding),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(items.length, (index) {
@@ -127,7 +129,7 @@ class _NavBarItem extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: _kNavBarPadding),
+        padding: const EdgeInsets.symmetric(vertical: _kNavBarVerticalPadding),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,

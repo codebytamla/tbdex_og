@@ -91,7 +91,6 @@ class AppShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
       extendBody: true,
@@ -131,7 +130,7 @@ class AppShell extends StatelessWidget {
           // Floating FAB circle beside the pill nav bar
           Positioned(
             right: 20,
-            bottom: bottomPadding + 12,
+            bottom: 20,
             child: GestureDetector(
               onTap: () => _showPatientPicker(context),
               child: AnimatedContainer(
