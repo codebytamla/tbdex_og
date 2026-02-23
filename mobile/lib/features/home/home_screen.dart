@@ -334,7 +334,7 @@ class _HeroPatientCard extends StatelessWidget {
             ),
             child: Icon(
               Icons.group_outlined,
-              color: AppColors.primary,
+              color: Colors.white,
               size: 22,
             ),
           ),
@@ -518,13 +518,13 @@ class _TaskRow extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(20),
         onTap: onTap,
         child: Ink(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
             color: isDark ? AppColorsDark.surface : AppColors.surface,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isDark ? AppColorsDark.border : AppColors.border,
             ),
