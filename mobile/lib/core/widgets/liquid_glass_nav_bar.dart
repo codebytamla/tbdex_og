@@ -4,6 +4,11 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 
+const _kNavBarHeight = 64.0;
+const _kNavBarRadius = 0.0;
+const _kNavItemHighlightInset = 6.0;
+const _kNavItemHighlightRadius = 0.0;
+
 class LiquidGlassNavBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
@@ -26,15 +31,15 @@ class LiquidGlassNavBar extends StatelessWidget {
       right: 88,
       bottom: bottomPadding + 10,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(_kNavBarRadius),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
           child: Container(
-            height: 64,
+            height: _kNavBarHeight,
             decoration: BoxDecoration(
               color: (isDark ? AppColorsDark.surface : AppColors.surface)
                   .withValues(alpha: 0.9),
-              borderRadius: BorderRadius.circular(999),
+              borderRadius: BorderRadius.circular(_kNavBarRadius),
               border: Border.all(
                 color: isDark ? AppColorsDark.border : AppColors.border,
                 width: 1,
@@ -106,10 +111,6 @@ class _NavBarItem extends StatelessWidget {
     final inactiveColor = isDark
         ? AppColorsDark.textTertiary
         : AppColors.textTertiary;
-    final activeBackground = isDark
-        ? AppColorsDark.primaryLight.withValues(alpha: 0.3)
-        : AppColors.primaryLight;
-
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -118,10 +119,11 @@ class _NavBarItem extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          height: _kNavBarHeight - (_kNavItemHighlightInset * 2),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: isSelected ? activeBackground : Colors.transparent,
-            borderRadius: BorderRadius.circular(999),
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(_kNavItemHighlightRadius),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,

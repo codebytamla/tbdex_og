@@ -208,7 +208,7 @@ class AppTheme {
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 2,
-        shape: StadiumBorder(),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.surface,
@@ -380,7 +380,7 @@ class AppTheme {
         backgroundColor: AppColorsDark.primary,
         foregroundColor: Colors.white,
         elevation: 2,
-        shape: StadiumBorder(),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColorsDark.surface,

@@ -128,7 +128,7 @@ class AppShell extends StatelessWidget {
               ),
             ],
           ),
-          // Floating FAB beside the capsule nav bar
+          // Floating FAB beside the square nav bar
           Positioned(
             right: 20,
             bottom: bottomPadding + 10,
@@ -140,7 +140,7 @@ class AppShell extends StatelessWidget {
                 height: 64,
                 decoration: BoxDecoration(
                   color: isDark ? AppColorsDark.primary : AppColors.primary,
-                  shape: BoxShape.circle,
+                  borderRadius: BorderRadius.circular(0),
                   boxShadow: [
                     BoxShadow(
                       color:
