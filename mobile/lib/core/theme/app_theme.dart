@@ -4,49 +4,51 @@ import 'package:google_fonts/google_fonts.dart';
 class AppColors {
   // Primary - Medical Blue
   static const Color primary = Color(0xFF2563EB);
-  static const Color primaryLight = Color(0xFFDBEAFE);
+  static const Color primaryLight = Color(0xFFEFF6FF);
   static const Color primaryDark = Color(0xFF1D4ED8);
 
   // Neutral (light)
-  static const Color background = Color(0xFFFAF8F5);
-  static const Color surface = Color(0xFFFFFEFB);
-  static const Color surfaceDim = Color(0xFFF2EFE9);
+  static const Color background = Color(0xFFF8FAFC);
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color surfaceDim = Color(0xFFF1F5F9);
   static const Color textPrimary = Color(0xFF0F172A);
-  static const Color textSecondary = Color(0xFF64748B);
+  static const Color textSecondary = Color(0xFF475569);
   static const Color textTertiary = Color(0xFF94A3B8);
-  static const Color border = Color(0xFFE8E4DC);
-  static const Color divider = Color(0xFFEDE9E2);
+  static const Color border = Color(0xFFE2E8F0);
+  static const Color divider = Color(0xFFF1F5F9);
 
   // Status
-  static const Color success = Color(0xFF16A34A);
-  static const Color successLight = Color(0xFFDCFCE7);
+  static const Color success = Color(0xFF10B981);
+  static const Color successLight = Color(0xFFD1FAE5);
   static const Color warning = Color(0xFFF59E0B);
   static const Color warningLight = Color(0xFFFEF3C7);
-  static const Color danger = Color(0xFFDC2626);
+  static const Color danger = Color(0xFFEF4444);
   static const Color dangerLight = Color(0xFFFEE2E2);
-  static const Color info = Color(0xFF0EA5E9);
-  static const Color infoLight = Color(0xFFE0F2FE);
+  static const Color info = Color(0xFF3B82F6);
+  static const Color infoLight = Color(0xFFDBEAFE);
 
   // Risk levels
-  static const Color riskHigh = Color(0xFFDC2626);
+  static const Color riskHigh = Color(0xFFEF4444);
   static const Color riskMedium = Color(0xFFF59E0B);
-  static const Color riskLow = Color(0xFF16A34A);
+  static const Color riskLow = Color(0xFF10B981);
 }
 
 class AppColorsDark {
-  // Neutral (dark — warm charcoal, not cold blue-black)
-  static const Color background = Color(0xFF1C1A17);
-  static const Color surface = Color(0xFF252219);
-  static const Color surfaceDim = Color(0xFF2E2B22);
-  static const Color textPrimary = Color(0xFFF4F1EA);
-  static const Color textSecondary = Color(0xFF9E9A8C);
-  static const Color textTertiary = Color(0xFF6A6760);
-  static const Color border = Color(0xFF3E3B30);
-  static const Color divider = Color(0xFF312E25);
+  static const Color primary = Color(0xFF3B82F6);
+  
+  // Neutral (dark — cool slate)
+  static const Color background = Color(0xFF020617);
+  static const Color surface = Color(0xFF0F172A);
+  static const Color surfaceDim = Color(0xFF1E293B);
+  static const Color textPrimary = Color(0xFFF8FAFC);
+  static const Color textSecondary = Color(0xFF94A3B8);
+  static const Color textTertiary = Color(0xFF64748B);
+  static const Color border = Color(0xFF1E293B);
+  static const Color divider = Color(0xFF0F172A);
 
   // Status lights — muted tints for dark backgrounds
-  static const Color primaryLight = Color(0xFF1E3A5F);
-  static const Color successLight = Color(0xFF14532D);
+  static const Color primaryLight = Color(0xFF1E3A8A);
+  static const Color successLight = Color(0xFF064E3B);
   static const Color warningLight = Color(0xFF78350F);
   static const Color dangerLight = Color(0xFF7F1D1D);
 }
@@ -220,9 +222,9 @@ class AppTheme {
       brightness: Brightness.dark,
       scaffoldBackgroundColor: AppColorsDark.background,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
+        seedColor: AppColorsDark.primary,
         brightness: Brightness.dark,
-        primary: AppColors.primary,
+        primary: AppColorsDark.primary,
         surface: AppColorsDark.surface,
         error: AppColors.danger,
       ),
@@ -273,7 +275,7 @@ class AppTheme {
         labelLarge: GoogleFonts.inter(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: AppColors.primary,
+          color: AppColorsDark.primary,
         ),
         labelMedium: GoogleFonts.inter(
           fontSize: 12,
@@ -304,7 +306,7 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
+          backgroundColor: AppColorsDark.primary,
           foregroundColor: Colors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
@@ -333,14 +335,14 @@ class AppTheme {
         ),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColorsDark.primary,
         foregroundColor: Colors.white,
         elevation: 2,
         shape: StadiumBorder(),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColorsDark.surface,
-        selectedItemColor: AppColors.primary,
+        selectedItemColor: AppColorsDark.primary,
         unselectedItemColor: AppColorsDark.textTertiary,
         type: BottomNavigationBarType.fixed,
         elevation: 8,
@@ -365,7 +367,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          borderSide: const BorderSide(color: AppColorsDark.primary, width: 1.5),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         hintStyle: GoogleFonts.inter(

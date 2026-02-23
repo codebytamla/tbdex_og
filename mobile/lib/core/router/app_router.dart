@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:ui';
 
 import '../../features/home/home_screen.dart';
 import '../../features/patients/patients_screen.dart';
@@ -9,6 +10,9 @@ import '../../features/assessment/assessment_wizard_screen.dart';
 import '../../features/assessment/assessment_result_screen.dart';
 import '../../features/sync/sync_center_screen.dart';
 import '../models/models.dart';
+import '../data/mock_data.dart';
+import '../theme/app_theme.dart';
+import '../widgets/liquid_glass_nav_bar.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -90,37 +94,183 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Scaffold(
-      body: child,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex(context),
-        onDestinationSelected: (index) {
-          switch (index) {
-            case 0:
-              context.go('/home');
-            case 1:
-              context.go('/patients');
-            case 2:
-              context.go('/activity');
-          }
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home_rounded),
-            label: 'Home',
+      extendBody: true,
+      body: Stack(
+        children: [
+          child,
+          LiquidGlassNavBar(
+            selectedIndex: _currentIndex(context),
+            onDestinationSelected: (index) {
+              switch (index) {
+                case 0:
+                  context.go('/home');
+                case 1:
+                  context.go('/patients');
+                case 2:
+                  context.go('/activity');
+              }
+            },
+            items: const [
+              LiquidGlassNavItem(
+                icon: Icons.home_outlined,
+                selectedIcon: Icons.home_rounded,
+                label: 'Home',
+              ),
+              LiquidGlassNavItem(
+                icon: Icons.people_outline_rounded,
+                selectedIcon: Icons.people_rounded,
+                label: 'Patients',
+              ),
+              LiquidGlassNavItem(
+                icon: Icons.assessment_outlined,
+                selectedIcon: Icons.assessment_rounded,
+                label: 'Activity',
+              ),
+            ],
           ),
-          NavigationDestination(
-            icon: Icon(Icons.people_outline_rounded),
-            selectedIcon: Icon(Icons.people_rounded),
-            label: 'Patients',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.assessment_outlined),
-            selectedIcon: Icon(Icons.assessment_rounded),
-            label: 'Activity',
+          // Floating FAB beside the capsule nav bar
+          Positioned(
+            right: 20,
+            bottom: bottomPadding + 12,
+            child: GestureDetector(
+              onTap: () => _showPatientPicker(context),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(999),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
+                  child: Container(
+                    width: 64,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppColors.primary.withValues(alpha: 0.85),
+                          AppColors.primary.withValues(alpha: 0.95),
+                        ],
+                      ),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: isDark ? 0.12 : 0.3),
+                        width: 0.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.35),
+                          blurRadius: 16,
+                          offset: const Offset(0, 6),
+                          spreadRadius: -2,
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.add_rounded,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showPatientPicker(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        height: MediaQuery.of(ctx).size.height * 0.7,
+        decoration: BoxDecoration(
+          color: isDark ? AppColorsDark.surface : AppColors.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 8),
+            Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: isDark ? AppColorsDark.border : AppColors.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Select Patient',
+                    style: Theme.of(ctx).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 12),
+                  const TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search patients...',
+                      prefixIcon: Icon(Icons.search_rounded),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: MockData.patients.length,
+                itemBuilder: (ctx, index) {
+                  final patient = MockData.patients[index];
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: AppColors.primaryLight,
+                      child: Text(
+                        patient.initials,
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      patient.fullName,
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    subtitle: Text(
+                      '${patient.village ?? ''} · ${patient.mrn ?? ''}',
+                    ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 14,
+                      color: AppColors.textTertiary,
+                    ),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      context.push('/assessment/${patient.id}');
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
