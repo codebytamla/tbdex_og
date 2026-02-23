@@ -19,12 +19,11 @@ class _ActivityScreenState extends State<ActivityScreen> {
   Widget build(BuildContext context) {
     var assessments = MockData.assessmentHistory;
     if (_filter != 'all') {
-      assessments =
-          assessments.where((a) => a.riskLevel == _filter).toList();
+      assessments = assessments.where((a) => a.riskLevel == _filter).toList();
     }
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.appBackground,
       appBar: AppBar(
         title: const Text('Activity'),
         actions: [
@@ -43,13 +42,16 @@ class _ActivityScreenState extends State<ActivityScreen> {
             margin: const EdgeInsets.fromLTRB(20, 8, 20, 0),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: AppColors.primaryLight,
+              color: context.appPrimaryLight,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                Icon(Icons.cloud_upload_rounded,
-                    size: 18, color: AppColors.primary),
+                Icon(
+                  Icons.cloud_upload_rounded,
+                  size: 18,
+                  color: context.appPrimary,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -57,7 +59,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: AppColors.primary,
+                      color: context.appPrimary,
                     ),
                   ),
                 ),
@@ -68,7 +70,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.primary,
+                      color: context.appPrimary,
                       decoration: TextDecoration.underline,
                     ),
                   ),
@@ -132,11 +134,16 @@ class _ActivityScreenState extends State<ActivityScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.assessment_outlined,
-                            size: 48, color: AppColors.textTertiary),
+                        Icon(
+                          Icons.assessment_outlined,
+                          size: 48,
+                          color: context.appTextTertiary,
+                        ),
                         const SizedBox(height: 12),
-                        Text('No assessments found',
-                            style: Theme.of(context).textTheme.bodyMedium),
+                        Text(
+                          'No assessments found',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
                       ],
                     ),
                   )
@@ -171,25 +178,23 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chipColor = color ?? AppColors.primary;
+    final chipColor = color ?? context.appPrimary;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: selected ? chipColor : AppColors.surface,
+          color: selected ? chipColor : context.appSurface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: selected ? chipColor : AppColors.border,
-          ),
+          border: Border.all(color: selected ? chipColor : context.appBorder),
         ),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: selected ? Colors.white : AppColors.textSecondary,
+            color: selected ? Colors.white : context.appTextSecondary,
           ),
         ),
       ),
@@ -260,7 +265,9 @@ class _AssessmentHistoryCard extends StatelessWidget {
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 3),
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: riskColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
@@ -279,8 +286,11 @@ class _AssessmentHistoryCard extends StatelessWidget {
               const SizedBox(height: 10),
               Row(
                 children: [
-                  Icon(Icons.description_outlined,
-                      size: 14, color: AppColors.textTertiary),
+                  Icon(
+                    Icons.description_outlined,
+                    size: 14,
+                    color: context.appTextTertiary,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     assessment.templateName,
@@ -288,8 +298,7 @@ class _AssessmentHistoryCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   if (assessment.referralCreated) ...[
-                    Icon(Icons.send_rounded,
-                        size: 12, color: AppColors.danger),
+                    Icon(Icons.send_rounded, size: 12, color: AppColors.danger),
                     const SizedBox(width: 4),
                     Text(
                       'Referred',
@@ -300,14 +309,17 @@ class _AssessmentHistoryCard extends StatelessWidget {
                       ),
                     ),
                   ] else ...[
-                    Icon(Icons.cloud_upload_outlined,
-                        size: 12, color: AppColors.textTertiary),
+                    Icon(
+                      Icons.cloud_upload_outlined,
+                      size: 12,
+                      color: context.appTextTertiary,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       'Pending sync',
                       style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.textTertiary,
+                        color: context.appTextTertiary,
                       ),
                     ),
                   ],

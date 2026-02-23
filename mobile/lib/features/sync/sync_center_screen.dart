@@ -10,7 +10,7 @@ class SyncCenterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.appBackground,
       appBar: AppBar(
         title: const Text('Sync Center'),
         leading: IconButton(
@@ -34,7 +34,7 @@ class SyncCenterScreen extends StatelessWidget {
                 Expanded(
                   child: _SyncSummaryCard(
                     icon: Icons.cloud_upload_rounded,
-                    iconColor: AppColors.primary,
+                    iconColor: context.appPrimary,
                     title: 'Pending Uploads',
                     detail: '8 assessments\n3 referrals\n2 new patients',
                     badge: '13',
@@ -56,7 +56,7 @@ class SyncCenterScreen extends StatelessWidget {
 
             _SyncSummaryCard(
               icon: Icons.download_rounded,
-              iconColor: AppColors.info,
+              iconColor: context.appPrimary,
               title: 'Download Queue',
               detail: '2 template updates available',
               isFullWidth: true,
@@ -86,8 +86,8 @@ class SyncCenterScreen extends StatelessWidget {
                 label: const Text('Sync Now'),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  disabledBackgroundColor: AppColors.surfaceDim,
-                  disabledForegroundColor: AppColors.textTertiary,
+                  disabledBackgroundColor: context.appSurfaceDim,
+                  disabledForegroundColor: context.appTextTertiary,
                 ),
               ),
             ),
@@ -97,10 +97,7 @@ class SyncCenterScreen extends StatelessWidget {
             Center(
               child: Text(
                 'Connect to the internet to sync',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textTertiary,
-                ),
+                style: TextStyle(fontSize: 12, color: context.appTextTertiary),
               ),
             ),
 
@@ -123,12 +120,12 @@ class _ConnectionBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isConnected ? AppColors.successLight : AppColors.surfaceDim,
+        color: isConnected ? context.appSuccessLight : context.appSurfaceDim,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isConnected
               ? AppColors.success.withValues(alpha: 0.3)
-              : AppColors.border,
+              : context.appBorder,
         ),
       ),
       child: Row(
@@ -137,7 +134,7 @@ class _ConnectionBanner extends StatelessWidget {
             width: 12,
             height: 12,
             decoration: BoxDecoration(
-              color: isConnected ? AppColors.success : AppColors.textTertiary,
+              color: isConnected ? AppColors.success : context.appTextTertiary,
               shape: BoxShape.circle,
             ),
           ),
@@ -149,9 +146,7 @@ class _ConnectionBanner extends StatelessWidget {
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: isConnected
-                  ? AppColors.success
-                  : AppColors.textSecondary,
+              color: isConnected ? AppColors.success : context.appTextSecondary,
             ),
           ),
         ],
@@ -183,9 +178,9 @@ class _SyncSummaryCard extends StatelessWidget {
       width: isFullWidth ? double.infinity : null,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.appSurface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: context.appBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,16 +195,18 @@ class _SyncSummaryCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textSecondary,
+                    color: context.appTextSecondary,
                   ),
                 ),
               ),
               if (badge != null)
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
-                    color: AppColors.primary,
+                    color: context.appPrimary,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -228,7 +225,7 @@ class _SyncSummaryCard extends StatelessWidget {
             detail,
             style: TextStyle(
               fontSize: 13,
-              color: AppColors.textPrimary,
+              color: context.appTextPrimary,
               height: 1.5,
             ),
           ),
@@ -251,9 +248,7 @@ class _SyncHistoryItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
-            event.success
-                ? Icons.check_circle_rounded
-                : Icons.error_rounded,
+            event.success ? Icons.check_circle_rounded : Icons.error_rounded,
             size: 18,
             color: event.success ? AppColors.success : AppColors.danger,
           ),
@@ -268,15 +263,12 @@ class _SyncHistoryItem extends StatelessWidget {
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: event.success
-                        ? AppColors.textPrimary
+                        ? context.appTextPrimary
                         : AppColors.danger,
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  event.time,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
+                Text(event.time, style: Theme.of(context).textTheme.bodySmall),
               ],
             ),
           ),
@@ -288,10 +280,7 @@ class _SyncHistoryItem extends StatelessWidget {
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: const Text(
-                'Retry',
-                style: TextStyle(fontSize: 13),
-              ),
+              child: const Text('Retry', style: TextStyle(fontSize: 13)),
             ),
         ],
       ),

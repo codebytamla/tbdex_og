@@ -227,8 +227,8 @@ class AppShell extends StatelessWidget {
                           : AppColors.primaryLight,
                       child: Text(
                         patient.initials,
-                        style: const TextStyle(
-                          color: AppColors.primary,
+                        style: TextStyle(
+                          color: ctx.appPrimary,
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
                         ),
@@ -241,10 +241,10 @@ class AppShell extends StatelessWidget {
                     subtitle: Text(
                       '${patient.village ?? ''} · ${patient.mrn ?? ''}',
                     ),
-                    trailing: const Icon(
+                    trailing: Icon(
                       Icons.arrow_forward_ios_rounded,
                       size: 14,
-                      color: AppColors.textTertiary,
+                      color: ctx.appTextTertiary,
                     ),
                     onTap: () {
                       Navigator.pop(ctx);

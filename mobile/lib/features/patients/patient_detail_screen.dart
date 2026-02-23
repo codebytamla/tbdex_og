@@ -38,7 +38,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.appBackground,
       appBar: AppBar(
         title: const Text('Patient Details'),
         leading: IconButton(
@@ -53,19 +53,19 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
             margin: const EdgeInsets.fromLTRB(20, 8, 20, 0),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: context.appSurface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: context.appBorder),
             ),
             child: Row(
               children: [
                 CircleAvatar(
                   radius: 28,
-                  backgroundColor: AppColors.primaryLight,
+                  backgroundColor: context.appPrimaryLight,
                   child: Text(
                     _patient.initials,
-                    style: const TextStyle(
-                      color: AppColors.primary,
+                    style: TextStyle(
+                      color: context.appPrimary,
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
                     ),
@@ -107,13 +107,13 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
             decoration: BoxDecoration(
-              color: AppColors.surfaceDim,
+              color: context.appSurfaceDim,
               borderRadius: BorderRadius.circular(10),
             ),
             child: TabBar(
               controller: _tabController,
               indicator: BoxDecoration(
-                color: AppColors.surface,
+                color: context.appSurface,
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
@@ -124,8 +124,8 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 ],
               ),
               indicatorPadding: const EdgeInsets.all(3),
-              labelColor: AppColors.textPrimary,
-              unselectedLabelColor: AppColors.textTertiary,
+              labelColor: context.appTextPrimary,
+              unselectedLabelColor: context.appTextTertiary,
               labelStyle: const TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
@@ -176,7 +176,7 @@ class _StatusDot extends StatelessWidget {
       case 'provisional':
         color = AppColors.warning;
       default:
-        color = AppColors.textTertiary;
+        color = context.appTextTertiary;
     }
 
     return Container(
@@ -191,10 +191,7 @@ class _StatusDot extends StatelessWidget {
           Container(
             width: 6,
             height: 6,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const SizedBox(width: 5),
           Text(
@@ -223,10 +220,7 @@ class _OverviewTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Vitals',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Text('Vitals', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 12),
 
           // Vitals grid
@@ -244,7 +238,7 @@ class _OverviewTab extends StatelessWidget {
               Expanded(
                 child: _VitalCard(
                   icon: Icons.monitor_weight_rounded,
-                  iconColor: AppColors.primary,
+                  iconColor: context.appPrimary,
                   label: 'Weight',
                   value: '58 kg',
                 ),
@@ -277,10 +271,7 @@ class _OverviewTab extends StatelessWidget {
           const SizedBox(height: 24),
 
           // Patient info
-          Text(
-            'Information',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Text('Information', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 12),
           _InfoRow(label: 'Phone', value: patient.phone ?? '—'),
           _InfoRow(label: 'National ID', value: patient.nationalId ?? '—'),
@@ -298,8 +289,7 @@ class _OverviewTab extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: () =>
-                  context.push('/assessment/${patient.id}'),
+              onPressed: () => context.push('/assessment/${patient.id}'),
               icon: const Icon(Icons.assignment_rounded),
               label: const Text('Start New Assessment'),
             ),
@@ -329,9 +319,9 @@ class _VitalCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.appSurface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: context.appBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -344,7 +334,7 @@ class _VitalCard extends StatelessWidget {
                 label,
                 style: TextStyle(
                   fontSize: 12,
-                  color: AppColors.textSecondary,
+                  color: context.appTextSecondary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -353,10 +343,7 @@ class _VitalCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-            ),
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
           ),
         ],
       ),
@@ -378,18 +365,12 @@ class _InfoRow extends StatelessWidget {
         children: [
           SizedBox(
             width: 120,
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
+            child: Text(label, style: Theme.of(context).textTheme.bodySmall),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
           ),
         ],
@@ -417,7 +398,7 @@ class _AssessmentsTab extends StatelessWidget {
             Icon(
               Icons.assignment_outlined,
               size: 48,
-              color: AppColors.textTertiary,
+              color: context.appTextTertiary,
             ),
             const SizedBox(height: 12),
             Text(
@@ -476,8 +457,10 @@ class _AssessmentCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: riskColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -502,11 +485,7 @@ class _AssessmentCard extends StatelessWidget {
               const SizedBox(height: 6),
               Row(
                 children: [
-                  Icon(
-                    Icons.send_rounded,
-                    size: 12,
-                    color: AppColors.danger,
-                  ),
+                  Icon(Icons.send_rounded, size: 12, color: AppColors.danger),
                   const SizedBox(width: 4),
                   Text(
                     'Referral created',
@@ -542,16 +521,9 @@ class _ReferralsTab extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.send_outlined,
-              size: 48,
-              color: AppColors.textTertiary,
-            ),
+            Icon(Icons.send_outlined, size: 48, color: context.appTextTertiary),
             const SizedBox(height: 12),
-            Text(
-              'No referrals',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            Text('No referrals', style: Theme.of(context).textTheme.bodyMedium),
           ],
         ),
       );
@@ -571,8 +543,7 @@ class _ReferralsTab extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.send_rounded,
-                        size: 16, color: AppColors.danger),
+                    Icon(Icons.send_rounded, size: 16, color: AppColors.danger),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -585,9 +556,11 @@ class _ReferralsTab extends StatelessWidget {
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
-                        color: AppColors.warningLight,
+                        color: context.appWarningLight,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(

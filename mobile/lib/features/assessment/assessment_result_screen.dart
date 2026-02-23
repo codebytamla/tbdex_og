@@ -36,7 +36,7 @@ class AssessmentResultScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.appBackground,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -49,7 +49,7 @@ class AssessmentResultScreen extends StatelessWidget {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: AppColors.successLight,
+                  color: context.appSuccessLight,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -158,9 +158,7 @@ class AssessmentResultScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: riskColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: riskColor.withValues(alpha: 0.3),
-                    ),
+                    border: Border.all(color: riskColor.withValues(alpha: 0.3)),
                   ),
                   child: Column(
                     children: [
@@ -171,9 +169,7 @@ class AssessmentResultScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        riskLevel == 'medium'
-                            ? 'Monitor Patient'
-                            : 'Low Risk',
+                        riskLevel == 'medium' ? 'Monitor Patient' : 'Low Risk',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
@@ -201,9 +197,9 @@ class AssessmentResultScreen extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: context.appSurface,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: context.appBorder),
                 ),
                 child: Column(
                   children: [
@@ -211,7 +207,8 @@ class AssessmentResultScreen extends StatelessWidget {
                     const Divider(height: 16),
                     _SummaryRow(
                       label: 'Assessment date',
-                      value: '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+                      value:
+                          '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
                     ),
                     const Divider(height: 16),
                     _SummaryRow(label: 'CHW', value: 'Sarah Kimani'),
@@ -258,9 +255,7 @@ class AssessmentResultScreen extends StatelessWidget {
                     // Navigate back to home
                     context.go('/home');
                   },
-                  child: Text(
-                    isRefer ? 'Save Without Referral' : 'Done',
-                  ),
+                  child: Text(isRefer ? 'Save Without Referral' : 'Done'),
                 ),
               ),
 
@@ -273,14 +268,14 @@ class AssessmentResultScreen extends StatelessWidget {
                   Icon(
                     Icons.cloud_off_rounded,
                     size: 14,
-                    color: AppColors.textTertiary,
+                    color: context.appTextTertiary,
                   ),
                   const SizedBox(width: 6),
                   Text(
                     'This assessment will be synced when connected',
                     style: TextStyle(
                       fontSize: 12,
-                      color: AppColors.textTertiary,
+                      color: context.appTextTertiary,
                     ),
                   ),
                 ],
@@ -336,15 +331,11 @@ class _SummaryRow extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: Text(
-            label,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
+          child: Text(label, style: Theme.of(context).textTheme.bodySmall),
         ),
         valueColor != null
             ? Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: valueColor!.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),

@@ -61,10 +61,10 @@ class _AssessmentWizardScreenState extends State<AssessmentWizardScreen> {
       setState(() => _currentStep++);
     } else {
       // Navigate to result
-      context.push('/assessment-result', extra: {
-        'assessmentData': _data,
-        'patientId': widget.patientId,
-      });
+      context.push(
+        '/assessment-result',
+        extra: {'assessmentData': _data, 'patientId': widget.patientId},
+      );
     }
   }
 
@@ -87,7 +87,7 @@ class _AssessmentWizardScreenState extends State<AssessmentWizardScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.appBackground,
       appBar: AppBar(
         title: const Text('TB Screening'),
         leading: IconButton(
@@ -115,8 +115,8 @@ class _AssessmentWizardScreenState extends State<AssessmentWizardScreen> {
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: (_currentStep + 1) / _totalSteps,
-                backgroundColor: AppColors.surfaceDim,
-                color: AppColors.primary,
+                backgroundColor: context.appSurfaceDim,
+                color: context.appPrimary,
                 minHeight: 4,
               ),
             ),
@@ -155,10 +155,8 @@ class _AssessmentWizardScreenState extends State<AssessmentWizardScreen> {
           Container(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
             decoration: BoxDecoration(
-              color: AppColors.surface,
-              border: Border(
-                top: BorderSide(color: AppColors.border),
-              ),
+              color: context.appSurface,
+              border: Border(top: BorderSide(color: context.appBorder)),
             ),
             child: Row(
               children: [
@@ -225,9 +223,7 @@ class _AssessmentWizardScreenState extends State<AssessmentWizardScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Discard assessment?'),
-        content: const Text(
-          'Your progress will be lost if you exit now.',
-        ),
+        content: const Text('Your progress will be lost if you exit now.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -238,9 +234,7 @@ class _AssessmentWizardScreenState extends State<AssessmentWizardScreen> {
               Navigator.pop(ctx);
               context.pop();
             },
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.danger,
-            ),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
             child: const Text('Discard'),
           ),
         ],
@@ -282,7 +276,7 @@ class _VitalsStep extends StatelessWidget {
           const SizedBox(height: 12),
           _VitalInput(
             icon: Icons.monitor_weight_rounded,
-            iconColor: AppColors.primary,
+            iconColor: context.appPrimary,
             label: 'Weight',
             suffix: 'kg',
             controller: weightController,
@@ -334,9 +328,9 @@ class _VitalInput extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.appSurface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: context.appBorder),
       ),
       child: Row(
         children: [
@@ -357,15 +351,16 @@ class _VitalInput extends StatelessWidget {
                   label,
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color: context.appTextSecondary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 4),
                 TextField(
                   controller: controller,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
@@ -387,7 +382,7 @@ class _VitalInput extends StatelessWidget {
             suffix,
             style: TextStyle(
               fontSize: 16,
-              color: AppColors.textTertiary,
+              color: context.appTextTertiary,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -456,10 +451,10 @@ class _SymptomsStep extends StatelessWidget {
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.primaryLight : AppColors.surface,
+              color: isSelected ? context.appPrimaryLight : context.appSurface,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isSelected ? AppColors.primary : AppColors.border,
+                color: isSelected ? context.appPrimary : context.appBorder,
                 width: isSelected ? 1.5 : 1,
               ),
             ),
@@ -469,16 +464,16 @@ class _SymptomsStep extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? AppColors.primary.withValues(alpha: 0.15)
-                        : AppColors.surfaceDim,
+                        ? context.appPrimary.withValues(alpha: 0.15)
+                        : context.appSurfaceDim,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
                     _getIcon(symptom.icon),
                     size: 20,
                     color: isSelected
-                        ? AppColors.primary
-                        : AppColors.textSecondary,
+                        ? context.appPrimary
+                        : context.appTextSecondary,
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -487,11 +482,12 @@ class _SymptomsStep extends StatelessWidget {
                     symptom.label,
                     style: TextStyle(
                       fontSize: 15,
-                      fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.w400,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
                       color: isSelected
-                          ? AppColors.primary
-                          : AppColors.textPrimary,
+                          ? context.appPrimary
+                          : context.appTextPrimary,
                     ),
                   ),
                 ),
@@ -500,17 +496,21 @@ class _SymptomsStep extends StatelessWidget {
                   width: 24,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: isSelected ? AppColors.primary : Colors.transparent,
+                    color: isSelected ? context.appPrimary : Colors.transparent,
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
-                      color:
-                          isSelected ? AppColors.primary : AppColors.border,
+                      color: isSelected
+                          ? context.appPrimary
+                          : context.appBorder,
                       width: 1.5,
                     ),
                   ),
                   child: isSelected
-                      ? const Icon(Icons.check_rounded,
-                          size: 16, color: Colors.white)
+                      ? const Icon(
+                          Icons.check_rounded,
+                          size: 16,
+                          color: Colors.white,
+                        )
                       : null,
                 ),
               ],
@@ -604,19 +604,16 @@ class _ToggleCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.appSurface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: context.appBorder),
       ),
       child: Row(
         children: [
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
           ),
           const SizedBox(width: 12),
@@ -660,9 +657,9 @@ class _OptionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = isSelected
         ? (isPositive ? AppColors.danger : AppColors.success)
-        : AppColors.textTertiary;
+        : context.appTextTertiary;
     final bgColor = isSelected
-        ? (isPositive ? AppColors.dangerLight : AppColors.successLight)
+        ? (isPositive ? context.appDangerLight : context.appSuccessLight)
         : Colors.transparent;
 
     return GestureDetector(
@@ -672,16 +669,14 @@ class _OptionButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isSelected ? color : AppColors.border,
-          ),
+          border: Border.all(color: isSelected ? color : context.appBorder),
         ),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: isSelected ? color : AppColors.textTertiary,
+            color: isSelected ? color : context.appTextTertiary,
           ),
         ),
       ),
@@ -771,14 +766,12 @@ class _ReviewStep extends StatelessWidget {
 
           // Patient
           _ReviewSection(label: 'Patient', value: patient.fullName),
-          _ReviewSection(
-              label: 'Village', value: patient.village ?? '—'),
+          _ReviewSection(label: 'Village', value: patient.village ?? '—'),
 
           const Divider(height: 24),
 
           // Vitals
-          Text('Vitals',
-              style: Theme.of(context).textTheme.titleMedium),
+          Text('Vitals', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           _ReviewSection(
             label: 'Temperature',
@@ -788,8 +781,7 @@ class _ReviewStep extends StatelessWidget {
           ),
           _ReviewSection(
             label: 'Weight',
-            value:
-                data.weight != null ? '${data.weight} kg' : 'Not recorded',
+            value: data.weight != null ? '${data.weight} kg' : 'Not recorded',
           ),
           _ReviewSection(
             label: 'Heart Rate',
@@ -799,36 +791,43 @@ class _ReviewStep extends StatelessWidget {
           ),
           _ReviewSection(
             label: 'SpO2',
-            value:
-                data.spo2 != null ? '${data.spo2}%' : 'Not recorded',
+            value: data.spo2 != null ? '${data.spo2}%' : 'Not recorded',
           ),
 
           const Divider(height: 24),
 
           // Symptoms
-          Text('Symptoms (${symptoms.length})',
-              style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            'Symptoms (${symptoms.length})',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 8),
           if (symptoms.isEmpty)
-            Text('No symptoms reported',
-                style: Theme.of(context).textTheme.bodySmall),
-          ...symptoms.map((s) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 3),
-                child: Row(
-                  children: [
-                    Icon(Icons.check_circle_rounded,
-                        size: 16, color: AppColors.danger),
-                    const SizedBox(width: 8),
-                    Text(s.label, style: const TextStyle(fontSize: 14)),
-                  ],
-                ),
-              )),
+            Text(
+              'No symptoms reported',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ...symptoms.map(
+            (s) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.check_circle_rounded,
+                    size: 16,
+                    color: AppColors.danger,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(s.label, style: const TextStyle(fontSize: 14)),
+                ],
+              ),
+            ),
+          ),
 
           const Divider(height: 24),
 
           // History
-          Text('History',
-              style: Theme.of(context).textTheme.titleMedium),
+          Text('History', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           _ReviewSection(
             label: 'TB contact',
@@ -844,8 +843,7 @@ class _ReviewStep extends StatelessWidget {
           ),
           if (data.notes.isNotEmpty) ...[
             const SizedBox(height: 8),
-            Text('Notes',
-                style: Theme.of(context).textTheme.bodySmall),
+            Text('Notes', style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(height: 4),
             Text(data.notes, style: const TextStyle(fontSize: 14)),
           ],
@@ -871,18 +869,12 @@ class _ReviewSection extends StatelessWidget {
         children: [
           SizedBox(
             width: 130,
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
+            child: Text(label, style: Theme.of(context).textTheme.bodySmall),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
           ),
         ],

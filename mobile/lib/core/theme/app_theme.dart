@@ -53,6 +53,38 @@ class AppColorsDark {
   static const Color dangerLight = Color(0xFF881337);
 }
 
+extension AppThemeContext on BuildContext {
+  bool get isAppDark => Theme.of(this).brightness == Brightness.dark;
+
+  Color get appPrimary => isAppDark ? AppColorsDark.primary : AppColors.primary;
+  Color get appBackground =>
+      isAppDark ? AppColorsDark.background : AppColors.background;
+  Color get appSurface => isAppDark ? AppColorsDark.surface : AppColors.surface;
+  Color get appSurfaceDim =>
+      isAppDark ? AppColorsDark.surfaceDim : AppColors.surfaceDim;
+  Color get appTextPrimary =>
+      isAppDark ? AppColorsDark.textPrimary : AppColors.textPrimary;
+  Color get appTextSecondary =>
+      isAppDark ? AppColorsDark.textSecondary : AppColors.textSecondary;
+  Color get appTextTertiary =>
+      isAppDark ? AppColorsDark.textTertiary : AppColors.textTertiary;
+  Color get appBorder => isAppDark ? AppColorsDark.border : AppColors.border;
+  Color get appDivider => isAppDark ? AppColorsDark.divider : AppColors.divider;
+
+  Color get appPrimaryLight => isAppDark
+      ? AppColorsDark.primaryLight.withValues(alpha: 0.35)
+      : AppColors.primaryLight;
+  Color get appSuccessLight => isAppDark
+      ? AppColorsDark.successLight.withValues(alpha: 0.32)
+      : AppColors.successLight;
+  Color get appWarningLight => isAppDark
+      ? AppColorsDark.warningLight.withValues(alpha: 0.32)
+      : AppColors.warningLight;
+  Color get appDangerLight => isAppDark
+      ? AppColorsDark.dangerLight.withValues(alpha: 0.3)
+      : AppColors.dangerLight;
+}
+
 class AppTheme {
   static ThemeData get theme {
     return ThemeData(

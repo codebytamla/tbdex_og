@@ -19,21 +19,20 @@ class _PatientsScreenState extends State<PatientsScreen> {
     var patients = MockData.patients;
     if (_searchQuery.isNotEmpty) {
       patients = patients
-          .where((p) =>
-              p.fullName
-                  .toLowerCase()
-                  .contains(_searchQuery.toLowerCase()) ||
-              (p.village ?? '')
-                  .toLowerCase()
-                  .contains(_searchQuery.toLowerCase()) ||
-              (p.mrn ?? '')
-                  .toLowerCase()
-                  .contains(_searchQuery.toLowerCase()))
+          .where(
+            (p) =>
+                p.fullName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                (p.village ?? '').toLowerCase().contains(
+                  _searchQuery.toLowerCase(),
+                ) ||
+                (p.mrn ?? '').toLowerCase().contains(
+                  _searchQuery.toLowerCase(),
+                ),
+          )
           .toList();
     }
     if (_statusFilter != 'all') {
-      patients =
-          patients.where((p) => p.status == _statusFilter).toList();
+      patients = patients.where((p) => p.status == _statusFilter).toList();
     }
     return patients;
   }
@@ -43,10 +42,8 @@ class _PatientsScreenState extends State<PatientsScreen> {
     final patients = _filteredPatients;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Patients'),
-      ),
+      backgroundColor: context.appBackground,
+      appBar: AppBar(title: const Text('Patients')),
       body: Column(
         children: [
           // Search bar
@@ -81,8 +78,7 @@ class _PatientsScreenState extends State<PatientsScreen> {
                 _FilterChip(
                   label: 'Provisional',
                   selected: _statusFilter == 'provisional',
-                  onTap: () =>
-                      setState(() => _statusFilter = 'provisional'),
+                  onTap: () => setState(() => _statusFilter = 'provisional'),
                 ),
               ],
             ),
@@ -110,7 +106,7 @@ class _PatientsScreenState extends State<PatientsScreen> {
                       Icon(
                         Icons.person_add_rounded,
                         size: 16,
-                        color: AppColors.primary,
+                        color: context.appPrimary,
                       ),
                       const SizedBox(width: 5),
                       Text(
@@ -118,7 +114,7 @@ class _PatientsScreenState extends State<PatientsScreen> {
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.primary,
+                          color: context.appPrimary,
                         ),
                       ),
                     ],
@@ -138,7 +134,7 @@ class _PatientsScreenState extends State<PatientsScreen> {
                         Icon(
                           Icons.person_search_rounded,
                           size: 48,
-                          color: AppColors.textTertiary,
+                          color: context.appTextTertiary,
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -156,8 +152,7 @@ class _PatientsScreenState extends State<PatientsScreen> {
                       final patient = patients[index];
                       return _PatientCard(
                         patient: patient,
-                        onTap: () =>
-                            context.push('/patients/${patient.id}'),
+                        onTap: () => context.push('/patients/${patient.id}'),
                       );
                     },
                   ),
@@ -186,10 +181,10 @@ class _FilterChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
-          color: selected ? AppColors.primary : AppColors.surface,
+          color: selected ? context.appPrimary : context.appSurface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: selected ? AppColors.primary : AppColors.border,
+            color: selected ? context.appPrimary : context.appBorder,
           ),
         ),
         child: Text(
@@ -197,7 +192,7 @@ class _FilterChip extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w500,
-            color: selected ? Colors.white : AppColors.textSecondary,
+            color: selected ? Colors.white : context.appTextSecondary,
           ),
         ),
       ),
@@ -223,11 +218,11 @@ class _PatientCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 22,
-                backgroundColor: AppColors.primaryLight,
+                backgroundColor: context.appPrimaryLight,
                 child: Text(
                   patient.initials,
-                  style: const TextStyle(
-                    color: AppColors.primary,
+                  style: TextStyle(
+                    color: context.appPrimary,
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                   ),
@@ -255,10 +250,10 @@ class _PatientCard extends StatelessWidget {
               ),
               _PatientStatusBadge(status: patient.status),
               const SizedBox(width: 8),
-              const Icon(
+              Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 14,
-                color: AppColors.textTertiary,
+                color: context.appTextTertiary,
               ),
             ],
           ),
@@ -281,16 +276,16 @@ class _PatientStatusBadge extends StatelessWidget {
     switch (status) {
       case 'active':
         color = AppColors.success;
-        bgColor = AppColors.successLight;
+        bgColor = context.appSuccessLight;
       case 'provisional':
         color = AppColors.warning;
-        bgColor = AppColors.warningLight;
+        bgColor = context.appWarningLight;
       case 'inactive':
-        color = AppColors.textTertiary;
-        bgColor = AppColors.surfaceDim;
+        color = context.appTextTertiary;
+        bgColor = context.appSurfaceDim;
       default:
-        color = AppColors.textTertiary;
-        bgColor = AppColors.surfaceDim;
+        color = context.appTextTertiary;
+        bgColor = context.appSurfaceDim;
     }
 
     return Container(
@@ -305,10 +300,7 @@ class _PatientStatusBadge extends StatelessWidget {
           Container(
             width: 6,
             height: 6,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const SizedBox(width: 5),
           Text(
