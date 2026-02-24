@@ -39,9 +39,7 @@ class LiquidGlassNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final navBarColor = isDark
-        ? const Color(0xFF222326)
-        : const Color(0xFFF6F7F8);
+    final navBarColor = isDark ? const Color(0xFF222326) : AppColors.surface;
 
     return Positioned(
       left: 24,
@@ -55,9 +53,23 @@ class LiquidGlassNavBar extends StatelessWidget {
           border: Border.all(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.14)
-                : Colors.black.withValues(alpha: 0.08),
-            width: 0.4,
+                : AppColors.border.withValues(alpha: 0.9),
+            width: isDark ? 0.4 : 0.9,
           ),
+          boxShadow: isDark
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(

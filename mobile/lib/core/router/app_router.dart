@@ -193,6 +193,7 @@ class AppShell extends StatelessWidget {
                 duration: const Duration(milliseconds: 200),
                 width: kBottomChromeFabSize,
                 height: kBottomChromeFabSize,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: isDark ? AppColorsDark.primary : AppColors.primary,
                   borderRadius: BorderRadius.circular(999),
