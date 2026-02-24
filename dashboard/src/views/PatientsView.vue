@@ -1922,13 +1922,13 @@ void loadSitesCatalog({ silent: true })
   letter-spacing: 0.03em;
   text-transform: uppercase;
   border-bottom: 1px solid #e8eaed;
-  padding: 0.5rem 1rem;
+  padding: 0.38rem 1rem;
   white-space: nowrap;
 }
 
 :deep(.p-datatable-tbody > tr > td) {
   color: #1a1d23;
-  padding: 0.5rem 1rem;
+  padding: 0.38rem 1rem;
   white-space: nowrap;
   border-bottom: 1px solid #eef0f3;
   border-color: #eef0f3;
