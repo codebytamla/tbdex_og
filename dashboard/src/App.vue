@@ -428,6 +428,11 @@ function toggleSidebarColorMode() {
   font-size: 0.875rem;
 }
 
+:global(.p-datatable .p-datatable-table-container) {
+  max-height: calc(10 * 2.14rem + 2.22rem); /* ~10 rows + 1 header */
+  overflow: auto;
+}
+
 :global(.p-datatable .p-datatable-tbody > tr:not(.p-datatable-row-selected):hover > td) {
   background: #f8f9fb;
 }

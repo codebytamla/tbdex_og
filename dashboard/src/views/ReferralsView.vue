@@ -793,29 +793,6 @@ void loadSitesCatalog()
   letter-spacing: 0.01em;
 }
 
-/* ── Table overrides ───────────────────────────────────── */
-
-:deep(.p-datatable-header-cell) {
-  background: #ffffff;
-  color: #6b7280;
-  font-weight: 600;
-  font-size: 0.78rem;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  border-bottom: 1px solid #e8eaed;
-  padding: 0.38rem 1rem;
-  white-space: nowrap;
-}
-
-:deep(.p-datatable-tbody > tr > td) {
-  color: #1a1d23;
-  padding: 0.38rem 1rem;
-  white-space: nowrap;
-  border-bottom: 1px solid #eef0f3;
-  border-color: #eef0f3;
-  font-size: 0.875rem;
-}
-
 /* ── Expand toggle ─────────────────────────────────────── */
 
 .expand-toggle-btn {
