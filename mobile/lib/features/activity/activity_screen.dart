@@ -63,15 +63,19 @@ class _ActivityScreenState extends State<ActivityScreen> {
                     ),
                   ),
                 ),
-                GestureDetector(
+                InkWell(
                   onTap: () => context.push('/sync'),
-                  child: Text(
-                    'View',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: context.appPrimary,
-                      decoration: TextDecoration.underline,
+                  borderRadius: BorderRadius.circular(4),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    child: Text(
+                      'View',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: context.appPrimary,
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                   ),
                 ),
@@ -180,21 +184,26 @@ class _FilterChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final chipColor = color ?? context.appPrimary;
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: selected ? chipColor : context.appSurface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: selected ? chipColor : context.appBorder),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: selected ? Colors.white : context.appTextSecondary,
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: selected ? chipColor : context.appSurface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: selected ? chipColor : context.appBorder),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: selected ? Colors.white : context.appTextSecondary,
+            ),
           ),
         ),
       ),

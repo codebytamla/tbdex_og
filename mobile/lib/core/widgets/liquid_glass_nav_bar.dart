@@ -4,7 +4,7 @@ import '../theme/app_theme.dart';
 
 /// Shared geometry for bottom chrome (nav bar + FAB) so their spacing stays
 /// consistent when we tune sizes.
-const kBottomChromeBottomInset = 20.0;
+const kBottomChromeBottomInset = 25.0;
 const kBottomChromeFabSize = 56.0;
 const kBottomChromeFabRightInset = 20.0;
 const kBottomChromeNavFabGap = 6.0;
@@ -22,7 +22,7 @@ const _kNavBarHorizontalPadding = 5.0;
 const _kNavBarVerticalPadding = 0.0;
 
 const _kNavBarItemIconSize = 20.0;
-const _kNavBarLabelSize = 9.0;
+const _kNavBarLabelSize = 11.0;
 
 class LiquidGlassNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -49,12 +49,12 @@ class LiquidGlassNavBar extends StatelessWidget {
         height: _kNavBarHeight,
         decoration: BoxDecoration(
           color: navBarColor,
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(28),
           border: Border.all(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.14)
                 : AppColors.border.withValues(alpha: 0.9),
-            width: isDark ? 0.4 : 0.9,
+            width: 1.0,
           ),
           boxShadow: isDark
               ? null
@@ -144,7 +144,7 @@ class _NavBarItem extends StatelessWidget {
           curve: Curves.easeOutCubic,
           decoration: BoxDecoration(
             color: isSelected ? selectedBg : Colors.transparent,
-            borderRadius: BorderRadius.circular(999),
+            borderRadius: BorderRadius.circular(28),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),

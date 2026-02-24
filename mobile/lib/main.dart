@@ -25,14 +25,28 @@ class TbdexApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
-      builder: (_, mode, __) => MaterialApp.router(
-        title: 'TBDex',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.theme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: mode,
-        routerConfig: appRouter,
-      ),
+      builder: (_, mode, __) {
+        final isDark = mode == ThemeMode.dark;
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness:
+                isDark ? Brightness.light : Brightness.dark,
+            statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+            systemNavigationBarColor: Colors.transparent,
+            systemNavigationBarIconBrightness:
+                isDark ? Brightness.light : Brightness.dark,
+          ),
+          child: MaterialApp.router(
+            title: 'TBDex',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.theme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: mode,
+            routerConfig: appRouter,
+          ),
+        );
+      },
     );
   }
 }

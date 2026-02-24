@@ -160,7 +160,7 @@ class AppTheme {
         scrolledUnderElevation: 0.5,
         centerTitle: true,
         titleTextStyle: GoogleFonts.inter(
-          fontSize: 17,
+          fontSize: 18,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
         ),
@@ -204,11 +204,11 @@ class AppTheme {
           ),
         ),
       ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.surface,
@@ -332,7 +332,7 @@ class AppTheme {
         scrolledUnderElevation: 0.5,
         centerTitle: true,
         titleTextStyle: GoogleFonts.inter(
-          fontSize: 17,
+          fontSize: 18,
           fontWeight: FontWeight.w600,
           color: AppColorsDark.textPrimary,
         ),
@@ -376,11 +376,11 @@ class AppTheme {
           ),
         ),
       ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: AppColorsDark.primary,
         foregroundColor: Colors.white,
         elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColorsDark.surface,

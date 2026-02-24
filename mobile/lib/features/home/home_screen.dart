@@ -57,8 +57,8 @@ class HomeScreen extends StatelessWidget {
                                 style: Theme.of(context).textTheme.displaySmall
                                     ?.copyWith(
                                       fontWeight: FontWeight.w800,
-                                      letterSpacing: -1.2,
-                                      height: 1.0,
+                                      letterSpacing: -0.5,
+                                      height: 1.1,
                                     ),
                               ),
                             ],
@@ -255,14 +255,28 @@ class HomeScreen extends StatelessWidget {
                               ?.copyWith(fontWeight: FontWeight.w700),
                         ),
                         if (hasMoreTasks)
-                          GestureDetector(
+                          InkWell(
                             onTap: () => context.go('/activity'),
-                            child: Text(
-                              'See All >',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
+                            borderRadius: BorderRadius.circular(8),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'See All',
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.primary,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right_rounded,
+                                    size: 18,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                ],
                               ),
                             ),
                           ),
