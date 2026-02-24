@@ -67,7 +67,10 @@ class _ActivityScreenState extends State<ActivityScreen> {
                   onTap: () => context.push('/sync'),
                   borderRadius: BorderRadius.circular(4),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
                     child: Text(
                       'View',
                       style: TextStyle(
@@ -139,7 +142,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          Icons.assessment_outlined,
+                          Icons.assessment_rounded,
                           size: 48,
                           color: context.appTextTertiary,
                         ),
@@ -247,7 +250,7 @@ class _AssessmentHistoryCard extends StatelessWidget {
                     child: Icon(
                       assessment.riskLevel == 'high'
                           ? Icons.warning_amber_rounded
-                          : Icons.check_circle_outline_rounded,
+                          : Icons.check_circle_rounded,
                       color: riskColor,
                       size: 18,
                     ),
@@ -296,7 +299,7 @@ class _AssessmentHistoryCard extends StatelessWidget {
               Row(
                 children: [
                   Icon(
-                    Icons.description_outlined,
+                    Icons.description,
                     size: 14,
                     color: context.appTextTertiary,
                   ),
@@ -319,7 +322,7 @@ class _AssessmentHistoryCard extends StatelessWidget {
                     ),
                   ] else ...[
                     Icon(
-                      Icons.cloud_upload_outlined,
+                      Icons.cloud_upload,
                       size: 12,
                       color: context.appTextTertiary,
                     ),

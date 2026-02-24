@@ -395,11 +395,7 @@ class _AssessmentsTab extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.assignment_outlined,
-              size: 48,
-              color: context.appTextTertiary,
-            ),
+            Icon(Icons.assignment, size: 48, color: context.appTextTertiary),
             const SizedBox(height: 12),
             Text(
               'No assessments yet',
@@ -521,7 +517,7 @@ class _ReferralsTab extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.send_outlined, size: 48, color: context.appTextTertiary),
+            Icon(Icons.send_rounded, size: 48, color: context.appTextTertiary),
             const SizedBox(height: 12),
             Text('No referrals', style: Theme.of(context).textTheme.bodyMedium),
           ],

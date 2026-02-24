@@ -727,7 +727,7 @@ class _ReviewStep extends StatelessWidget {
                 Icon(
                   data.shouldRefer
                       ? Icons.warning_amber_rounded
-                      : Icons.check_circle_outline_rounded,
+                      : Icons.check_circle_rounded,
                   color: riskColor,
                   size: 28,
                 ),

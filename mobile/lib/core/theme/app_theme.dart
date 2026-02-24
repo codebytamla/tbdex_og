@@ -3,9 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
   // Base
-  static const Color primary = Color(0xFF2563EB);
-  static const Color primaryLight = Color(0xFFDBEAFE);
-  static const Color primaryDark = Color(0xFF1D4ED8);
+  static const Color primary = Color(0xFF0D9488);
+  static const Color primaryLight = Color(0xFFCCFBF1);
+  static const Color primaryDark = Color(0xFF0F766E);
 
   // Neutral (light)
   static const Color background = Color(0xFFF3F4F6);
@@ -24,8 +24,8 @@ class AppColors {
   static const Color warningLight = Color(0xFFFEF3C7);
   static const Color danger = Color(0xFFE11D48);
   static const Color dangerLight = Color(0xFFFFE4E6);
-  static const Color info = Color(0xFF2563EB);
-  static const Color infoLight = Color(0xFFDBEAFE);
+  static const Color info = Color(0xFF0D9488);
+  static const Color infoLight = Color(0xFFCCFBF1);
 
   // Risk levels
   static const Color riskHigh = Color(0xFFEF4444);
@@ -34,7 +34,7 @@ class AppColors {
 }
 
 class AppColorsDark {
-  static const Color primary = Color(0xFF3B82F6);
+  static const Color primary = Color(0xFF2DD4BF);
 
   // Neutral (dark)
   static const Color background = Color(0xFF131314);
@@ -47,7 +47,7 @@ class AppColorsDark {
   static const Color divider = Color(0xFF2A2B2E);
 
   // Status lights — muted tints for dark backgrounds
-  static const Color primaryLight = Color(0xFF1E3A8A);
+  static const Color primaryLight = Color(0xFF134E4A);
   static const Color successLight = Color(0xFF14532D);
   static const Color warningLight = Color(0xFF78350F);
   static const Color dangerLight = Color(0xFF881337);
@@ -208,9 +208,7 @@ class AppTheme {
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       navigationBarTheme: NavigationBarThemeData(
         height: 72,
@@ -405,9 +403,7 @@ class AppTheme {
         backgroundColor: AppColorsDark.primary,
         foregroundColor: Colors.white,
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       navigationBarTheme: NavigationBarThemeData(
         height: 72,
@@ -419,7 +415,9 @@ class AppTheme {
         iconTheme: WidgetStateProperty.resolveWith((states) {
           final isSelected = states.contains(WidgetState.selected);
           return IconThemeData(
-            color: isSelected ? AppColorsDark.primary : AppColorsDark.textTertiary,
+            color: isSelected
+                ? AppColorsDark.primary
+                : AppColorsDark.textTertiary,
             size: 24,
           );
         }),

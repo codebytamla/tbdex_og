@@ -163,7 +163,7 @@ class AssessmentResultScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       Icon(
-                        Icons.check_circle_outline_rounded,
+                        Icons.check_circle_rounded,
                         color: riskColor,
                         size: 40,
                       ),

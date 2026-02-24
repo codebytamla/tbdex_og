@@ -25,8 +25,9 @@ class HomeScreen extends StatelessWidget {
     final assessmentCount = tasks
         .where((t) => t.status == 'pending' || t.status == 'in_progress')
         .length;
-    final referralCount =
-        MockData.assessmentHistory.where((a) => a.referralCreated).length;
+    final referralCount = MockData.assessmentHistory
+        .where((a) => a.referralCreated)
+        .length;
     final totalPatients = MockData.patients.length;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -52,10 +53,8 @@ class HomeScreen extends StatelessWidget {
                             children: [
                               Text(
                                 _greeting(),
-                                style:
-                                    Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.w500),
                               ),
                               const SizedBox(height: 2),
                               Text(
@@ -80,8 +79,8 @@ class HomeScreen extends StatelessWidget {
                             },
                             icon: Icon(
                               mode == ThemeMode.light
-                                  ? Icons.dark_mode_outlined
-                                  : Icons.light_mode_outlined,
+                                  ? Icons.dark_mode
+                                  : Icons.light_mode,
                               size: 22,
                               color: isDark
                                   ? AppColorsDark.textSecondary
@@ -220,7 +219,7 @@ class HomeScreen extends StatelessWidget {
                           child: _MiniStatCard(
                             label: 'ASSESSMENTS',
                             value: '$assessmentCount',
-                            icon: Icons.description_outlined,
+                            icon: Icons.description,
                             iconColor: const Color(0xFFE05C5C),
                             iconColorDark: const Color(0xFFA07070),
                             iconBg: const Color(0xFFFEECEC),
@@ -235,7 +234,7 @@ class HomeScreen extends StatelessWidget {
                           child: _MiniStatCard(
                             label: 'REFERRALS',
                             value: '$referralCount',
-                            icon: Icons.person_add_outlined,
+                            icon: Icons.person_add,
                             iconColor: const Color(0xFF3AAFA9),
                             iconColorDark: const Color(0xFF5E9E9A),
                             iconBg: const Color(0xFFE6F7F7),
@@ -265,14 +264,19 @@ class HomeScreen extends StatelessWidget {
                             onTap: () => context.go('/activity'),
                             borderRadius: BorderRadius.circular(8),
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 2,
+                              ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
                                     'See All',
                                     style: TextStyle(
-                                      color: Theme.of(context).colorScheme.primary,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
                                       fontWeight: FontWeight.w600,
                                       fontSize: 16,
                                     ),
@@ -280,7 +284,9 @@ class HomeScreen extends StatelessWidget {
                                   Icon(
                                     Icons.chevron_right_rounded,
                                     size: 18,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
                                 ],
                               ),
@@ -365,7 +371,7 @@ class _HeroPatientCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
-              Icons.group_outlined,
+              Icons.group,
               color: isDark ? AppColorsDark.textSecondary : AppColors.primary,
               size: 22,
             ),

@@ -120,11 +120,9 @@ class _AppShellState extends State<AppShell> {
         body: widget.child,
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                color: context.appBorder.withValues(alpha: 0.5),
-                width: 0.5,
-              ),
+            border: Border.all(
+              color: context.appBorder.withValues(alpha: 0.45),
+              width: 1,
             ),
           ),
           child: NavigationBar(
@@ -142,17 +140,17 @@ class _AppShellState extends State<AppShell> {
             },
             destinations: const [
               NavigationDestination(
-                icon: Icon(Icons.home_outlined),
+                icon: Icon(Icons.home_rounded),
                 selectedIcon: Icon(Icons.home_rounded),
                 label: 'Home',
               ),
               NavigationDestination(
-                icon: Icon(Icons.people_outline_rounded),
+                icon: Icon(Icons.people_rounded),
                 selectedIcon: Icon(Icons.people_rounded),
                 label: 'Patients',
               ),
               NavigationDestination(
-                icon: Icon(Icons.assessment_outlined),
+                icon: Icon(Icons.assessment_rounded),
                 selectedIcon: Icon(Icons.assessment_rounded),
                 label: 'Activity',
               ),
@@ -162,9 +160,18 @@ class _AppShellState extends State<AppShell> {
         floatingActionButton: isHome
             ? FloatingActionButton.extended(
                 onPressed: () => _showPatientPicker(context),
+                backgroundColor: const Color(0xFF0D9488),
+                foregroundColor: Colors.white,
                 icon: const Icon(Icons.add_rounded),
                 label: const Text('New Screening'),
                 isExtended: isFabExtended,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(
+                    color: context.appBorder.withValues(alpha: 0.45),
+                    width: 1,
+                  ),
+                ),
               )
             : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,

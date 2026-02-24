@@ -167,11 +167,7 @@ class MockData {
       time: '10 min ago',
       success: true,
     ),
-    SyncEvent(
-      message: 'Templates updated',
-      time: '2 hours ago',
-      success: true,
-    ),
+    SyncEvent(message: 'Templates updated', time: '2 hours ago', success: true),
     SyncEvent(
       message: 'Failed: 1 referral',
       time: '3 hours ago',
