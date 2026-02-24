@@ -67,7 +67,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                     style: TextStyle(
                       color: context.appPrimary,
                       fontWeight: FontWeight.w700,
-                      fontSize: 16,
+                      fontSize: 18,
                     ),
                   ),
                 ),
@@ -79,7 +79,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                       Text(
                         _patient.fullName,
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 22,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -128,11 +128,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
               unselectedLabelColor: context.appTextTertiary,
               labelStyle: const TextStyle(
                 fontWeight: FontWeight.w600,
-                fontSize: 13,
+                fontSize: 15,
               ),
               unselectedLabelStyle: const TextStyle(
                 fontWeight: FontWeight.w500,
-                fontSize: 13,
+                fontSize: 15,
               ),
               dividerColor: Colors.transparent,
               tabs: const [
@@ -197,7 +197,7 @@ class _StatusDot extends StatelessWidget {
           Text(
             status[0].toUpperCase() + status.substring(1),
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: color,
             ),
@@ -333,7 +333,7 @@ class _VitalCard extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 14,
                   color: context.appTextSecondary,
                   fontWeight: FontWeight.w500,
                 ),
@@ -343,7 +343,7 @@ class _VitalCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+            style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
           ),
         ],
       ),
@@ -370,7 +370,7 @@ class _InfoRow extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ),
         ],
@@ -452,7 +452,7 @@ class _AssessmentCard extends StatelessWidget {
                     assessment.templateName,
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: 14,
+                      fontSize: 16,
                     ),
                   ),
                 ),
@@ -468,7 +468,7 @@ class _AssessmentCard extends StatelessWidget {
                   child: Text(
                     assessment.riskLevel.toUpperCase(),
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: riskColor,
                     ),
@@ -490,7 +490,7 @@ class _AssessmentCard extends StatelessWidget {
                   Text(
                     'Referral created',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: AppColors.danger,
                     ),
@@ -550,7 +550,7 @@ class _ReferralsTab extends StatelessWidget {
                         'Referral to Clinic',
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
-                          fontSize: 14,
+                          fontSize: 16,
                         ),
                       ),
                     ),
@@ -566,7 +566,7 @@ class _ReferralsTab extends StatelessWidget {
                       child: Text(
                         'IN PROGRESS',
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: AppColors.warning,
                         ),

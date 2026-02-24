@@ -98,7 +98,7 @@ class HomeScreen extends StatelessWidget {
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
-                              fontSize: 13,
+                              fontSize: 15,
                             ),
                           ),
                         ),
@@ -166,7 +166,7 @@ class HomeScreen extends StatelessWidget {
                                             ? const Color(0xFFD4B97A)
                                             : const Color(0xFF92400E),
                                         fontWeight: FontWeight.w600,
-                                        fontSize: 13,
+                                        fontSize: 15,
                                       ),
                                     ),
                                     const SizedBox(height: 1),
@@ -181,7 +181,7 @@ class HomeScreen extends StatelessWidget {
                                                 0xFF92400E,
                                               ).withValues(alpha: 0.65),
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 11.5,
+                                        fontSize: 13,
                                       ),
                                     ),
                                   ],
@@ -268,7 +268,7 @@ class HomeScreen extends StatelessWidget {
                                     style: TextStyle(
                                       color: Theme.of(context).colorScheme.primary,
                                       fontWeight: FontWeight.w600,
-                                      fontSize: 14,
+                                      fontSize: 16,
                                     ),
                                   ),
                                   Icon(
@@ -377,7 +377,7 @@ class _HeroPatientCard extends StatelessWidget {
                       '$totalPatients',
                       style: TextStyle(
                         color: textPrimary,
-                        fontSize: 42,
+                        fontSize: 48,
                         fontWeight: FontWeight.w700,
                         height: 1,
                       ),
@@ -387,7 +387,7 @@ class _HeroPatientCard extends StatelessWidget {
                       'TOTAL PATIENTS',
                       style: TextStyle(
                         color: textSecondary,
-                        fontSize: 11,
+                        fontSize: 13,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 1.1,
                       ),
@@ -513,7 +513,7 @@ class _MiniStatCard extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              fontSize: 30,
+              fontSize: 34,
               fontWeight: FontWeight.w700,
               color: effectiveColor,
               height: 1,
@@ -523,7 +523,7 @@ class _MiniStatCard extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              fontSize: 10.5,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: isDark
                   ? AppColorsDark.textSecondary
@@ -636,7 +636,7 @@ class _StatusChip extends StatelessWidget {
         style.label,
         style: TextStyle(
           color: style.foreground,
-          fontSize: 11,
+          fontSize: 13,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.3,
         ),

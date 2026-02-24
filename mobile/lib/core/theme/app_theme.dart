@@ -100,55 +100,55 @@ class AppTheme {
       ),
       textTheme: GoogleFonts.interTextTheme().copyWith(
         headlineLarge: GoogleFonts.inter(
-          fontSize: 28,
+          fontSize: 34,
           fontWeight: FontWeight.w700,
           color: AppColors.textPrimary,
           height: 1.2,
         ),
         headlineMedium: GoogleFonts.inter(
-          fontSize: 22,
+          fontSize: 26,
           fontWeight: FontWeight.w700,
           color: AppColors.textPrimary,
           height: 1.3,
         ),
         headlineSmall: GoogleFonts.inter(
-          fontSize: 18,
+          fontSize: 22,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
           height: 1.3,
         ),
         titleLarge: GoogleFonts.inter(
-          fontSize: 16,
+          fontSize: 20,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
         ),
         titleMedium: GoogleFonts.inter(
-          fontSize: 14,
+          fontSize: 17,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
         ),
         bodyLarge: GoogleFonts.inter(
-          fontSize: 16,
+          fontSize: 18,
           fontWeight: FontWeight.w400,
           color: AppColors.textPrimary,
         ),
         bodyMedium: GoogleFonts.inter(
-          fontSize: 14,
+          fontSize: 16,
           fontWeight: FontWeight.w400,
           color: AppColors.textSecondary,
         ),
         bodySmall: GoogleFonts.inter(
-          fontSize: 12,
+          fontSize: 14,
           fontWeight: FontWeight.w400,
           color: AppColors.textTertiary,
         ),
         labelLarge: GoogleFonts.inter(
-          fontSize: 14,
+          fontSize: 16,
           fontWeight: FontWeight.w600,
           color: AppColors.primary,
         ),
         labelMedium: GoogleFonts.inter(
-          fontSize: 12,
+          fontSize: 14,
           fontWeight: FontWeight.w500,
           color: AppColors.textSecondary,
         ),
@@ -160,7 +160,7 @@ class AppTheme {
         scrolledUnderElevation: 0.5,
         centerTitle: true,
         titleTextStyle: GoogleFonts.inter(
-          fontSize: 18,
+          fontSize: 22,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
         ),
@@ -184,7 +184,7 @@ class AppTheme {
             borderRadius: BorderRadius.circular(14),
           ),
           textStyle: GoogleFonts.inter(
-            fontSize: 15,
+            fontSize: 17,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -199,7 +199,7 @@ class AppTheme {
           ),
           side: const BorderSide(color: AppColors.border),
           textStyle: GoogleFonts.inter(
-            fontSize: 15,
+            fontSize: 17,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -217,11 +217,11 @@ class AppTheme {
         type: BottomNavigationBarType.fixed,
         elevation: 8,
         selectedLabelStyle: TextStyle(
-          fontSize: 12,
+          fontSize: 13,
           fontWeight: FontWeight.w600,
         ),
         unselectedLabelStyle: TextStyle(
-          fontSize: 12,
+          fontSize: 13,
           fontWeight: FontWeight.w400,
         ),
       ),
@@ -250,7 +250,7 @@ class AppTheme {
           vertical: 14,
         ),
         hintStyle: GoogleFonts.inter(
-          fontSize: 14,
+          fontSize: 16,
           color: AppColors.textTertiary,
         ),
       ),
@@ -272,55 +272,55 @@ class AppTheme {
       textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme)
           .copyWith(
             headlineLarge: GoogleFonts.inter(
-              fontSize: 28,
+              fontSize: 34,
               fontWeight: FontWeight.w700,
               color: AppColorsDark.textPrimary,
               height: 1.2,
             ),
             headlineMedium: GoogleFonts.inter(
-              fontSize: 22,
+              fontSize: 26,
               fontWeight: FontWeight.w700,
               color: AppColorsDark.textPrimary,
               height: 1.3,
             ),
             headlineSmall: GoogleFonts.inter(
-              fontSize: 18,
+              fontSize: 22,
               fontWeight: FontWeight.w600,
               color: AppColorsDark.textPrimary,
               height: 1.3,
             ),
             titleLarge: GoogleFonts.inter(
-              fontSize: 16,
+              fontSize: 20,
               fontWeight: FontWeight.w600,
               color: AppColorsDark.textPrimary,
             ),
             titleMedium: GoogleFonts.inter(
-              fontSize: 14,
+              fontSize: 17,
               fontWeight: FontWeight.w600,
               color: AppColorsDark.textPrimary,
             ),
             bodyLarge: GoogleFonts.inter(
-              fontSize: 16,
+              fontSize: 18,
               fontWeight: FontWeight.w400,
               color: AppColorsDark.textPrimary,
             ),
             bodyMedium: GoogleFonts.inter(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.w400,
               color: AppColorsDark.textSecondary,
             ),
             bodySmall: GoogleFonts.inter(
-              fontSize: 12,
+              fontSize: 14,
               fontWeight: FontWeight.w400,
               color: AppColorsDark.textTertiary,
             ),
             labelLarge: GoogleFonts.inter(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.w600,
               color: AppColorsDark.primary,
             ),
             labelMedium: GoogleFonts.inter(
-              fontSize: 12,
+              fontSize: 14,
               fontWeight: FontWeight.w500,
               color: AppColorsDark.textSecondary,
             ),
@@ -332,7 +332,7 @@ class AppTheme {
         scrolledUnderElevation: 0.5,
         centerTitle: true,
         titleTextStyle: GoogleFonts.inter(
-          fontSize: 18,
+          fontSize: 22,
           fontWeight: FontWeight.w600,
           color: AppColorsDark.textPrimary,
         ),
@@ -356,7 +356,7 @@ class AppTheme {
             borderRadius: BorderRadius.circular(14),
           ),
           textStyle: GoogleFonts.inter(
-            fontSize: 15,
+            fontSize: 17,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -371,7 +371,7 @@ class AppTheme {
           ),
           side: const BorderSide(color: AppColorsDark.border),
           textStyle: GoogleFonts.inter(
-            fontSize: 15,
+            fontSize: 17,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -389,11 +389,11 @@ class AppTheme {
         type: BottomNavigationBarType.fixed,
         elevation: 8,
         selectedLabelStyle: TextStyle(
-          fontSize: 12,
+          fontSize: 13,
           fontWeight: FontWeight.w600,
         ),
         unselectedLabelStyle: TextStyle(
-          fontSize: 12,
+          fontSize: 13,
           fontWeight: FontWeight.w400,
         ),
       ),
@@ -425,7 +425,7 @@ class AppTheme {
           vertical: 14,
         ),
         hintStyle: GoogleFonts.inter(
-          fontSize: 14,
+          fontSize: 16,
           color: AppColorsDark.textTertiary,
         ),
       ),

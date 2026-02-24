@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -92,6 +91,8 @@ class AppShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+    final navBottom = bottomInset + 8;
 
     return Scaffold(
       extendBody: true,
@@ -154,6 +155,7 @@ class AppShell extends StatelessWidget {
             ),
           ),
           LiquidGlassNavBar(
+            bottom: navBottom,
             selectedIndex: _currentIndex(context),
             onDestinationSelected: (index) {
               switch (index) {
@@ -167,18 +169,18 @@ class AppShell extends StatelessWidget {
             },
             items: const [
               LiquidGlassNavItem(
-                icon: CupertinoIcons.house_fill,
-                selectedIcon: CupertinoIcons.house_fill,
+                icon: Icons.home_outlined,
+                selectedIcon: Icons.home_rounded,
                 label: 'Home',
               ),
               LiquidGlassNavItem(
-                icon: CupertinoIcons.person_2_fill,
-                selectedIcon: CupertinoIcons.person_2_fill,
+                icon: Icons.people_outline_rounded,
+                selectedIcon: Icons.people_rounded,
                 label: 'Patients',
               ),
               LiquidGlassNavItem(
                 icon: Icons.assessment_outlined,
-                selectedIcon: Icons.assessment_outlined,
+                selectedIcon: Icons.assessment_rounded,
                 label: 'Activity',
               ),
             ],
@@ -186,7 +188,7 @@ class AppShell extends StatelessWidget {
           // Floating FAB circle beside the pill nav bar
           Positioned(
             right: kBottomChromeFabRightInset,
-            bottom: kBottomChromeBottomInset,
+            bottom: navBottom,
             child: GestureDetector(
               onTap: () => _showPatientPicker(context),
               child: AnimatedContainer(
@@ -213,7 +215,7 @@ class AppShell extends StatelessWidget {
                   ],
                 ),
                 child: const Icon(
-                  CupertinoIcons.square_pencil,
+                  Icons.edit_outlined,
                   color: Colors.white,
                   size: 24,
                 ),
@@ -284,7 +286,7 @@ class AppShell extends StatelessWidget {
                         style: TextStyle(
                           color: ctx.appPrimary,
                           fontWeight: FontWeight.w600,
-                          fontSize: 13,
+                          fontSize: 15,
                         ),
                       ),
                     ),

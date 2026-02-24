@@ -97,7 +97,7 @@ class SyncCenterScreen extends StatelessWidget {
             Center(
               child: Text(
                 'Connect to the internet to sync',
-                style: TextStyle(fontSize: 12, color: context.appTextTertiary),
+                style: TextStyle(fontSize: 14, color: context.appTextTertiary),
               ),
             ),
 
@@ -144,7 +144,7 @@ class _ConnectionBanner extends StatelessWidget {
                 ? 'Connected via Mobile Data'
                 : 'No Internet Connection',
             style: TextStyle(
-              fontSize: 15,
+              fontSize: 17,
               fontWeight: FontWeight.w600,
               color: isConnected ? AppColors.success : context.appTextSecondary,
             ),
@@ -193,7 +193,7 @@ class _SyncSummaryCard extends StatelessWidget {
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: context.appTextSecondary,
                   ),
@@ -212,7 +212,7 @@ class _SyncSummaryCard extends StatelessWidget {
                   child: Text(
                     badge!,
                     style: const TextStyle(
-                      fontSize: 12,
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
                     ),
@@ -224,7 +224,7 @@ class _SyncSummaryCard extends StatelessWidget {
           Text(
             detail,
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 15,
               color: context.appTextPrimary,
               height: 1.5,
             ),
@@ -260,7 +260,7 @@ class _SyncHistoryItem extends StatelessWidget {
                 Text(
                   event.message,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: event.success
                         ? context.appTextPrimary
@@ -280,7 +280,7 @@ class _SyncHistoryItem extends StatelessWidget {
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: const Text('Retry', style: TextStyle(fontSize: 13)),
+              child: const Text('Retry', style: TextStyle(fontSize: 15)),
             ),
         ],
       ),

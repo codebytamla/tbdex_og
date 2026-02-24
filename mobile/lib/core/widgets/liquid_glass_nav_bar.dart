@@ -22,18 +22,20 @@ const _kNavBarHorizontalPadding = 5.0;
 const _kNavBarVerticalPadding = 0.0;
 
 const _kNavBarItemIconSize = 20.0;
-const _kNavBarLabelSize = 11.0;
+const _kNavBarLabelSize = 13.0;
 
 class LiquidGlassNavBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
   final List<LiquidGlassNavItem> items;
+  final double bottom;
 
   const LiquidGlassNavBar({
     super.key,
     required this.selectedIndex,
     required this.onDestinationSelected,
     required this.items,
+    required this.bottom,
   });
 
   @override
@@ -44,7 +46,7 @@ class LiquidGlassNavBar extends StatelessWidget {
     return Positioned(
       left: 24,
       right: kBottomChromeNavRightInset,
-      bottom: kBottomChromeBottomInset,
+      bottom: bottom,
       child: Container(
         height: _kNavBarHeight,
         decoration: BoxDecoration(

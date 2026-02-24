@@ -97,7 +97,7 @@ class AssessmentResultScreen extends StatelessWidget {
                             'Refer to Clinic',
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 20,
+                              fontSize: 24,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -108,7 +108,7 @@ class AssessmentResultScreen extends StatelessWidget {
                         'This patient shows ${criteria.length} red-flag indicators',
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.9),
-                          fontSize: 14,
+                          fontSize: 16,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -116,7 +116,7 @@ class AssessmentResultScreen extends StatelessWidget {
                         'Criteria met:',
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: 12,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -125,7 +125,7 @@ class AssessmentResultScreen extends StatelessWidget {
                         criteria.join(', '),
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.9),
-                          fontSize: 14,
+                          fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -143,7 +143,7 @@ class AssessmentResultScreen extends StatelessWidget {
                           'Template: Standard TB Screening v2.1',
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.9),
-                            fontSize: 12,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -171,7 +171,7 @@ class AssessmentResultScreen extends StatelessWidget {
                       Text(
                         riskLevel == 'medium' ? 'Monitor Patient' : 'Low Risk',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 24,
                           fontWeight: FontWeight.w700,
                           color: riskColor,
                         ),
@@ -182,7 +182,7 @@ class AssessmentResultScreen extends StatelessWidget {
                             ? 'Schedule a follow-up in 2 weeks'
                             : 'No referral needed at this time',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           color: riskColor.withValues(alpha: 0.8),
                         ),
                       ),
@@ -274,7 +274,7 @@ class AssessmentResultScreen extends StatelessWidget {
                   Text(
                     'This assessment will be synced when connected',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 14,
                       color: context.appTextTertiary,
                     ),
                   ),
@@ -343,7 +343,7 @@ class _SummaryRow extends StatelessWidget {
                 child: Text(
                   value,
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: valueColor,
                   ),
@@ -352,7 +352,7 @@ class _SummaryRow extends StatelessWidget {
             : Text(
                 value,
                 style: const TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
               ),

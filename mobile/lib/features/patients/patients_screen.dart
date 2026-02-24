@@ -112,7 +112,7 @@ class _PatientsScreenState extends State<PatientsScreen> {
                       Text(
                         'Add Patient',
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 15,
                           fontWeight: FontWeight.w600,
                           color: context.appPrimary,
                         ),
@@ -194,7 +194,7 @@ class _FilterChip extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 15,
               fontWeight: FontWeight.w500,
               color: selected ? Colors.white : context.appTextSecondary,
             ),
@@ -229,7 +229,7 @@ class _PatientCard extends StatelessWidget {
                       patient.fullName,
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: 15,
+                        fontSize: 17,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -299,7 +299,7 @@ class _PatientStatusBadge extends StatelessWidget {
             status[0].toUpperCase() + status.substring(1),
             style: TextStyle(
               color: color,
-              fontSize: 11,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
           ),

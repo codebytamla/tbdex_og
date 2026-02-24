@@ -350,7 +350,7 @@ class _VitalInput extends StatelessWidget {
                 Text(
                   label,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 14,
                     color: context.appTextSecondary,
                     fontWeight: FontWeight.w500,
                   ),
@@ -362,7 +362,7 @@ class _VitalInput extends StatelessWidget {
                     decimal: true,
                   ),
                   style: const TextStyle(
-                    fontSize: 20,
+                    fontSize: 24,
                     fontWeight: FontWeight.w700,
                   ),
                   decoration: InputDecoration(
@@ -381,7 +381,7 @@ class _VitalInput extends StatelessWidget {
           Text(
             suffix,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 18,
               color: context.appTextTertiary,
               fontWeight: FontWeight.w500,
             ),
@@ -481,7 +481,7 @@ class _SymptomsStep extends StatelessWidget {
                   child: Text(
                     symptom.label,
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 17,
                       fontWeight: isSelected
                           ? FontWeight.w600
                           : FontWeight.w400,
@@ -613,7 +613,7 @@ class _ToggleCard extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ),
           const SizedBox(width: 12),
@@ -674,7 +674,7 @@ class _OptionButton extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 13,
+            fontSize: 15,
             fontWeight: FontWeight.w600,
             color: isSelected ? color : context.appTextTertiary,
           ),
@@ -739,7 +739,7 @@ class _ReviewStep extends StatelessWidget {
                       Text(
                         'Risk Level: ${data.riskLevel.toUpperCase()}',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: riskColor,
                         ),
@@ -750,7 +750,7 @@ class _ReviewStep extends StatelessWidget {
                             ? 'Referral recommended'
                             : 'No referral needed',
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 15,
                           color: riskColor.withValues(alpha: 0.8),
                           fontWeight: FontWeight.w500,
                         ),
@@ -818,7 +818,7 @@ class _ReviewStep extends StatelessWidget {
                     color: AppColors.danger,
                   ),
                   const SizedBox(width: 8),
-                  Text(s.label, style: const TextStyle(fontSize: 14)),
+                  Text(s.label, style: const TextStyle(fontSize: 16)),
                 ],
               ),
             ),
@@ -845,7 +845,7 @@ class _ReviewStep extends StatelessWidget {
             const SizedBox(height: 8),
             Text('Notes', style: Theme.of(context).textTheme.bodySmall),
             const SizedBox(height: 4),
-            Text(data.notes, style: const TextStyle(fontSize: 14)),
+            Text(data.notes, style: const TextStyle(fontSize: 16)),
           ],
 
           const SizedBox(height: 40),
@@ -874,7 +874,7 @@ class _ReviewSection extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ),
         ],

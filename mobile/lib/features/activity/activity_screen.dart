@@ -57,7 +57,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                   child: Text(
                     '8 assessments pending sync',
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color: context.appPrimary,
                     ),
@@ -71,7 +71,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                     child: Text(
                       'View',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: context.appPrimary,
                         decoration: TextDecoration.underline,
@@ -200,7 +200,7 @@ class _FilterChip extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 14,
               fontWeight: FontWeight.w600,
               color: selected ? Colors.white : context.appTextSecondary,
             ),
@@ -261,7 +261,7 @@ class _AssessmentHistoryCard extends StatelessWidget {
                           assessment.patientName,
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
-                            fontSize: 15,
+                            fontSize: 17,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -284,7 +284,7 @@ class _AssessmentHistoryCard extends StatelessWidget {
                     child: Text(
                       assessment.riskLevel.toUpperCase(),
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: riskColor,
                       ),
@@ -312,7 +312,7 @@ class _AssessmentHistoryCard extends StatelessWidget {
                     Text(
                       'Referred',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: AppColors.danger,
                       ),
@@ -327,7 +327,7 @@ class _AssessmentHistoryCard extends StatelessWidget {
                     Text(
                       'Pending sync',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 14,
                         color: context.appTextTertiary,
                       ),
                     ),
