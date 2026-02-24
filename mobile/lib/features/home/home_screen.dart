@@ -20,8 +20,7 @@ class HomeScreen extends StatelessWidget {
         .length;
     final referralCount = 3;
     final totalPatients = MockData.patients.length;
-    final bottomInset = MediaQuery.of(context).padding.bottom;
-    final listBottomSpacing = bottomInset + 84;
+    const listBottomSpacing = 28.0;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -330,9 +329,6 @@ class _HeroPatientCard extends StatelessWidget {
     final textSecondary = isDark
         ? AppColorsDark.textSecondary
         : AppColors.textSecondary;
-    final iconBg = isDark
-        ? AppColorsDark.primaryLight.withValues(alpha: 0.35)
-        : AppColors.primaryLight;
 
     return Container(
       width: double.infinity,

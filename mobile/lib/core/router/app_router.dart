@@ -11,7 +11,6 @@ import '../../features/sync/sync_center_screen.dart';
 import '../models/models.dart';
 import '../data/mock_data.dart';
 import '../theme/app_theme.dart';
-import '../widgets/liquid_glass_nav_bar.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -90,140 +89,63 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bottomInset = MediaQuery.of(context).padding.bottom;
-    final navBottom = bottomInset + 8;
+    final currentIndex = _currentIndex(context);
 
     return Scaffold(
-      extendBody: true,
-      body: Stack(
-        children: [
-          child,
-          // Top scrim — fades content below the Dynamic Island / status bar.
-          Positioned(
-            left: 0,
-            right: 0,
-            top: 0,
-            height: 120,
-            child: IgnorePointer(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Theme.of(context).scaffoldBackgroundColor,
-                      Theme.of(
-                        context,
-                      ).scaffoldBackgroundColor.withValues(alpha: 0.85),
-                      Theme.of(
-                        context,
-                      ).scaffoldBackgroundColor.withValues(alpha: 0),
-                    ],
-                    stops: const [0.0, 0.45, 1.0],
-                  ),
-                ),
-              ),
+      body: child,
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: context.appBorder,
+              width: 1,
             ),
           ),
-          // Bottom scrim — fades content into the background colour so the
-          // floating nav bar doesn't visually collide with scrolling content.
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: 140,
-            child: IgnorePointer(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Theme.of(
-                        context,
-                      ).scaffoldBackgroundColor.withValues(alpha: 0),
-                      Theme.of(
-                        context,
-                      ).scaffoldBackgroundColor.withValues(alpha: 0.85),
-                      Theme.of(context).scaffoldBackgroundColor,
-                    ],
-                    stops: const [0.0, 0.55, 1.0],
-                  ),
-                ),
-              ),
+        ),
+        child: NavigationBar(
+          selectedIndex: currentIndex,
+          onDestinationSelected: (index) {
+            if (index == 0) {
+              context.go('/home');
+              return;
+            }
+            if (index == 1) {
+              context.go('/patients');
+              return;
+            }
+            context.go('/activity');
+          },
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home_rounded),
+              label: 'Home',
             ),
-          ),
-          LiquidGlassNavBar(
-            bottom: navBottom,
-            selectedIndex: _currentIndex(context),
-            onDestinationSelected: (index) {
-              switch (index) {
-                case 0:
-                  context.go('/home');
-                case 1:
-                  context.go('/patients');
-                case 2:
-                  context.go('/activity');
-              }
-            },
-            items: const [
-              LiquidGlassNavItem(
-                icon: Icons.home_rounded,
-                selectedIcon: Icons.home_rounded,
-                label: 'Home',
-              ),
-              LiquidGlassNavItem(
-                icon: Icons.people_rounded,
-                selectedIcon: Icons.people_rounded,
-                label: 'Patients',
-              ),
-              LiquidGlassNavItem(
-                icon: Icons.assessment_rounded,
-                selectedIcon: Icons.assessment_rounded,
-                label: 'Activity',
-              ),
-            ],
-          ),
-          // Floating FAB circle beside the pill nav bar
-          Positioned(
-            right: kBottomChromeFabRightInset,
-            bottom: navBottom,
-            child: GestureDetector(
-              onTap: () => _showPatientPicker(context),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: kBottomChromeFabSize,
-                height: kBottomChromeFabSize,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: isDark ? AppColorsDark.primary : AppColors.primary,
-                  borderRadius: BorderRadius.circular(999),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.24),
-                    width: 0.4,
-                    strokeAlign: BorderSide.strokeAlignOutside,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color:
-                          (isDark ? AppColorsDark.primary : AppColors.primary)
-                              .withValues(alpha: 0.35),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.edit_outlined,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
+            NavigationDestination(
+              icon: Icon(Icons.people_outline_rounded),
+              selectedIcon: Icon(Icons.people_rounded),
+              label: 'Patients',
             ),
-          ),
-        ],
+            NavigationDestination(
+              icon: Icon(Icons.assessment_outlined),
+              selectedIcon: Icon(Icons.assessment_rounded),
+              label: 'Activity',
+            ),
+          ],
+        ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        tooltip: 'New Assessment',
+        onPressed: () => _showPatientPicker(context),
+        icon: const Icon(Icons.add_rounded),
+        label: const Text(
+          'New Assessment',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 

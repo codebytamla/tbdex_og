@@ -17,10 +17,6 @@ const _kNavBarHeight = 56.0;
 /// Horizontal padding on the items row inside the nav bar pill.
 const _kNavBarHorizontalPadding = 5.0;
 
-/// Vertical padding inside the nav bar pill — controls how tall the
-/// inner selected-item highlight pill is. Smaller = taller active pill.
-const _kNavBarVerticalPadding = 0.5;
-
 const _kNavBarItemIconSize = 20.0;
 const _kNavBarLabelSize = 13.0;
 
