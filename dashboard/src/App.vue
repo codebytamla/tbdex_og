@@ -426,6 +426,7 @@ function toggleSidebarColorMode() {
   border-color: #eef0f3;
   padding: 0.38rem 1rem;
   font-size: 0.875rem;
+  font-weight: 500;
 }
 
 :global(.p-datatable .p-datatable-tbody > tr:not(.p-datatable-row-selected):hover > td) {
