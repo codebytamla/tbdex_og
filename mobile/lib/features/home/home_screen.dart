@@ -16,6 +16,65 @@ class HomeScreen extends StatelessWidget {
     return 'Good evening';
   }
 
+  String _relativeTime(DateTime timestamp) {
+    final diff = DateTime.now().difference(timestamp);
+    if (diff.inMinutes < 1) return 'just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes} min ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    return '${diff.inDays}d ago';
+  }
+
+  IconData _syncIcon({
+    required SyncStatus syncStatus,
+    required bool isLastSyncStale,
+  }) {
+    if (!syncStatus.isOnline) return Icons.cloud_off_rounded;
+    if (syncStatus.failedItemCount > 0) return Icons.sync_problem_rounded;
+    if (syncStatus.pendingTotal > 0 || isLastSyncStale) {
+      return Icons.sync_rounded;
+    }
+    return Icons.check_circle_rounded;
+  }
+
+  String _syncTitle({
+    required SyncStatus syncStatus,
+    required bool isLastSyncStale,
+  }) {
+    if (!syncStatus.isOnline) return 'Offline: sync paused';
+    if (syncStatus.failedItemCount > 0) return 'Sync needs attention';
+    if (syncStatus.pendingUploadCount > 0) return 'Tap to sync data';
+    if (syncStatus.pendingDownloadCount > 0) return 'Updates ready to sync';
+    if (isLastSyncStale) return 'Sync recommended';
+    return 'Synced';
+  }
+
+  String _syncSubtitle({
+    required SyncStatus syncStatus,
+    required bool isLastSyncStale,
+  }) {
+    if (!syncStatus.isOnline) return 'Connect to the internet to sync';
+    if (syncStatus.failedItemCount > 0) {
+      final suffix = syncStatus.failedItemCount == 1 ? '' : 's';
+      return '${syncStatus.failedItemCount} failed item$suffix. Tap to review';
+    }
+    if (syncStatus.pendingTotal > 0) {
+      final segments = <String>[];
+      if (syncStatus.pendingUploadCount > 0) {
+        final suffix = syncStatus.pendingUploadCount == 1 ? '' : 's';
+        segments.add('${syncStatus.pendingUploadCount} upload$suffix');
+      }
+      if (syncStatus.pendingDownloadCount > 0) {
+        final suffix = syncStatus.pendingDownloadCount == 1 ? '' : 's';
+        segments.add('${syncStatus.pendingDownloadCount} download$suffix');
+      }
+      return '${segments.join(' • ')} pending';
+    }
+    if (isLastSyncStale) {
+      return 'Last synced ${_relativeTime(syncStatus.lastSyncedAt)}';
+    }
+    return 'Last synced ${_relativeTime(syncStatus.lastSyncedAt)}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final tasks = MockData.todaysTasks;
@@ -28,8 +87,28 @@ class HomeScreen extends StatelessWidget {
     final referralCount = MockData.assessmentHistory
         .where((a) => a.referralCreated)
         .length;
-    final totalPatients = MockData.patients.length;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final syncStatus = MockData.syncStatus;
+    final isLastSyncStale =
+        DateTime.now().difference(syncStatus.lastSyncedAt) >
+        const Duration(hours: 8);
+    final showSyncCard =
+        !syncStatus.isOnline ||
+        syncStatus.pendingTotal > 0 ||
+        syncStatus.failedItemCount > 0 ||
+        isLastSyncStale;
+    final syncTitle = _syncTitle(
+      syncStatus: syncStatus,
+      isLastSyncStale: isLastSyncStale,
+    );
+    final syncSubtitle = _syncSubtitle(
+      syncStatus: syncStatus,
+      isLastSyncStale: isLastSyncStale,
+    );
+    final syncIcon = _syncIcon(
+      syncStatus: syncStatus,
+      isLastSyncStale: isLastSyncStale,
+    );
 
     return Scaffold(
       backgroundColor: isDark ? AppColorsDark.background : AppColors.background,
@@ -89,19 +168,23 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 2),
-                        // Amber avatar
+                        // User avatar
                         Container(
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFD97706),
+                            color: isDark
+                                ? AppColorsDark.surfaceDim
+                                : const Color(0xFFE9EEF3),
                             borderRadius: BorderRadius.circular(999),
                           ),
                           alignment: Alignment.center,
-                          child: const Text(
+                          child: Text(
                             'TD',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: isDark
+                                  ? AppColorsDark.textSecondary
+                                  : AppColors.textSecondary,
                               fontWeight: FontWeight.w700,
                               fontSize: 15,
                             ),
@@ -113,104 +196,141 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 18),
 
                     // ── Sync Banner ─────────────────────────────────────────
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () => context.push('/sync'),
-                        borderRadius: BorderRadius.circular(14),
-                        child: Ink(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 7,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? AppColorsDark.warningLight.withValues(
-                                    alpha: 0.22,
-                                  )
-                                : const Color(0xFFFFF8EE),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(
+                    if (showSyncCard)
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () => context.push('/sync'),
+                          borderRadius: BorderRadius.circular(14),
+                          child: Ink(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 7,
+                            ),
+                            decoration: BoxDecoration(
                               color: isDark
-                                  ? const Color(
-                                      0xFF92400E,
-                                    ).withValues(alpha: 0.45)
-                                  : const Color(0xFFFFE4B5),
+                                  ? AppColorsDark.surfaceDim
+                                  : AppColors.surfaceDim,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 28,
+                                  height: 28,
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? AppColorsDark.surface
+                                        : const Color(0xFFE9EEF3),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(
+                                    syncIcon,
+                                    color: isDark
+                                        ? AppColorsDark.textSecondary
+                                        : const Color(0xFF556275),
+                                    size: 18,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        syncTitle,
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? AppColorsDark.textPrimary
+                                              : AppColors.textPrimary,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 1),
+                                      Text(
+                                        syncSubtitle,
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? AppColorsDark.textSecondary
+                                              : AppColors.textSecondary,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.chevron_right_rounded,
+                                  color: isDark
+                                      ? AppColorsDark.textSecondary
+                                      : AppColors.textSecondary,
+                                  size: 20,
+                                ),
+                              ],
                             ),
                           ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 28,
-                                height: 28,
-                                decoration: BoxDecoration(
-                                  color: isDark
-                                      ? const Color(
-                                          0xFFD97706,
-                                        ).withValues(alpha: 0.18)
-                                      : const Color(0xFFFFF3CD),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Icon(
-                                  Icons.sync_rounded,
-                                  color: isDark
-                                      ? const Color(0xFFFBBF24)
-                                      : const Color(0xFFD97706),
+                        ),
+                      )
+                    else
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () => context.push('/sync'),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 2,
+                              vertical: 3,
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.check_circle_rounded,
                                   size: 18,
+                                  color: isDark
+                                      ? const Color(0xFF95C0B0)
+                                      : const Color(0xFF3F7A5E),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Tap to sync data',
-                                      style: TextStyle(
-                                        color: isDark
-                                            ? const Color(0xFFD4B97A)
-                                            : const Color(0xFF92400E),
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 15,
-                                      ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Synced ${_relativeTime(syncStatus.lastSyncedAt)}',
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? AppColorsDark.textSecondary
+                                          : AppColors.textSecondary,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14,
                                     ),
-                                    const SizedBox(height: 1),
-                                    Text(
-                                      'Last synced 2 hours ago',
-                                      style: TextStyle(
-                                        color: isDark
-                                            ? const Color(
-                                                0xFFD4B97A,
-                                              ).withValues(alpha: 0.55)
-                                            : const Color(
-                                                0xFF92400E,
-                                              ).withValues(alpha: 0.65),
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                              Icon(
-                                Icons.chevron_right_rounded,
-                                color: isDark
-                                    ? const Color(0xFFC4A060)
-                                    : const Color(0xFFD97706),
-                                size: 20,
-                              ),
-                            ],
+                                Text(
+                                  'Sync center',
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? AppColorsDark.textTertiary
+                                        : AppColors.textTertiary,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.chevron_right_rounded,
+                                  size: 18,
+                                  color: isDark
+                                      ? AppColorsDark.textTertiary
+                                      : AppColors.textTertiary,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
 
-                    const SizedBox(height: 14),
-
-                    // ── Hero: Total Patients ─────────────────────────────────
-                    _HeroPatientCard(totalPatients: totalPatients),
-
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 18),
 
                     // ── Stats Row ────────────────────────────────────────────
                     Row(
@@ -220,12 +340,12 @@ class HomeScreen extends StatelessWidget {
                             label: 'ASSESSMENTS',
                             value: '$assessmentCount',
                             icon: Icons.description,
-                            iconColor: const Color(0xFFE05C5C),
-                            iconColorDark: const Color(0xFFA07070),
-                            iconBg: const Color(0xFFFEECEC),
+                            iconColor: const Color(0xFF5E6B7D),
+                            iconColorDark: const Color(0xFFA5B1C0),
+                            iconBg: const Color(0xFFF1F4F8),
                             iconBgDark: const Color(
-                              0xFF5C2A2A,
-                            ).withValues(alpha: 0.3),
+                              0xFF2B3441,
+                            ).withValues(alpha: 0.45),
                             isDark: isDark,
                           ),
                         ),
@@ -235,12 +355,12 @@ class HomeScreen extends StatelessWidget {
                             label: 'REFERRALS',
                             value: '$referralCount',
                             icon: Icons.person_add,
-                            iconColor: const Color(0xFF3AAFA9),
-                            iconColorDark: const Color(0xFF5E9E9A),
-                            iconBg: const Color(0xFFE6F7F7),
+                            iconColor: const Color(0xFF6D6256),
+                            iconColorDark: const Color(0xFFC2B5A5),
+                            iconBg: const Color(0xFFF5F1EA),
                             iconBgDark: const Color(
-                              0xFF1A3A38,
-                            ).withValues(alpha: 0.4),
+                              0xFF3A3228,
+                            ).withValues(alpha: 0.45),
                             isDark: isDark,
                           ),
                         ),
@@ -325,150 +445,6 @@ class HomeScreen extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Hero Patient Card
-// ─────────────────────────────────────────────────────────────────────────────
-class _HeroPatientCard extends StatelessWidget {
-  final int totalPatients;
-  const _HeroPatientCard({required this.totalPatients});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark ? AppColorsDark.surface : AppColors.surface;
-    final borderColor = isDark ? AppColorsDark.border : AppColors.border;
-    final textPrimary = isDark
-        ? AppColorsDark.textPrimary
-        : AppColors.textPrimary;
-    final textSecondary = isDark
-        ? AppColorsDark.textSecondary
-        : AppColors.textSecondary;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: borderColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.09 : 0.02),
-            blurRadius: 6,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              Icons.group,
-              color: isDark ? AppColorsDark.textSecondary : AppColors.primary,
-              size: 22,
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              // Number + label
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '$totalPatients',
-                      style: TextStyle(
-                        color: textPrimary,
-                        fontSize: 48,
-                        fontWeight: FontWeight.w700,
-                        height: 1,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'TOTAL PATIENTS',
-                      style: TextStyle(
-                        color: textSecondary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.1,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Mini bar chart decoration
-              const _BarChartDecoration(),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Small decorative bar chart
-class _BarChartDecoration extends StatelessWidget {
-  const _BarChartDecoration();
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bars = isDark
-        ? const [
-            _Bar(height: 28, color: Color(0xFFBFA8A8)),
-            _Bar(height: 20, color: Color(0xFF9BBCBA)),
-            _Bar(height: 38, color: Color(0xFFC4A97D)),
-            _Bar(height: 24, color: Color(0xFF9BBCBA)),
-          ]
-        : const [
-            _Bar(height: 28, color: Color(0xFFE05C5C)),
-            _Bar(height: 20, color: Color(0xFF3AAFA9)),
-            _Bar(height: 38, color: Color(0xFFD97706)),
-            _Bar(height: 24, color: Color(0xFF3AAFA9)),
-          ];
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: bars
-          .map(
-            (b) => Padding(
-              padding: const EdgeInsets.only(left: 5),
-              child: Container(
-                width: 10,
-                height: b.height,
-                decoration: BoxDecoration(
-                  color: b.color.withValues(alpha: isDark ? 0.7 : 0.85),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
-          )
-          .toList(),
-    );
-  }
-}
-
-class _Bar {
-  final double height;
-  final Color color;
-  const _Bar({required this.height, required this.color});
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // Mini Stat Card (Assessments / Referrals)
 // ─────────────────────────────────────────────────────────────────────────────
 class _MiniStatCard extends StatelessWidget {
@@ -500,13 +476,10 @@ class _MiniStatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColorsDark.surface : AppColors.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: isDark ? AppColorsDark.border : AppColors.border,
-        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.09 : 0.02),
-            blurRadius: 6,
+            color: Colors.black.withValues(alpha: isDark ? 0.08 : 0.025),
+            blurRadius: 8,
             offset: const Offset(0, 1),
           ),
         ],
@@ -529,7 +502,7 @@ class _MiniStatCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 34,
               fontWeight: FontWeight.w700,
-              color: effectiveColor,
+              color: isDark ? AppColorsDark.textPrimary : AppColors.textPrimary,
               height: 1,
             ),
           ),
@@ -580,13 +553,10 @@ class _TaskRow extends StatelessWidget {
           decoration: BoxDecoration(
             color: isDark ? AppColorsDark.surface : AppColors.surface,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: isDark ? AppColorsDark.border : AppColors.border,
-            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.08 : 0.02),
-                blurRadius: 5,
+                color: Colors.black.withValues(alpha: isDark ? 0.08 : 0.025),
+                blurRadius: 8,
                 offset: const Offset(0, 1),
               ),
             ],
@@ -598,15 +568,17 @@ class _TaskRow extends StatelessWidget {
                 height: 36,
                 decoration: BoxDecoration(
                   color: isDark
-                      ? AppColorsDark.primaryLight.withValues(alpha: 0.35)
-                      : AppColors.primaryLight,
+                      ? AppColorsDark.surfaceDim
+                      : AppColors.surfaceDim,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   _initials(task.patientName),
                   style: TextStyle(
-                    color: isDark ? AppColorsDark.primary : AppColors.primary,
+                    color: isDark
+                        ? AppColorsDark.textSecondary
+                        : AppColors.textSecondary,
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                   ),
@@ -701,31 +673,31 @@ class _StatusStyle {
       case 'pending':
         return _StatusStyle(
           foreground: isDark
-              ? const Color(0xFFFDE68A)
-              : const Color(0xFF92400E),
+              ? const Color(0xFFE6D3A0)
+              : const Color(0xFF7A5A2A),
           background: isDark
-              ? AppColorsDark.warningLight.withValues(alpha: 0.35)
-              : AppColors.warningLight,
+              ? AppColorsDark.warningLight.withValues(alpha: 0.3)
+              : AppColors.warningLight.withValues(alpha: 0.7),
           label: 'PENDING',
         );
       case 'in_progress':
         return _StatusStyle(
           foreground: isDark
-              ? const Color(0xFFBFDBFE)
-              : const Color(0xFF1E40AF),
+              ? const Color(0xFFB6C7E5)
+              : const Color(0xFF3E5A7A),
           background: isDark
-              ? AppColorsDark.primaryLight.withValues(alpha: 0.38)
-              : AppColors.primaryLight,
+              ? const Color(0xFF273246).withValues(alpha: 0.55)
+              : const Color(0xFFEAF0FA),
           label: 'IN PROGRESS',
         );
       case 'done':
         return _StatusStyle(
           foreground: isDark
-              ? const Color(0xFF6EE7B7)
-              : const Color(0xFF065F46),
+              ? const Color(0xFFA7F3D0)
+              : const Color(0xFF115E59),
           background: isDark
-              ? AppColorsDark.successLight.withValues(alpha: 0.35)
-              : AppColors.successLight,
+              ? AppColorsDark.successLight.withValues(alpha: 0.32)
+              : AppColors.successLight.withValues(alpha: 0.75),
           label: 'DONE',
         );
       default:

@@ -7,8 +7,33 @@ import '../../core/data/mock_data.dart';
 class SyncCenterScreen extends StatelessWidget {
   const SyncCenterScreen({super.key});
 
+  String _formatSyncTimestamp(DateTime timestamp) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    final hour12 = timestamp.hour % 12 == 0 ? 12 : timestamp.hour % 12;
+    final minute = timestamp.minute.toString().padLeft(2, '0');
+    final period = timestamp.hour >= 12 ? 'PM' : 'AM';
+    return '${months[timestamp.month - 1]} ${timestamp.day}, ${timestamp.year}\n$hour12:$minute $period';
+  }
+
   @override
   Widget build(BuildContext context) {
+    final syncStatus = MockData.syncStatus;
+    final pendingUploads = syncStatus.pendingUploadCount;
+    final pendingDownloads = syncStatus.pendingDownloadCount;
+
     return Scaffold(
       backgroundColor: context.appBackground,
       appBar: AppBar(
@@ -24,7 +49,7 @@ class SyncCenterScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Connection status
-            _ConnectionBanner(isConnected: false),
+            _ConnectionBanner(isConnected: syncStatus.isOnline),
 
             const SizedBox(height: 20),
 
@@ -36,8 +61,10 @@ class SyncCenterScreen extends StatelessWidget {
                     icon: Icons.cloud_upload_rounded,
                     iconColor: context.appPrimary,
                     title: 'Pending Uploads',
-                    detail: '8 assessments\n3 referrals\n2 new patients',
-                    badge: '13',
+                    detail: pendingUploads == 0
+                        ? 'No items pending upload'
+                        : '$pendingUploads item${pendingUploads == 1 ? '' : 's'} pending upload',
+                    badge: pendingUploads == 0 ? null : '$pendingUploads',
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -46,7 +73,7 @@ class SyncCenterScreen extends StatelessWidget {
                     icon: Icons.check_circle_rounded,
                     iconColor: AppColors.success,
                     title: 'Last Sync',
-                    detail: 'Feb 23, 2026\n8:30 AM',
+                    detail: _formatSyncTimestamp(syncStatus.lastSyncedAt),
                   ),
                 ),
               ],
@@ -58,7 +85,9 @@ class SyncCenterScreen extends StatelessWidget {
               icon: Icons.download_rounded,
               iconColor: context.appPrimary,
               title: 'Download Queue',
-              detail: '2 template updates available',
+              detail: pendingDownloads == 0
+                  ? 'No updates pending download'
+                  : '$pendingDownloads template update${pendingDownloads == 1 ? '' : 's'} available',
               isFullWidth: true,
             ),
 
@@ -81,7 +110,7 @@ class SyncCenterScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: null, // Disabled when offline
+                onPressed: syncStatus.isOnline ? () {} : null,
                 icon: const Icon(Icons.sync_rounded),
                 label: const Text('Sync Now'),
                 style: ElevatedButton.styleFrom(
@@ -96,7 +125,9 @@ class SyncCenterScreen extends StatelessWidget {
 
             Center(
               child: Text(
-                'Connect to the internet to sync',
+                syncStatus.isOnline
+                    ? 'Connected and ready to sync'
+                    : 'Connect to the internet to sync',
                 style: TextStyle(fontSize: 14, color: context.appTextTertiary),
               ),
             ),

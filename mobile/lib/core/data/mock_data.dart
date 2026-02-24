@@ -161,22 +161,25 @@ class MockData {
     SymptomItem(id: 's7', label: 'Blood in sputum', icon: 'droplet'),
   ];
 
+  static final SyncStatus syncStatus = SyncStatus(
+    isOnline: true,
+    pendingUploadCount: 0,
+    pendingDownloadCount: 0,
+    failedItemCount: 0,
+    lastSyncedAt: DateTime.now().subtract(const Duration(minutes: 18)),
+  );
+
   static final List<SyncEvent> syncHistory = [
     SyncEvent(
       message: '5 assessments uploaded',
       time: '10 min ago',
       success: true,
     ),
+    SyncEvent(message: 'Templates updated', time: '2 hours ago', success: true),
     SyncEvent(
-      message: 'Templates updated',
-      time: '2 hours ago',
-      success: true,
-    ),
-    SyncEvent(
-      message: 'Failed: 1 referral',
+      message: '1 referral uploaded',
       time: '3 hours ago',
-      success: false,
-      retryAvailable: true,
+      success: true,
     ),
   ];
 }

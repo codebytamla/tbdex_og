@@ -116,6 +116,24 @@ class SyncEvent {
   });
 }
 
+class SyncStatus {
+  final bool isOnline;
+  final int pendingUploadCount;
+  final int pendingDownloadCount;
+  final int failedItemCount;
+  final DateTime lastSyncedAt;
+
+  const SyncStatus({
+    required this.isOnline,
+    required this.pendingUploadCount,
+    required this.pendingDownloadCount,
+    required this.failedItemCount,
+    required this.lastSyncedAt,
+  });
+
+  int get pendingTotal => pendingUploadCount + pendingDownloadCount;
+}
+
 class AssessmentData {
   double? temperature;
   double? weight;

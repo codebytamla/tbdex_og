@@ -114,6 +114,12 @@ class _AppShellState extends State<AppShell> {
     final isHome = currentIndex == 0;
     final isFabExtended = !_isHomeFabCollapsed;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final navBorderColor = isDark
+        ? Colors.white.withValues(alpha: 0.18)
+        : Colors.white.withValues(alpha: 0.72);
+    final fabBorderColor = isDark
+        ? Colors.white.withValues(alpha: 0.26)
+        : Colors.white.withValues(alpha: 0.58);
 
     return NotificationListener<ScrollNotification>(
       onNotification: isHome ? _onHomeScrollNotification : null,
@@ -121,12 +127,7 @@ class _AppShellState extends State<AppShell> {
         body: widget.child,
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                color: context.appBorder.withValues(alpha: 0.5),
-                width: 1,
-              ),
-            ),
+            border: Border(top: BorderSide(color: navBorderColor, width: 0.7)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: isDark ? 0.28 : 0.12),
@@ -171,21 +172,24 @@ class _AppShellState extends State<AppShell> {
         floatingActionButton: isHome
             ? FloatingActionButton.extended(
                 onPressed: () => _showPatientPicker(context),
-                backgroundColor: const Color(0xFF0D9488),
+                backgroundColor: isDark
+                    ? AppColors.primary
+                    : AppColors.primaryDark,
                 foregroundColor: Colors.white,
                 icon: const Icon(Icons.add_rounded),
                 label: const Text('New Screening'),
                 isExtended: isFabExtended,
-                elevation: 10,
-                highlightElevation: 14,
-                focusElevation: 12,
-                hoverElevation: 12,
+                extendedTextStyle: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.1,
+                ),
+                elevation: 12,
+                highlightElevation: 16,
+                focusElevation: 14,
+                hoverElevation: 14,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(
-                    color: context.appBorder.withValues(alpha: 0.45),
-                    width: 1,
-                  ),
+                  side: BorderSide(color: fabBorderColor, width: 0.8),
                 ),
               )
             : null,
