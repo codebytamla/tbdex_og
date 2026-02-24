@@ -177,8 +177,8 @@ class AppShell extends StatelessWidget {
                 label: 'Patients',
               ),
               LiquidGlassNavItem(
-                icon: CupertinoIcons.square_list,
-                selectedIcon: CupertinoIcons.square_list,
+                icon: Icons.assessment_outlined,
+                selectedIcon: Icons.assessment_outlined,
                 label: 'Activity',
               ),
             ],

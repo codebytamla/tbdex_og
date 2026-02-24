@@ -19,7 +19,7 @@ const _kNavBarHorizontalPadding = 5.0;
 
 /// Vertical padding inside the nav bar pill — controls how tall the
 /// inner selected-item highlight pill is. Smaller = taller active pill.
-const _kNavBarVerticalPadding = 1.0;
+const _kNavBarVerticalPadding = 0.0;
 
 const _kNavBarItemIconSize = 20.0;
 const _kNavBarLabelSize = 9.0;
@@ -109,11 +109,14 @@ class _NavBarItem extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = isDark ? AppColorsDark.primary : AppColors.primary;
 
-    final inactiveColor = isDark
+    final inactiveIconColor = isDark
+        ? Colors.white.withValues(alpha: 0.78)
+        : Colors.black.withValues(alpha: 0.74);
+    final inactiveLabelColor = isDark
         ? Colors.white.withValues(alpha: 0.78)
         : Colors.black.withValues(alpha: 0.44);
-    final iconColor = isSelected ? primaryColor : inactiveColor;
-    final labelColor = isSelected ? primaryColor : inactiveColor;
+    final iconColor = isSelected ? primaryColor : inactiveIconColor;
+    final labelColor = isSelected ? primaryColor : inactiveLabelColor;
 
     final selectedBg = isDark
         ? Colors.white.withValues(alpha: 0.16)
@@ -132,7 +135,7 @@ class _NavBarItem extends StatelessWidget {
             borderRadius: BorderRadius.circular(999),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,

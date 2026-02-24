@@ -12,11 +12,12 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tasks = MockData.todaysTasks;
-    const previewTaskCount = 4;
+    const previewTaskCount = 3;
     final previewTasks = tasks.take(previewTaskCount).toList();
     final hasMoreTasks = tasks.length > previewTaskCount;
-    final assessmentCount =
-        tasks.where((t) => t.status == 'pending' || t.status == 'in_progress').length;
+    final assessmentCount = tasks
+        .where((t) => t.status == 'pending' || t.status == 'in_progress')
+        .length;
     final referralCount = 3;
     final totalPatients = MockData.patients.length;
     final bottomInset = MediaQuery.of(context).padding.bottom;
@@ -53,9 +54,7 @@ class HomeScreen extends StatelessWidget {
                               const SizedBox(height: 2),
                               Text(
                                 'Overview',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall
+                                style: Theme.of(context).textTheme.displaySmall
                                     ?.copyWith(
                                       fontWeight: FontWeight.w800,
                                       letterSpacing: -1.2,
@@ -121,12 +120,16 @@ class HomeScreen extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: isDark
-                                ? AppColorsDark.warningLight.withValues(alpha: 0.22)
+                                ? AppColorsDark.warningLight.withValues(
+                                    alpha: 0.22,
+                                  )
                                 : const Color(0xFFFFF8EE),
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(
                               color: isDark
-                                  ? const Color(0xFF92400E).withValues(alpha: 0.45)
+                                  ? const Color(
+                                      0xFF92400E,
+                                    ).withValues(alpha: 0.45)
                                   : const Color(0xFFFFE4B5),
                             ),
                           ),
@@ -137,7 +140,9 @@ class HomeScreen extends StatelessWidget {
                                 height: 28,
                                 decoration: BoxDecoration(
                                   color: isDark
-                                      ? const Color(0xFFD97706).withValues(alpha: 0.18)
+                                      ? const Color(
+                                          0xFFD97706,
+                                        ).withValues(alpha: 0.18)
                                       : const Color(0xFFFFF3CD),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -154,7 +159,7 @@ class HomeScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                     Text(
+                                    Text(
                                       'Tap to sync data',
                                       style: TextStyle(
                                         color: isDark
@@ -169,10 +174,12 @@ class HomeScreen extends StatelessWidget {
                                       'Last synced 2 hours ago',
                                       style: TextStyle(
                                         color: isDark
-                                            ? const Color(0xFFD4B97A).withValues(
-                                                alpha: 0.55)
-                                            : const Color(0xFF92400E)
-                                                .withValues(alpha: 0.65),
+                                            ? const Color(
+                                                0xFFD4B97A,
+                                              ).withValues(alpha: 0.55)
+                                            : const Color(
+                                                0xFF92400E,
+                                              ).withValues(alpha: 0.65),
                                         fontWeight: FontWeight.w400,
                                         fontSize: 11.5,
                                       ),
@@ -211,7 +218,9 @@ class HomeScreen extends StatelessWidget {
                             iconColor: const Color(0xFFE05C5C),
                             iconColorDark: const Color(0xFFA07070),
                             iconBg: const Color(0xFFFEECEC),
-                            iconBgDark: const Color(0xFF5C2A2A).withValues(alpha: 0.3),
+                            iconBgDark: const Color(
+                              0xFF5C2A2A,
+                            ).withValues(alpha: 0.3),
                             isDark: isDark,
                           ),
                         ),
@@ -224,8 +233,9 @@ class HomeScreen extends StatelessWidget {
                             iconColor: const Color(0xFF3AAFA9),
                             iconColorDark: const Color(0xFF5E9E9A),
                             iconBg: const Color(0xFFE6F7F7),
-                            iconBgDark:
-                                const Color(0xFF1A3A38).withValues(alpha: 0.4),
+                            iconBgDark: const Color(
+                              0xFF1A3A38,
+                            ).withValues(alpha: 0.4),
                             isDark: isDark,
                           ),
                         ),
@@ -241,20 +251,16 @@ class HomeScreen extends StatelessWidget {
                       children: [
                         Text(
                           'Recents',
-                          style:
-                              Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                  ),
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.w700),
                         ),
                         if (hasMoreTasks)
                           GestureDetector(
                             onTap: () => context.go('/activity'),
                             child: Text(
-                              'See All',
+                              'See All >',
                               style: TextStyle(
-                                color: isDark
-                                    ? AppColorsDark.textSecondary
-                                    : AppColors.primary,
+                                color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
                               ),
@@ -304,8 +310,12 @@ class _HeroPatientCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? AppColorsDark.surface : AppColors.surface;
     final borderColor = isDark ? AppColorsDark.border : AppColors.border;
-    final textPrimary = isDark ? AppColorsDark.textPrimary : AppColors.textPrimary;
-    final textSecondary = isDark ? AppColorsDark.textSecondary : AppColors.textSecondary;
+    final textPrimary = isDark
+        ? AppColorsDark.textPrimary
+        : AppColors.textPrimary;
+    final textSecondary = isDark
+        ? AppColorsDark.textSecondary
+        : AppColors.textSecondary;
     final iconBg = isDark
         ? AppColorsDark.primaryLight.withValues(alpha: 0.35)
         : AppColors.primaryLight;
@@ -336,11 +346,7 @@ class _HeroPatientCard extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              Icons.group_outlined,
-              color: Colors.white,
-              size: 22,
-            ),
+            child: Icon(Icons.group_outlined, color: Colors.white, size: 22),
           ),
 
           const SizedBox(height: 20),
@@ -560,18 +566,18 @@ class _TaskRow extends StatelessWidget {
                     Text(
                       task.patientName,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 3),
                     Text(
                       '${task.village} • ${task.time}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: isDark
-                                ? AppColorsDark.textSecondary
-                                : AppColors.textSecondary,
-                          ),
+                        fontWeight: FontWeight.w500,
+                        color: isDark
+                            ? AppColorsDark.textSecondary
+                            : AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
