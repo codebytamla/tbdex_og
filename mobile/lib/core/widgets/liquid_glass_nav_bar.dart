@@ -147,7 +147,7 @@ class _NavBarItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(28),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
