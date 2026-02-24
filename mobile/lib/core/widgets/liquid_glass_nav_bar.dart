@@ -19,7 +19,7 @@ const _kNavBarHorizontalPadding = 5.0;
 
 /// Vertical padding inside the nav bar pill — controls how tall the
 /// inner selected-item highlight pill is. Smaller = taller active pill.
-const _kNavBarVerticalPadding = 0.0;
+const _kNavBarVerticalPadding = 0.5;
 
 const _kNavBarItemIconSize = 20.0;
 const _kNavBarLabelSize = 13.0;
@@ -139,43 +139,40 @@ class _NavBarItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: _kNavBarVerticalPadding),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutCubic,
-          decoration: BoxDecoration(
-            color: isSelected ? selectedBg : Colors.transparent,
-            borderRadius: BorderRadius.circular(28),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 180),
-                  child: Icon(
-                    isSelected ? item.selectedIcon : item.icon,
-                    key: ValueKey(isSelected),
-                    size: _kNavBarItemIconSize,
-                    color: iconColor,
-                  ),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
+        decoration: BoxDecoration(
+          color: isSelected ? selectedBg : Colors.transparent,
+          borderRadius: BorderRadius.circular(28),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 180),
+                child: Icon(
+                  isSelected ? item.selectedIcon : item.icon,
+                  key: ValueKey(isSelected),
+                  size: _kNavBarItemIconSize,
+                  color: iconColor,
                 ),
-                const SizedBox(height: 2),
-                AnimatedDefaultTextStyle(
-                  duration: const Duration(milliseconds: 180),
-                  style: TextStyle(
-                    fontSize: _kNavBarLabelSize,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: labelColor,
-                    letterSpacing: -0.1,
-                  ),
-                  child: Text(item.label, overflow: TextOverflow.ellipsis),
+              ),
+              const SizedBox(height: 2),
+              AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 180),
+                style: TextStyle(
+                  fontSize: _kNavBarLabelSize,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  color: labelColor,
+                  letterSpacing: -0.1,
                 ),
-              ],
-            ),
+                child: Text(item.label, overflow: TextOverflow.ellipsis),
+              ),
+            ],
           ),
         ),
       ),

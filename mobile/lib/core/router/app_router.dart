@@ -169,17 +169,17 @@ class AppShell extends StatelessWidget {
             },
             items: const [
               LiquidGlassNavItem(
-                icon: Icons.home_outlined,
+                icon: Icons.home_rounded,
                 selectedIcon: Icons.home_rounded,
                 label: 'Home',
               ),
               LiquidGlassNavItem(
-                icon: Icons.people_outline_rounded,
+                icon: Icons.people_rounded,
                 selectedIcon: Icons.people_rounded,
                 label: 'Patients',
               ),
               LiquidGlassNavItem(
-                icon: Icons.assessment_outlined,
+                icon: Icons.assessment_rounded,
                 selectedIcon: Icons.assessment_rounded,
                 label: 'Activity',
               ),
