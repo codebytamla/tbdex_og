@@ -9,6 +9,13 @@ import '../../../main.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
+  String _greeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  }
+
   @override
   Widget build(BuildContext context) {
     final tasks = MockData.todaysTasks;
@@ -18,9 +25,9 @@ class HomeScreen extends StatelessWidget {
     final assessmentCount = tasks
         .where((t) => t.status == 'pending' || t.status == 'in_progress')
         .length;
-    final referralCount = 3;
+    final referralCount =
+        MockData.assessmentHistory.where((a) => a.referralCreated).length;
     final totalPatients = MockData.patients.length;
-    const listBottomSpacing = 28.0;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -43,13 +50,13 @@ class HomeScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Text(
-                              //   'Today',
-                              //   style:
-                              //       Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              //             fontWeight: FontWeight.w500,
-                              //           ),
-                              // ),
+                              Text(
+                                _greeting(),
+                                style:
+                                    Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                              ),
                               const SizedBox(height: 2),
                               Text(
                                 'Overview',
@@ -303,7 +310,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            SliverToBoxAdapter(child: SizedBox(height: listBottomSpacing)),
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
       ),
@@ -348,15 +355,20 @@ class _HeroPatientCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Person-group icon in a subtle box
           Container(
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : AppColors.primaryLight,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.group_outlined, color: Colors.white, size: 22),
+            child: Icon(
+              Icons.group_outlined,
+              color: isDark ? AppColorsDark.textSecondary : AppColors.primary,
+              size: 22,
+            ),
           ),
 
           const SizedBox(height: 20),
@@ -542,6 +554,12 @@ class _TaskRow extends StatelessWidget {
 
   const _TaskRow({required this.task, required this.onTap});
 
+  String _initials(String name) {
+    final parts = name.split(' ');
+    if (parts.length >= 2) return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    return name[0].toUpperCase();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -569,6 +587,26 @@ class _TaskRow extends StatelessWidget {
           ),
           child: Row(
             children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppColorsDark.primaryLight.withValues(alpha: 0.35)
+                      : AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  _initials(task.patientName),
+                  style: TextStyle(
+                    color: isDark ? AppColorsDark.primary : AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

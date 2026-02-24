@@ -75,10 +75,18 @@ final GoRouter appRouter = GoRouter(
   ],
 );
 
-class AppShell extends StatelessWidget {
+class AppShell extends StatefulWidget {
   final Widget child;
 
   const AppShell({super.key, required this.child});
+
+  @override
+  State<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends State<AppShell> {
+  static const double _fabCollapseOffset = 24;
+  bool _isHomeFabCollapsed = false;
 
   int _currentIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
@@ -87,65 +95,80 @@ class AppShell extends StatelessWidget {
     return 0;
   }
 
+  bool _onHomeScrollNotification(ScrollNotification notification) {
+    if (notification.metrics.axis != Axis.vertical || notification.depth != 0) {
+      return false;
+    }
+
+    final shouldCollapse = notification.metrics.pixels > _fabCollapseOffset;
+    if (shouldCollapse != _isHomeFabCollapsed) {
+      setState(() => _isHomeFabCollapsed = shouldCollapse);
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentIndex = _currentIndex(context);
+    final isHome = currentIndex == 0;
+    final isFabExtended = !_isHomeFabCollapsed;
 
-    return Scaffold(
-      body: child,
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: context.appBorder,
-              width: 1,
+    return NotificationListener<ScrollNotification>(
+      onNotification: isHome ? _onHomeScrollNotification : null,
+      child: Scaffold(
+        body: widget.child,
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: context.appBorder.withValues(alpha: 0.5),
+                width: 0.5,
+              ),
             ),
           ),
-        ),
-        child: NavigationBar(
-          selectedIndex: currentIndex,
-          onDestinationSelected: (index) {
-            if (index == 0) {
-              context.go('/home');
-              return;
-            }
-            if (index == 1) {
-              context.go('/patients');
-              return;
-            }
-            context.go('/activity');
-          },
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home_rounded),
-              label: 'Home',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.people_outline_rounded),
-              selectedIcon: Icon(Icons.people_rounded),
-              label: 'Patients',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.assessment_outlined),
-              selectedIcon: Icon(Icons.assessment_rounded),
-              label: 'Activity',
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        tooltip: 'New Assessment',
-        onPressed: () => _showPatientPicker(context),
-        icon: const Icon(Icons.add_rounded),
-        label: const Text(
-          'New Assessment',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
+          child: NavigationBar(
+            selectedIndex: currentIndex,
+            onDestinationSelected: (index) {
+              if (index == 0) {
+                context.go('/home');
+                return;
+              }
+              if (index == 1) {
+                context.go('/patients');
+                return;
+              }
+              context.go('/activity');
+            },
+            destinations: const [
+              NavigationDestination(
+                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home_rounded),
+                label: 'Home',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.people_outline_rounded),
+                selectedIcon: Icon(Icons.people_rounded),
+                label: 'Patients',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.assessment_outlined),
+                selectedIcon: Icon(Icons.assessment_rounded),
+                label: 'Activity',
+              ),
+            ],
           ),
         ),
+        floatingActionButton: isHome
+            ? FloatingActionButton.extended(
+                onPressed: () => _showPatientPicker(context),
+                icon: const Icon(Icons.add_rounded),
+                label: const Text('New Screening'),
+                isExtended: isFabExtended,
+              )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
