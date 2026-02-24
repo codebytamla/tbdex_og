@@ -131,7 +131,7 @@ class _NavBarItem extends StatelessWidget {
     final labelColor = isSelected ? primaryColor : inactiveLabelColor;
 
     final selectedBg = isDark
-        ? Colors.white.withValues(alpha: 0.16)
+        ? Colors.white.withValues(alpha: 0.10)
         : Colors.black.withValues(alpha: 0.10);
 
     return GestureDetector(
