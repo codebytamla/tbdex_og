@@ -28,7 +28,7 @@ const hasActions = computed(() => !!slots.actions)
 
 <style scoped>
 .page-section-header {
-  margin-bottom: var(--page-section-margin-bottom, 1.25rem);
+  margin-bottom: var(--page-section-margin-bottom, 1.5rem);
 }
 
 .page-section-top {
@@ -40,10 +40,11 @@ const hasActions = computed(() => !!slots.actions)
 
 .page-section-title {
   margin: 0;
-  font-size: 1.65rem;
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
+  font-family: 'Bricolage Grotesque', 'Avenir Next', 'Segoe UI', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
   color: #0d1117;
 }
 

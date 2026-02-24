@@ -238,7 +238,7 @@ function toggleSidebarColorMode() {
   --page-section-margin-bottom: 1rem;
   --page-content-padding: 2rem;
   --page-content-padding-mobile: 1.25rem;
-  --page-content-top-offset: 1.25rem;
+  --page-content-top-offset: 0.5rem;
   --sidebar-content-inline-offset: 0.75rem;
 
   --radius-sm: 6px;
