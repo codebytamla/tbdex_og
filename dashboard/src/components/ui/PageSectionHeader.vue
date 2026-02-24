@@ -4,11 +4,9 @@ import { computed, useSlots } from 'vue'
 const props = withDefaults(
   defineProps<{
     title: string
-    description?: string
     compact?: boolean
   }>(),
   {
-    description: '',
     compact: false,
   },
 )
@@ -20,10 +18,7 @@ const hasActions = computed(() => !!slots.actions)
 <template>
   <section class="page-section-header" :class="{ compact: props.compact }">
     <div class="page-section-top">
-      <div class="page-section-copy">
-        <h1 class="page-section-title">{{ props.title }}</h1>
-        <p v-if="props.description" class="page-section-description">{{ props.description }}</p>
-      </div>
+      <h1 class="page-section-title">{{ props.title }}</h1>
       <div v-if="hasActions" class="page-section-actions">
         <slot name="actions" />
       </div>
@@ -33,7 +28,7 @@ const hasActions = computed(() => !!slots.actions)
 
 <style scoped>
 .page-section-header {
-  margin-bottom: var(--page-section-margin-bottom, 1.5rem);
+  margin-bottom: var(--page-section-margin-bottom, 1.25rem);
 }
 
 .page-section-top {
@@ -43,28 +38,17 @@ const hasActions = computed(() => !!slots.actions)
   gap: 1rem;
 }
 
-.page-section-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  min-width: 0;
-}
-
 .page-section-title {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.65rem;
   font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: -0.025em;
-  color: #111827;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: #0d1117;
 }
 
-.page-section-description {
-  margin: 0;
-  font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #6b7280;
+.page-section-header.compact .page-section-title {
+  font-size: 1.35rem;
 }
 
 .page-section-actions {
@@ -74,18 +58,6 @@ const hasActions = computed(() => !!slots.actions)
   justify-content: flex-end;
   gap: 0.5rem;
   flex-wrap: wrap;
-}
-
-.page-section-header.compact {
-  margin-bottom: 1rem;
-}
-
-.page-section-header.compact .page-section-title {
-  font-size: 1.25rem;
-}
-
-.page-section-header.compact .page-section-description {
-  font-size: 0.825rem;
 }
 
 @media (max-width: 900px) {
@@ -101,11 +73,7 @@ const hasActions = computed(() => !!slots.actions)
   }
 
   .page-section-title {
-    font-size: 1.25rem;
-  }
-
-  .page-section-description {
-    font-size: 0.825rem;
+    font-size: 1.35rem;
   }
 }
 </style>

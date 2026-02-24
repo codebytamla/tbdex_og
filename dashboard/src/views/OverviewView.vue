@@ -44,7 +44,7 @@ function openSettings() {
 </script>
 
 <template>
-  <PageSectionHeader title="Overview" description="Dashboard summary for account access, sites, and quick actions">
+  <PageSectionHeader title="Overview">
     <template #actions>
       <Button class="top-cta top-cta-primary" @click="openPatients">
         <UserPlus :size="16" :stroke-width="2.25" />

@@ -407,7 +407,7 @@ void loadRoles()
 </script>
 
 <template>
-  <PageSectionHeader title="Roles" description="Manage role definitions and permission assignments">
+  <PageSectionHeader title="Roles">
     <template #actions>
       <PrimaryActionDropdown
         label="New Role"

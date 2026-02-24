@@ -1171,7 +1171,7 @@ void loadSitesCatalog({ silent: true })
 </script>
 
 <template>
-  <PageSectionHeader title="Users" description="Manage users, profile data, roles, sites, and password resets">
+  <PageSectionHeader title="Users">
     <template #actions>
       <PrimaryActionDropdown
         label="New User"

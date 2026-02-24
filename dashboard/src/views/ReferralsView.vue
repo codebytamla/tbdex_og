@@ -411,7 +411,6 @@ void loadSitesCatalog()
 <template>
   <PageSectionHeader
     title="Referrals"
-    description="Track and manage patient referrals across sites"
   >
     <template #actions>
       <PrimaryActionDropdown

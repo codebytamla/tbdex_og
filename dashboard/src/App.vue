@@ -408,7 +408,7 @@ function toggleSidebarColorMode() {
 
 :global(.p-datatable .p-datatable-thead > tr > th),
 :global(.p-datatable .p-datatable-header-cell) {
-  background: #ffffff;
+  background: #f8f9fb;
   color: #6b7280;
   border-color: #f0f1f3;
   border-bottom: 1px solid #e8eaed;

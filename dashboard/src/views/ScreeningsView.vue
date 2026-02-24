@@ -6,7 +6,6 @@ import PageSectionHeader from '@/components/ui/PageSectionHeader.vue'
 <template>
   <PageSectionHeader
     title="Screenings"
-    description="Page temporarily paused for redesign"
   />
 
   <Card>

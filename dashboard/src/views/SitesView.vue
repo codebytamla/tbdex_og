@@ -372,7 +372,7 @@ void loadSites()
 </script>
 
 <template>
-  <PageSectionHeader title="Sites" description="Create and manage active service sites">
+  <PageSectionHeader title="Sites">
     <template #actions>
       <PrimaryActionDropdown
         label="New Site"

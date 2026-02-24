@@ -1204,7 +1204,6 @@ void loadSitesCatalog({ silent: true })
 <template>
   <PageSectionHeader
     title="Patients"
-    description="Patient registration, lookup, updates, site assignment, and deactivation"
   >
     <template #actions>
       <PrimaryActionDropdown

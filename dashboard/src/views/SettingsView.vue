@@ -29,7 +29,7 @@ const selectedSecondaryColor = computed({
 </script>
 
 <template>
-  <PageSectionHeader title="Settings" description="Account and application preferences" />
+  <PageSectionHeader title="Settings" />
 
   <Card>
     <template #content>
