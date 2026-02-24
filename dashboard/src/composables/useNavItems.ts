@@ -3,12 +3,12 @@ import type { Component } from 'vue'
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
-  ArrowRightLeft,
+  Ambulance,
   ClipboardCheck,
   LayoutDashboard,
-  MapPin,
+  MapPinned,
   ShieldCheck,
-  Stethoscope,
+  Ribbon,
   Users,
 } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
@@ -46,7 +46,7 @@ const navDefinitions: NavItemDefinition[] = [
     key: 'referrals',
     label: 'Referrals',
     to: '/referrals',
-    iconComponent: ArrowRightLeft,
+    iconComponent: Ambulance,
     requiredPermissions: referralsReadPermissions,
   },
   {
@@ -60,14 +60,14 @@ const navDefinitions: NavItemDefinition[] = [
     key: 'patients',
     label: 'Patients',
     to: '/patients',
-    iconComponent: Stethoscope,
+    iconComponent: Ribbon,
     requiredPermissions: patientsReadPermissions,
   },
   {
     key: 'sites',
     label: 'Sites',
     to: '/sites',
-    iconComponent: MapPin,
+    iconComponent: MapPinned,
     requiredPermissions: sitesReadPermissions,
   },
   {

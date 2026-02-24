@@ -2,7 +2,7 @@
 import type { MenuItem } from 'primevue/menuitem'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { MoreVertical, Palette, PanelLeftClose, PanelLeftOpen, X } from 'lucide-vue-next'
+import { MoreVertical, PanelLeftClose, PanelLeftOpen } from 'lucide-vue-next'
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import Menu from 'primevue/menu'
@@ -36,27 +36,59 @@ const accountRole = computed(() => {
   return authStore.roles[0] || 'No role assigned'
 })
 const accountInitial = computed(() => accountName.value.trim().charAt(0).toUpperCase() || 'A')
-
-const accountActions = computed<MenuItem[]>(() => [
-  {
-    label: 'Settings',
-    command: async () => {
-      await router.push('/settings')
-    },
-  },
-  {
-    label: 'Logout',
-    command: async () => {
-      authStore.logout()
-      await router.push('/auth/login')
-    },
-  },
-])
-const accountMenu = ref()
-const isThemeExplorerOpen = ref(true)
-const themeExplorerLabel = 'Theme explorer'
 const themePresets = computed(() => themeColors.themePresets)
 const activeThemePresetId = computed(() => themeColors.activeThemePresetId.value)
+
+const accountActions = computed<MenuItem[]>(() => {
+  const activePresetId = activeThemePresetId.value
+  const appearanceActions: MenuItem[] = [
+    {
+      label: `Dark navbar: ${sidebarDarkMode.value ? 'On' : 'Off'}`,
+      class: sidebarDarkMode.value
+        ? 'account-menu-navbar-toggle account-menu-navbar-toggle-active'
+        : 'account-menu-navbar-toggle',
+      command: () => toggleSidebarColorMode(),
+    },
+    {
+      separator: true,
+    },
+    ...themePresets.value.map((themePreset) => ({
+      label: activePresetId === themePreset.id ? `${themePreset.name} (Active)` : themePreset.name,
+      class:
+        activePresetId === themePreset.id
+          ? 'account-menu-theme-item account-menu-theme-item-active'
+          : 'account-menu-theme-item',
+      command: () => setThemePreset(themePreset.id),
+    })),
+  ]
+
+  return [
+    {
+      label: 'Settings',
+      command: async () => {
+        await router.push('/settings')
+      },
+    },
+    {
+      separator: true,
+    },
+    {
+      label: 'Appearance',
+      items: appearanceActions,
+    },
+    {
+      separator: true,
+    },
+    {
+      label: 'Logout',
+      command: async () => {
+        authStore.logout()
+        await router.push('/auth/login')
+      },
+    },
+  ]
+})
+const accountMenu = ref()
 const isNavbarDark = computed(() => sidebarDarkMode.value)
 
 onMounted(() => {
@@ -151,77 +183,13 @@ function toggleSidebarColorMode() {
           <Avatar v-if="sidebarCollapsed" :label="accountInitial" shape="circle" class="account-menu-avatar" />
           <MoreVertical v-else :size="24" :stroke-width="2.45" />
         </Button>
-        <Menu ref="accountMenu" :model="accountActions" popup />
+        <Menu ref="accountMenu" :model="accountActions" popup class="account-menu" />
       </div>
     </aside>
 
     <main class="content">
       <RouterView />
     </main>
-
-    <div class="theme-explorer" :aria-label="themeExplorerLabel">
-      <section v-if="isThemeExplorerOpen" class="theme-explorer-panel">
-        <header class="theme-explorer-header">
-          <div>
-            <p class="theme-explorer-title">Theme Explorer</p>
-            <p class="theme-explorer-subtitle">Select a modern aesthetic</p>
-          </div>
-          <button
-            type="button"
-            class="theme-explorer-close"
-            aria-label="Close theme explorer"
-            title="Close theme explorer"
-            @click="isThemeExplorerOpen = false"
-          >
-            <X :size="16" :stroke-width="2.1" />
-          </button>
-        </header>
-
-        <button
-          type="button"
-          class="theme-explorer-navbar-toggle"
-          :class="{
-            'theme-explorer-navbar-toggle-active': isNavbarDark,
-          }"
-          :aria-pressed="isNavbarDark"
-          @click="toggleSidebarColorMode"
-        >
-          <span class="theme-explorer-navbar-copy">
-            <span class="theme-explorer-navbar-title">Dark navbar</span>
-            <span class="theme-explorer-navbar-subtitle">Only affects sidebar colors</span>
-          </span>
-          <span class="theme-explorer-navbar-state">{{ sidebarDarkMode ? 'On' : 'Off' }}</span>
-        </button>
-
-        <div class="theme-explorer-list">
-          <button
-            v-for="themePreset in themePresets"
-            :key="themePreset.id"
-            type="button"
-            class="theme-explorer-option"
-            :class="{ 'theme-explorer-option-active': activeThemePresetId === themePreset.id }"
-            @click="setThemePreset(themePreset.id)"
-          >
-            <span class="theme-explorer-option-name">{{ themePreset.name }}</span>
-            <span class="theme-explorer-option-description">{{ themePreset.description }}</span>
-          </button>
-        </div>
-      </section>
-
-      <button
-        v-else
-        type="button"
-        class="theme-explorer-trigger"
-        aria-label="Open theme explorer"
-        title="Open theme explorer"
-        @click="isThemeExplorerOpen = true"
-      >
-        <span class="theme-explorer-trigger-icon">
-          <Palette :size="16" :stroke-width="2.2" />
-        </span>
-        <span>Themes ({{ themePresets.length }})</span>
-      </button>
-    </div>
   </div>
 </template>
 
@@ -272,30 +240,6 @@ function toggleSidebarColorMode() {
 
   --account-panel-bg: color-mix(in srgb, var(--p-surface-0) 54%, transparent);
   --account-panel-border: color-mix(in srgb, var(--p-surface-500) 36%, transparent);
-
-  --theme-explorer-panel-bg: var(--p-surface-0);
-  --theme-explorer-panel-border: color-mix(in srgb, var(--p-surface-500) 32%, transparent);
-  --theme-explorer-panel-shadow: var(--shadow-lg);
-  --theme-explorer-title: var(--p-surface-900);
-  --theme-explorer-subtitle: var(--p-surface-600);
-  --theme-explorer-close: var(--p-surface-500);
-  --theme-explorer-close-hover: var(--p-surface-800);
-  --theme-explorer-close-hover-bg: color-mix(in srgb, var(--p-surface-300) 40%, transparent);
-  --theme-explorer-option-bg-hover: color-mix(in srgb, var(--p-surface-300) 24%, transparent);
-  --theme-explorer-option-title: var(--p-surface-800);
-  --theme-explorer-option-description: var(--p-surface-600);
-  --theme-explorer-option-active-bg: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
-  --theme-explorer-option-active-border: color-mix(in srgb, var(--p-primary-color) 34%, transparent);
-  --theme-explorer-option-active-title: var(--p-primary-700);
-  --theme-explorer-option-active-description: color-mix(in srgb, var(--p-primary-700) 85%, var(--p-surface-700));
-  --theme-explorer-trigger-bg: var(--p-surface-0);
-  --theme-explorer-trigger-border: color-mix(in srgb, var(--p-surface-500) 32%, transparent);
-  --theme-explorer-trigger-text: var(--p-surface-700);
-  --theme-explorer-trigger-text-hover: var(--p-primary-700);
-  --theme-explorer-trigger-icon-bg: color-mix(in srgb, var(--p-surface-300) 42%, transparent);
-  --theme-explorer-trigger-icon-hover-bg: color-mix(in srgb, var(--p-primary-color) 20%, transparent);
-  --theme-explorer-trigger-shadow: var(--shadow-md);
-  --theme-explorer-trigger-shadow-hover: var(--shadow-lg);
 }
 
 :global(body) {
@@ -400,6 +344,22 @@ function toggleSidebarColorMode() {
 
 :global(.p-menu .p-menu-item-link:hover) {
   background: #f4f5f7;
+}
+
+:global(.p-menu.account-menu .p-menu-submenu-label) {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--p-surface-500);
+  padding: 0.55rem 0.75rem 0.35rem;
+}
+
+:global(.p-menu.account-menu .account-menu-navbar-toggle-active .p-menu-item-link),
+:global(.p-menu.account-menu .account-menu-theme-item-active .p-menu-item-link) {
+  color: var(--p-primary-700);
+  background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
+  font-weight: 600;
 }
 
 :global(#app) {
@@ -1106,249 +1066,6 @@ function toggleSidebarColorMode() {
   background: var(--content-bg);
 }
 
-.theme-explorer {
-  position: fixed;
-  right: clamp(0.85rem, 2vw, 1.5rem);
-  bottom: clamp(0.85rem, 2vw, 1.5rem);
-  z-index: 1100;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.theme-explorer-panel {
-  width: min(18rem, calc(100vw - 1.7rem));
-  max-height: min(80vh, 31rem);
-  border-radius: 1rem;
-  border: 1px solid var(--theme-explorer-panel-border);
-  box-shadow: var(--theme-explorer-panel-shadow);
-  background: var(--theme-explorer-panel-bg);
-  padding: 0.5rem;
-  display: grid;
-  gap: 0.28rem;
-  transform-origin: bottom right;
-  animation: theme-explorer-in 180ms ease-out;
-}
-
-.theme-explorer-header {
-  padding: 0.35rem 0.35rem 0.45rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 0.8rem;
-}
-
-.theme-explorer-title {
-  margin: 0;
-  font-size: 0.67rem;
-  font-weight: 800;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--theme-explorer-title);
-}
-
-.theme-explorer-subtitle {
-  margin: 0.25rem 0 0;
-  font-size: 0.64rem;
-  line-height: 1.3;
-  color: var(--theme-explorer-subtitle);
-}
-
-.theme-explorer-close {
-  width: 1.9rem;
-  height: 1.9rem;
-  border: none;
-  border-radius: 0.65rem;
-  background: transparent;
-  color: var(--theme-explorer-close);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  cursor: pointer;
-  transition: color 0.15s ease, background-color 0.15s ease;
-}
-
-.theme-explorer-close:hover {
-  color: var(--theme-explorer-close-hover);
-  background: var(--theme-explorer-close-hover-bg);
-}
-
-.theme-explorer-navbar-toggle {
-  margin: 0 0.35rem 0.42rem;
-  border: 1px solid var(--theme-explorer-trigger-border);
-  background: color-mix(in srgb, var(--theme-explorer-trigger-bg) 90%, transparent);
-  border-radius: 0.85rem;
-  padding: 0.46rem 0.58rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-  cursor: pointer;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
-}
-
-.theme-explorer-navbar-toggle:hover {
-  border-color: color-mix(in srgb, var(--p-primary-color) 30%, var(--theme-explorer-trigger-border));
-  background: color-mix(in srgb, var(--theme-explorer-option-bg-hover) 72%, transparent);
-}
-
-.theme-explorer-navbar-toggle:disabled {
-  opacity: 0.9;
-  cursor: not-allowed;
-}
-
-.theme-explorer-navbar-toggle-locked:hover {
-  border-color: var(--theme-explorer-trigger-border);
-  background: color-mix(in srgb, var(--theme-explorer-trigger-bg) 90%, transparent);
-}
-
-.theme-explorer-navbar-copy {
-  min-width: 0;
-  display: grid;
-  gap: 0.1rem;
-  text-align: left;
-}
-
-.theme-explorer-navbar-title {
-  font-size: 0.73rem;
-  font-weight: 700;
-  color: var(--theme-explorer-option-title);
-  line-height: 1.2;
-}
-
-.theme-explorer-navbar-subtitle {
-  font-size: 0.63rem;
-  color: var(--theme-explorer-option-description);
-  line-height: 1.25;
-}
-
-.theme-explorer-navbar-state {
-  flex: 0 0 auto;
-  min-width: 2.15rem;
-  text-align: center;
-  font-size: 0.69rem;
-  font-weight: 700;
-  color: var(--theme-explorer-trigger-text);
-  border: 1px solid color-mix(in srgb, var(--p-surface-500) 30%, transparent);
-  border-radius: 999px;
-  padding: 0.2rem 0.48rem;
-  background: color-mix(in srgb, var(--p-surface-200) 36%, transparent);
-}
-
-.theme-explorer-navbar-toggle-active {
-  border-color: color-mix(in srgb, var(--p-primary-color) 40%, transparent);
-  background: color-mix(in srgb, var(--p-primary-color) 14%, transparent);
-}
-
-.theme-explorer-navbar-toggle-active .theme-explorer-navbar-state {
-  color: var(--p-primary-700);
-  border-color: color-mix(in srgb, var(--p-primary-color) 42%, transparent);
-  background: color-mix(in srgb, var(--p-primary-color) 18%, transparent);
-}
-
-.theme-explorer-list {
-  max-height: min(65vh, 25rem);
-  overflow-y: auto;
-  display: grid;
-  gap: 0.28rem;
-  padding: 0 0.2rem 0.2rem;
-}
-
-.theme-explorer-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.theme-explorer-list::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--p-surface-500) 38%, transparent);
-  border-radius: 999px;
-}
-
-.theme-explorer-option {
-  border-radius: 0.8rem;
-  border: 1px solid transparent;
-  background: transparent;
-  padding: 0.6rem 0.68rem;
-  text-align: left;
-  display: grid;
-  gap: 0.25rem;
-  cursor: pointer;
-  transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
-}
-
-.theme-explorer-option:hover {
-  background: var(--theme-explorer-option-bg-hover);
-}
-
-.theme-explorer-option-name {
-  font-size: 0.79rem;
-  font-weight: 700;
-  color: var(--theme-explorer-option-title);
-  letter-spacing: -0.003em;
-}
-
-.theme-explorer-option-description {
-  font-size: 0.66rem;
-  line-height: 1.35;
-  color: var(--theme-explorer-option-description);
-}
-
-.theme-explorer-option-active {
-  background: var(--theme-explorer-option-active-bg);
-  border-color: var(--theme-explorer-option-active-border);
-}
-
-.theme-explorer-option-active .theme-explorer-option-name {
-  color: var(--theme-explorer-option-active-title);
-}
-
-.theme-explorer-option-active .theme-explorer-option-description {
-  color: var(--theme-explorer-option-active-description);
-}
-
-.theme-explorer-trigger {
-  border: 1px solid var(--theme-explorer-trigger-border);
-  border-radius: var(--radius-full);
-  box-shadow: var(--theme-explorer-trigger-shadow);
-  background: var(--theme-explorer-trigger-bg);
-  color: var(--theme-explorer-trigger-text);
-  min-height: 2.85rem;
-  padding: 0.35rem 0.9rem 0.35rem 0.55rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: -0.005em;
-  cursor: pointer;
-  transition: color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.theme-explorer-trigger:hover {
-  color: var(--theme-explorer-trigger-text-hover);
-  box-shadow: var(--theme-explorer-trigger-shadow-hover);
-}
-
-.theme-explorer-trigger:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--p-primary-color) 34%, transparent);
-  outline-offset: 2px;
-}
-
-.theme-explorer-trigger-icon {
-  width: 1.7rem;
-  height: 1.7rem;
-  border-radius: var(--radius-full);
-  background: var(--theme-explorer-trigger-icon-bg);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.15s ease;
-}
-
-.theme-explorer-trigger:hover .theme-explorer-trigger-icon {
-  background: var(--theme-explorer-trigger-icon-hover-bg);
-}
-
 .account-panel {
   margin-top: auto;
   background: var(--account-panel-bg);
@@ -1576,44 +1293,6 @@ function toggleSidebarColorMode() {
     height: auto;
     overflow: visible;
     background: var(--content-bg);
-  }
-
-  .theme-explorer {
-    right: 0.75rem;
-    bottom: 0.75rem;
-  }
-
-  .theme-explorer-panel {
-    max-height: min(66vh, 23rem);
-  }
-
-  .theme-explorer-trigger span:last-child {
-    display: none;
-  }
-
-  .theme-explorer-trigger {
-    width: 2.85rem;
-    height: 2.85rem;
-    min-height: 2.85rem;
-    padding: 0;
-    justify-content: center;
-  }
-
-  .theme-explorer-trigger-icon {
-    width: 100%;
-    height: 100%;
-    border-radius: inherit;
-  }
-}
-
-@keyframes theme-explorer-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.985);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }
 </style>
