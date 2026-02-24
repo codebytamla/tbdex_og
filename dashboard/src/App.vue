@@ -416,14 +416,15 @@ function toggleSidebarColorMode() {
   font-size: 0.78rem;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 1rem;
 }
 
 :global(.p-datatable .p-datatable-tbody > tr > td) {
   background: #ffffff;
   color: #1a1d23;
-  border-color: #f4f5f7;
-  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eef0f3;
+  border-color: #eef0f3;
+  padding: 0.5rem 1rem;
   font-size: 0.875rem;
 }
 
