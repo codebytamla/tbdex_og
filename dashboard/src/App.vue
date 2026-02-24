@@ -235,7 +235,7 @@ function toggleSidebarColorMode() {
   --app-control-height: 2.25rem;
   --app-control-radius: 8px;
   --app-control-font-size: 0.855rem;
-  --page-section-margin-bottom: 1.5rem;
+  --page-section-margin-bottom: 1rem;
   --page-content-padding: 2rem;
   --page-content-padding-mobile: 1.25rem;
   --page-content-top-offset: 0.5rem;
@@ -775,7 +775,7 @@ function toggleSidebarColorMode() {
 :global(.p-datatable .p-datatable-header) {
   background: #ffffff;
   border: none;
-  padding: 1rem;
+  padding: 0.625rem;
   border-radius: inherit;
 }
 
