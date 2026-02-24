@@ -113,6 +113,7 @@ class _AppShellState extends State<AppShell> {
     final currentIndex = _currentIndex(context);
     final isHome = currentIndex == 0;
     final isFabExtended = !_isHomeFabCollapsed;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return NotificationListener<ScrollNotification>(
       onNotification: isHome ? _onHomeScrollNotification : null,
@@ -120,12 +121,22 @@ class _AppShellState extends State<AppShell> {
         body: widget.child,
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
-            border: Border.all(
-              color: context.appBorder.withValues(alpha: 0.45),
-              width: 1,
+            border: Border(
+              top: BorderSide(
+                color: context.appBorder.withValues(alpha: 0.5),
+                width: 1,
+              ),
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.28 : 0.12),
+                blurRadius: 22,
+                offset: const Offset(0, -6),
+              ),
+            ],
           ),
           child: NavigationBar(
+            elevation: 0,
             selectedIndex: currentIndex,
             onDestinationSelected: (index) {
               if (index == 0) {
@@ -165,6 +176,10 @@ class _AppShellState extends State<AppShell> {
                 icon: const Icon(Icons.add_rounded),
                 label: const Text('New Screening'),
                 isExtended: isFabExtended,
+                elevation: 10,
+                highlightElevation: 14,
+                focusElevation: 12,
+                hoverElevation: 12,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                   side: BorderSide(
