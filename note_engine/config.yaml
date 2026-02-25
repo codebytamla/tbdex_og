@@ -1,0 +1,13 @@
+nav_order:
+  - database_tables
+  - backend_api_routes
+  - frontend_routes
+  - roles_and_permissions
+  - frontend_stores_and_components
+
+nav_icons:
+  database_tables: 🗄️
+  backend_api_routes: 🔌
+  frontend_routes: 🧭
+  roles_and_permissions: 🔑
+  frontend_stores_and_components: 🧩
