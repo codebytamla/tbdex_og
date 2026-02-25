@@ -389,8 +389,12 @@ function toggleSidebarColorMode() {
   font-weight: 500;
 }
 
+:global(.p-datatable .p-datatable-tbody > tr:nth-child(even):not(.p-datatable-row-selected) > td) {
+  background: #f8fafc;
+}
+
 :global(.p-datatable .p-datatable-tbody > tr:not(.p-datatable-row-selected):hover > td) {
-  background: #f8f9fb;
+  background: #f3f6fa;
 }
 
 :global(.p-datatable .p-datatable-tbody > tr.p-datatable-row-selected > td) {
